@@ -39,6 +39,7 @@ $config = array
 
 $mapper = new my_mapper_class(new createphp\config($config));
 $controller = new createphp\controller($mapper);
+$controller->set_object($object);
 
 echo $controller
 ?>
