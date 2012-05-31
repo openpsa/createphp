@@ -11,6 +11,7 @@ To use createphp, you need to implement the rdfMapper class, instantiate it with
 configuration for your data source and then you're good to go
 
 ```php
+<?php
 $object = load_your_data_from_somewhere();
 
 $config = array
@@ -40,6 +41,7 @@ $mapper = new my_mapper_class(new createphp\config($config));
 $controller = new createphp\controller($mapper);
 
 echo $controller
+?>
 ```
 
 This will output something like
@@ -66,6 +68,7 @@ all specified fields will become editable. To actually save the data, you will
 have to provide an access point for the REST service, like so:
 
 ```php
+<?php
 $config = new createphp\config(load_my_configuration_from_somewhere());
 $mapper = new my_mapper_class($config);
 
@@ -73,6 +76,7 @@ $received_data = json_decode(file_get_contents("php://input"), true);
 $service = new createphp\restservice($mapper, $received_data);
 
 $service->run();
+?>
 ```
 
 Word of Warning
