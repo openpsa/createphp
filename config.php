@@ -41,6 +41,10 @@ class config
     {
         foreach ($data as $schema_name => $config)
         {
+            if (empty($this->_schema))
+            {
+                $this->_schema = $schema_name;
+            }
             foreach ($config['properties'] as $fieldname => $values)
             {
                 $config['properties'][$fieldname] = array_merge($this->_property_defaults, $config['properties'][$fieldname]);
