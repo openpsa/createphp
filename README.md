@@ -37,9 +37,9 @@ $config = array
     )
 );
 
-$mapper = new my_mapper_class(new createphp\config($config));
-$controller = new createphp\controller($mapper);
-$controller->set_object($object);
+$mapper = new my_mapper_class;
+$manager = new createphp\arrayManager($mapper, $config);
+$controller = $manager->get_controller('blog_article', $object);
 
 echo $controller
 ?>
@@ -70,13 +70,14 @@ have to provide an access point for the REST service, like so:
 
 ```php
 <?php
-$config = new createphp\config(load_my_configuration_from_somewhere());
-$mapper = new my_mapper_class($config);
+$mapper = new my_mapper_class;
+$manager = new createphp\arrayManager($mapper, load_my_configuration_from_somewhere());
+$controller = $manager->get_controller('blog_article');
 
 $received_data = json_decode(file_get_contents("php://input"), true);
 $service = new createphp\restservice($mapper, $received_data);
 
-$service->run();
+$service->run($controller);
 ?>
 ```
 
