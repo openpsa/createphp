@@ -76,6 +76,13 @@ class arrayManager extends manager
                         'property_name' => $property_name,
                     );
                 }
+                if (!empty($property_config['attributes']))
+                {
+                    foreach ($property_config['attributes'] as $key => $value)
+                    {
+                        $node->set_attribute($key, $value);
+                    }
+                }
                 $node->set_parent($controller);
                 $controller->$property_name = $node;
             }

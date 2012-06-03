@@ -17,18 +17,11 @@ class collection extends node implements \ArrayAccess, \Iterator
 {
     protected $_position = 0;
 
-    protected $_config;
-
     protected $_controller;
 
-    public function __construct(array $settings, $identifier)
+    public function __construct(array $config, $identifier)
     {
-        $this->_config = $settings;
-
-        foreach ($settings['attributes'] as $key => $value)
-        {
-            $this->set_attribute($key, $value);
-        }
+        $this->_config = $config;
     }
 
     public function set_controller(controller $controller)
