@@ -64,9 +64,27 @@ This will output something like
 ```
 
 Of course, the markup is completely configurable, and you can also render the
-individual fields separately. If you include the CreateJS files into your page,
-all specified fields will become editable. To actually save the data, you will
-have to provide an access point for the REST service, like so:
+individual fields separately:
+
+```php
+<?php
+$controller->title->set_attribute('class', 'headline');
+$controller->content->set_attribute('class', 'content-inner');
+$controller->content->set_template('<div class="content-outer"><span __ATTRIBUTES__>__CONTENT__</span></div>');
+
+echo $controller->render_start('article');
+$i = 0;
+foreach ($controller->get_children() as $fieldname => $node)
+{
+    $node->set_attribute('id', 'childnode-' . $i);
+    echo $node;
+    $i++;
+}
+echo $controller->render_end();
+?>
+
+If you include the CreateJS files into your page, all specified fields will become editable. 
+To actually save the data, you will have to provide an access point for the REST service, like so:
 
 ```php
 <?php
