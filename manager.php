@@ -60,8 +60,8 @@ class manager
         }
         if (null !== $object)
         {
-            $this->_controllers[$identifier]->set_object($object);
             $this->_controllers[$identifier]->set_editable($this->_mapper->is_editable($object));
+            $this->_controllers[$identifier]->set_object($object);
             $this->_controllers[$identifier]->set_attribute('about', $this->_mapper->create_identifier($object));
         }
         return $this->_controllers[$identifier];
