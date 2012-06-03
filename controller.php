@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract baseclass for the CreateController
+ * Abstract baseclass for the Object controller
  *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
@@ -30,6 +30,13 @@ class controller extends node
     protected $_mapper;
 
     /**
+     * The vocabularies used in this instance
+     *
+     * @var array
+     */
+    protected $_vocabularies = array();
+
+    /**
      * The current storage object, if any
      *
      * @var mixed
@@ -37,59 +44,42 @@ class controller extends node
     protected $_object;
 
     /**
-     * Stores an array of rdf properties currently set for the controller
-     *
-     * @var array
-     */
-    protected $_properties = array();
-
-    /**
      * The constructor
      *
      * @param rdfMapper $mapper
-     * @param controller $parent the parent controller for collection children
      */
-    public function __construct(rdfMapper $mapper, controller $parent = null)
+    public function __construct(rdfMapper $mapper, array $config = array())
     {
         $this->_mapper = $mapper;
-        $this->_parent = $parent;
+        $this->_config = $config;
     }
 
-    public function set_object($object, $schema_name)
+    public function set_vocabulary($prefix, $uri)
+    {
+        $this->_vocabularies[$prefix] = $uri;
+        $this->set_attribute('xmlns:' . $prefix, $uri);
+    }
+
+    public function get_vocabularies()
+    {
+        return $this->_vocabularies;
+    }
+
+    public function set_object($object)
     {
         $this->_object = $object;
-        $this->_properties = array();
-        $this->_mapper->get_config()->set_schema($schema_name);
-
-        foreach ($this->_mapper->get_config()->get('attributes') as $key => $value)
+        foreach ($this->_children as $fieldname => $node)
         {
-            $this->set_attribute($key, $value);
-        }
-
-        $map = $this->_mapper->get_config()->get('properties');
-
-        // use rdf mapper to create element representations
-        foreach ($map as $fieldname => $config)
-        {
-            $classname = array_shift($config['type']);
-            $this->$fieldname = new $classname($config, $this);
-
-            if ($this->$fieldname instanceof propertyNode)
+            if ($node instanceof propertyNode)
             {
-                if (empty($config['rdf_name']))
-                {
-                    $rdf_name = $this->_mapper->get_rdf_name($fieldname);
-                }
-                else
-                {
-                    $rdf_name = $config['rdf_name'];
-                }
-                $this->$fieldname->set_attribute('property', $rdf_name);
-                $this->$fieldname->set_value($this->_mapper->get_property_value($object, $fieldname));
+                $node->set_value($this->_mapper->get_property_value($object, $node));
+            }
+            else if ($node instanceof collection)
+            {
+                $node->set_attribute('about', $this->_mapper->create_identifier($object));
+                $node->load_from_parent($object);
             }
         }
-
-        $this->set_editable($this->_mapper->is_editable($object));
     }
 
     public function get_object()
@@ -105,9 +95,9 @@ class controller extends node
      */
     public function __get($key)
     {
-        if (isset($this->_properties[$key]))
+        if (isset($this->_children[$key]))
         {
-            return $this->_properties[$key];
+            return $this->_children[$key];
         }
         return null;
     }
@@ -120,7 +110,7 @@ class controller extends node
      */
     public function __set($key, node $node)
     {
-        $this->_properties[$key] = $node;
+        $this->_children[$key] = $node;
     }
 
     /**
@@ -152,16 +142,10 @@ class controller extends node
     public function render_start($tag_name = false)
     {
         // render this for admin users only
-        if ($this->is_editable())
+        if (!$this->is_editable())
         {
             // add about
-            $this->set_attribute('about', $this->_mapper->create_identifier($this->_object));
-        }
-
-        // add xml namespaces
-        foreach ($this->_mapper->get_vocabularies() as $prefix => $uri)
-        {
-            $this->set_attribute('xmlns:' . $prefix, $uri);
+            $this->unset_attribute('about');
         }
 
         return parent::render_start($tag_name);
@@ -170,11 +154,24 @@ class controller extends node
     public function render_content()
     {
         $output = '';
-        foreach ($this->_properties as $key => $prop)
+        foreach ($this->_children as $key => $prop)
         {
+            // add rdf name for admin only
+            if (!$this->is_editable())
+            {
+                $prop->unset_attribute('property');
+            }
             $output .= $prop->render();
         }
         return $output;
+    }
+
+    public function __clone()
+    {
+        foreach ($this->_children as $name => $node)
+        {
+            $this->$name = clone $node;
+        }
     }
 }
 ?>

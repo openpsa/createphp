@@ -22,13 +22,12 @@ class propertyNode extends node
      */
     private $_value = '';
 
-    protected $_config;
-    protected $_controller;
+    protected $_identifier;
 
-    public function __construct(array $config, controller $controller)
+    public function __construct(array $config, $identifier)
     {
         $this->_config = $config;
-        $this->_controller = $controller;
+        $this->_identifier = $identifier;
     }
 
     /**
@@ -51,20 +50,19 @@ class propertyNode extends node
         return $this->_value;
     }
 
+    /**
+     * Identifier getter
+     *
+     * @return string
+     */
+    public function get_identifier()
+    {
+        return $this->_identifier;
+    }
+
     public function render_content()
     {
         return $this->get_value();
-    }
-
-    public function render($tag_name = false)
-    {
-        // add rdf name for admin only
-        if (!$this->_controller->is_editable())
-        {
-            unset($this->_attributes['property']);
-        }
-
-        return parent::render($tag_name);
     }
 }
 ?>

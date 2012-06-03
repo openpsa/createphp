@@ -45,10 +45,7 @@ class restservice
     {
         $this->_data = $data;
         $this->_verb = strtolower($_SERVER['REQUEST_METHOD']);
-        if (null !== $mapper)
-        {
-            $this->set_mapper($mapper);
-        }
+        $this->set_mapper($mapper);
     }
 
     public function get_data()
@@ -100,7 +97,7 @@ class restservice
     /**
      * Run the service
      */
-    public function run()
+    public function run(controller $controller)
     {
         switch ($this->_verb)
         {
@@ -108,13 +105,13 @@ class restservice
                 // do not handle get
                 break;
             case 'delete':
-                $this->_handle_delete();
+                $this->_handle_delete($controller);
                 break;
             case 'post':
-                $this->_handle_create();
+                $this->_handle_create($controller);
                 break;
             case 'put':
-                $this->_handle_update();
+                $this->_handle_update($controller);
                 break;
         }
     }
@@ -122,84 +119,78 @@ class restservice
     /**
      * Handle post request
      */
-    private function _handle_create()
+    private function _handle_create(controller $controller)
     {
-        $map = $this->_mapper->get_config()->get('properties');
         $received_data = $this->_get_properties();
 
-        $parent = null;
-        foreach ($map as $fieldname => $config)
+        $child_controller = null;
+        foreach ($controller->get_children() as $fieldname => $node)
         {
-            if (!isset($config['attributes']['rev']))
+            if (!$node instanceof collection)
             {
                 continue;
             }
-
-            $parentfield = $this->_expand_property_name($config['attributes']['rev']);
+            $child_controller = $node->get_controller();
+            $parentfield = $this->_expand_property_name($node->get_attribute('rev'), $child_controller);
             if (!empty($received_data[$parentfield]))
             {
                 $parent_identifier = trim($received_data[$parentfield][0], '<>');
                 $parent = $this->_mapper->get_by_identifier($parent_identifier);
-                $this->_mapper->get_config()->set_schema($config['type'][1]);
+                $object = $this->_mapper->prepare_object($child_controller, $parent);
+                $child_controller->set_object($object);
+                return $this->_store_data($child_controller);
             }
         }
-
-        $object = $this->_mapper->prepare_object($this->_mapper->get_config(), $parent);
-        return $this->_store_data($object);
+        $object = $this->_mapper->prepare_object($controller);
+        $controller->set_object($object);
+        return $this->_store_data($controller);
     }
 
     /**
      * Handle put request
      */
-    private function _handle_update()
+    private function _handle_update(controller $controller)
     {
         $object = $this->_mapper->get_by_identifier(trim($this->_data['@subject'], '<>'));
-        return $this->_store_data($object);
+        $controller->set_object($object);
+        return $this->_store_data($controller);
     }
 
-    private function _store_data($object)
+    private function _store_data(controller $controller)
     {
         $new_values = $this->_get_properties();
+        $object = $controller->get_object();
 
-        $properties = $this->_mapper->get_config()->get('properties');
-
-        foreach ($properties as $fieldname => $config)
+        foreach ($controller->get_children() as $fieldname => $node)
         {
-            //TODO: Figure out a proper way to do this
-            if (!empty($config['attributes']['rel']))
+            if (!$node instanceof propertyNode)
             {
                 continue;
             }
-            if (empty($config['rdf_name']))
-            {
-                $rdf_name = $this->_mapper->get_rdf_name($fieldname);
-            }
-            else
-            {
-                $rdf_name = $config['rdf_name'];
-            }
-            $expanded_name = $this->_expand_property_name($rdf_name);
+            $rdf_name = $node->get_attribute('property');
+
+            $expanded_name = $this->_expand_property_name($rdf_name, $controller);
 
             if (array_key_exists($expanded_name, $new_values))
             {
-                $object = $this->_mapper->set_property_value($object, $fieldname, $new_values[$expanded_name]);
+                $object = $this->_mapper->set_property_value($object, $node, $new_values[$expanded_name]);
             }
         }
 
         return $this->_mapper->store($object);
     }
 
-    private function _expand_property_name($name)
+    private function _expand_property_name($name, controller $controller)
     {
         $name = explode(":", $name);
-        $vocabularies = $this->_mapper->get_vocabularies();
+        $vocabularies = $controller->get_vocabularies();
         return $vocabularies[$name[0]] . $name[1];
     }
 
     /**
      * Handle delete request
      */
-    private function _handle_delete()
+    private function _handle_delete(controller $controller)
     {
         $object = $this->_mapper->get_by_identifier($_REQUEST["uri"]);
         return $this->_mapper->delete($object);

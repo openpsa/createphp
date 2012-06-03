@@ -18,9 +18,10 @@ class collection extends node implements \ArrayAccess, \Iterator
     protected $_position = 0;
 
     protected $_config;
+
     protected $_controller;
 
-    public function __construct(array $settings, controller $parent)
+    public function __construct(array $settings, $identifier)
     {
         $this->_config = $settings;
 
@@ -28,28 +29,41 @@ class collection extends node implements \ArrayAccess, \Iterator
         {
             $this->set_attribute($key, $value);
         }
+    }
 
-        $this->_controller = $parent;
-        $parent_mapper = $this->_controller->get_mapper();
-        $parent_object = $this->_controller->get_object();
-        $mapper_class = get_class($parent_mapper);
-        $config = $parent_mapper->get_config();
-        $config->set_schema($settings['type'][0]);
-
-        $children = $parent_mapper->get_children($parent_object, $config);
-
-        if ($parent_mapper->is_editable($parent_object))
+    public function set_controller(controller $controller)
+    {
+        $this->_controller = $controller;
+        foreach ($controller->get_vocabularies() as $prefix => $uri)
         {
-            $object = $parent_mapper->prepare_object($config, $parent_object);
+            $this->set_attribute('xmlns:' . $prefix, $uri);
+        }
+    }
+
+    public function get_controller()
+    {
+        return $this->_controller;
+    }
+
+    public function load_from_parent($object)
+    {
+        $this->_children = array();
+        $mapper = $this->_controller->get_mapper();
+        $config = $this->_controller->get_config();
+        $children = $mapper->get_children($object, $config);
+
+        if ($this->_parent->is_editable($object))
+        {
+            $object = $mapper->prepare_object($this->_controller, $object);
             array_unshift($children, $object);
         }
 
         // create controllers for children
         foreach ($children as $child)
         {
-            $mapper = new $mapper_class($config);
-            $controller = new controller($mapper, $this->_parent);
-            $controller->set_object($child, $settings['type'][0]);
+            $controller = clone $this->_controller;
+            $controller->set_object($child);
+            $controller->set_attribute('about', $mapper->create_identifier($child));
             $this->_children[] = $controller;
         }
     }
@@ -114,18 +128,10 @@ class collection extends node implements \ArrayAccess, \Iterator
      */
     public function render_start($tag_name = false)
     {
-        $mapper = $this->_controller->get_mapper();
         // render this for admin users only
-        if ($this->_controller->is_editable())
+        if (!$this->_parent->is_editable())
         {
-            // add about
-            $this->set_attribute('about', $mapper->create_identifier($this->_controller->get_object()));
-        }
-
-        // add xml namespaces
-        foreach ($mapper->get_vocabularies() as $prefix => $uri)
-        {
-            $this->set_attribute('xmlns:' . $prefix, $uri);
+            $this->unset_attribute('about');
         }
 
         return parent::render_start($tag_name);

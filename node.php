@@ -50,8 +50,35 @@ abstract class node
      */
     protected $_children = array();
 
+    protected $_config;
+
+    public function set_parent(node $parent)
+    {
+        $this->_parent = $parent;
+    }
+
+    public function get_parent()
+    {
+        return $this->_parent;
+    }
+
+    public function get_children()
+    {
+        return $this->_children;
+    }
+
     /**
-     * Adds an additional attribute to the wrapper tag
+     * Config getter
+     *
+     * @return string
+     */
+    public function get_config()
+    {
+        return $this->_config;
+    }
+
+    /**
+     * Adds an additional attribute
      *
      * @param string $key
      * @param string $value
@@ -62,13 +89,26 @@ abstract class node
     }
 
     /**
-     * Adds an additional attribute to the wrapper tag
+     * Get an attribute
      *
      * @param string $key
      */
     public function get_attribute($key)
     {
         return $this->_attributes[$key];
+    }
+
+    /**
+     * Remove an attribute
+     *
+     * @param string $key
+     */
+    public function unset_attribute($key)
+    {
+        if (isset($this->_attributes[$key]))
+        {
+            unset($this->_attributes[$key]);
+        }
     }
 
     /**
