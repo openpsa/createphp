@@ -45,18 +45,21 @@ class collection extends node implements \ArrayAccess, \Iterator
         $config = $this->_controller->get_config();
         $children = $mapper->get_children($object, $config);
 
-        if ($this->_parent->is_editable($object))
-        {
-            $object = $mapper->prepare_object($this->_controller, $object);
-            array_unshift($children, $object);
-        }
-
         // create controllers for children
         foreach ($children as $child)
         {
             $controller = clone $this->_controller;
             $controller->set_object($child);
             $controller->set_attribute('about', $mapper->create_identifier($child));
+            $this->_children[] = $controller;
+        }
+        if (   $this->_parent->is_editable($object)
+            && sizeof($this->_children) == 0)
+        {
+            $object = $mapper->prepare_object($this->_controller, $object);
+            $controller = clone $this->_controller;
+            $controller->set_object($object);
+            $controller->set_attribute('style', 'display:none');
             $this->_children[] = $controller;
         }
     }
