@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract baseclass for the Object controller
+ * The type/object controller
  *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
@@ -171,6 +171,7 @@ class controller extends node
         foreach ($this->_children as $name => $node)
         {
             $this->$name = clone $node;
+            $this->$name->set_parent($this);
         }
     }
 }
