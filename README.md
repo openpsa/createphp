@@ -28,10 +28,16 @@ $config = array
         'properties' => array(
             'title' => array
             (
-                'rdf_name' => 'dcterms:title',
+                'attributes' => array
+                (
+                    'property' => 'dcterms:title'
+                )
             ),
             'content' => array(
-                'rdf_name' => 'sioc:content',
+                'attributes' => array
+                (
+                    'property' => 'sioc:content'
+                )
             ),
         ),
     )

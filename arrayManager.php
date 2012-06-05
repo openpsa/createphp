@@ -41,34 +41,29 @@ class arrayManager extends manager
         $add_default_vocabulary = false;
         if (!empty($config['properties']))
         {
-            foreach ($config['properties'] as $property_name => $property_config)
+            foreach ($config['properties'] as $property_name => $field_config)
             {
-                if (empty($property_config['type']))
+                if (empty($field_config['type']))
                 {
                     $classname = 'openpsa\createphp\propertyNode';
                 }
                 else
                 {
-                    $classname = array_shift($property_config['type']);
+                    $classname = array_shift($field_config['type']);
                 }
-                $node = new $classname($property_config, $property_name);
+                $node = new $classname($field_config, $property_name);
 
                 if ($node instanceof propertyNode)
                 {
-                    if (empty($property_config['rdf_name']))
+                    if (empty($field_config['attributes']['property']))
                     {
-                        $rdf_name = 'createphp:' . $property_name;
+                        $field_config['attributes']['property'] = 'createphp:' . $property_name;
                         $add_default_vocabulary = true;
                     }
-                    else
-                    {
-                        $rdf_name = $property_config['rdf_name'];
-                    }
-                    $node->set_attribute('property', $rdf_name);
                 }
-                if (!empty($property_config['type']))
+                if (!empty($field_config['type']))
                 {
-                    $ref_id = array_shift($property_config['type']);
+                    $ref_id = array_shift($field_config['type']);
                     $this->_references[] = array
                     (
                         'identifier' => $identifier,
@@ -76,9 +71,9 @@ class arrayManager extends manager
                         'property_name' => $property_name,
                     );
                 }
-                if (!empty($property_config['attributes']))
+                if (!empty($field_config['attributes']))
                 {
-                    foreach ($property_config['attributes'] as $key => $value)
+                    foreach ($field_config['attributes'] as $key => $value)
                     {
                         $node->set_attribute($key, $value);
                     }
