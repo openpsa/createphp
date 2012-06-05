@@ -1,7 +1,5 @@
 <?php
 /**
- * Encapsulates a property node in the DOM tree
- *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
@@ -11,6 +9,14 @@
 namespace openpsa\createphp;
 
 /**
+ * Encapsulates a property node in the DOM tree.
+ *
+ * These nodes need the a "property" attribute to function correctly
+ *
+ * When rendering a property node separately, it will automatically render the controller
+ * template as well, so that we have XML namespaces and about attributes required by the
+ * JS interface
+ *
  * @package openpsa.createphp
  */
 class propertyNode extends node
@@ -23,6 +29,8 @@ class propertyNode extends node
     private $_value = '';
 
     protected $_identifier;
+
+    protected $_render_standalone = false;
 
     public function __construct(array $config, $identifier)
     {
@@ -60,9 +68,31 @@ class propertyNode extends node
         return $this->_identifier;
     }
 
+    public function render_start($tag_name = false)
+    {
+        $output = '';
+        if (!$this->_parent->is_rendering())
+        {
+            $output .= $this->_parent->render_start();
+            $this->_render_standalone = true;
+        }
+        return $output . parent::render_start($tag_name);
+    }
+
     public function render_content()
     {
         return $this->get_value();
+    }
+
+    public function render_end()
+    {
+        $output = parent::render_end();
+        if ($this->_render_standalone)
+        {
+            $output .= $this->_parent->render_end();
+            $this->_render_standalone = false;
+        }
+        return $output;
     }
 }
 ?>

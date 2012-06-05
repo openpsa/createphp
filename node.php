@@ -50,7 +50,19 @@ abstract class node
      */
     protected $_children = array();
 
+    /**
+     * Additional config parameters passed to the node
+     *
+     * @var array
+     */
     protected $_config;
+
+    /**
+     * Flag that tracks whether or not we're between render_start() and render_end()
+     *
+     * @var boolean
+     */
+    protected $_is_rendering = false;
 
     public function set_parent(node $parent)
     {
@@ -65,6 +77,11 @@ abstract class node
     public function get_children()
     {
         return $this->_children;
+    }
+
+    public function is_rendering()
+    {
+        return $this->_is_rendering;
     }
 
     /**
@@ -141,7 +158,7 @@ abstract class node
             "__TAG_NAME__" => $this->_tag_name,
             "__ATTRIBUTES__" => $this->render_attributes(),
         );
-
+        $this->_is_rendering = true;
         return strtr($template, $replace);
     }
 
@@ -183,6 +200,7 @@ abstract class node
         (
             "__TAG_NAME__" => $this->_tag_name,
         );
+        $this->_is_rendering = false;
         return strtr($template, $replace);
     }
 
