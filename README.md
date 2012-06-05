@@ -102,7 +102,8 @@ $controller = $manager->get_controller('blog_article');
 $received_data = json_decode(file_get_contents("php://input"), true);
 $service = new createphp\restservice($mapper, $received_data);
 
-$service->run($controller);
+$jsonld = $service->run($controller);
+send_as_json($jsonld);
 ?>
 ```
 
