@@ -105,13 +105,13 @@ class restservice
                 // do not handle get
                 break;
             case 'delete':
-                $this->_handle_delete($controller);
+                return $this->_handle_delete($controller);
                 break;
             case 'post':
-                $this->_handle_create($controller);
+                return $this->_handle_create($controller);
                 break;
             case 'put':
-                $this->_handle_update($controller);
+                return $this->_handle_update($controller);
                 break;
         }
     }
@@ -177,7 +177,33 @@ class restservice
             }
         }
 
-        return $this->_mapper->store($object);
+        if ($this->_mapper->store($object))
+        {
+            return $this->_convert_to_jsonld($object, $controller);
+        }
+    }
+
+    private function _convert_to_jsonld($object, controller $controller)
+    {
+        $jsonld = $this->_data;
+        $jsonld['@subject'] = $this->_mapper->create_identifier($object);
+        foreach ($controller->get_children() as $fieldname => $node)
+        {
+            if (!$node instanceof propertyNode)
+            {
+                continue;
+            }
+            $rdf_name = $node->get_attribute('property');
+
+            $expanded_name = '<' . $this->_expand_property_name($rdf_name, $controller) . '>';
+
+            if (array_key_exists($expanded_name, $jsonld))
+            {
+                $jsonld[$expanded_name] = $this->_mapper->get_property_value($object, $node);
+            }
+        }
+
+        return $jsonld;
     }
 
     private function _expand_property_name($name, controller $controller)
@@ -193,7 +219,10 @@ class restservice
     private function _handle_delete(controller $controller)
     {
         $object = $this->_mapper->get_by_identifier($_REQUEST["uri"]);
-        return $this->_mapper->delete($object);
+        if ($this->_mapper->delete($object))
+        {
+            return $this->_convert_to_jsonld($object, $controller);
+        }
     }
 }
 ?>
