@@ -1,7 +1,5 @@
 <?php
 /**
- * Encapsulates a node in the DOM tree
- *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
@@ -11,6 +9,14 @@
 namespace openpsa\createphp;
 
 /**
+ * Baseclass for (DOM) nodes.
+ *
+ * Provides functionality for managing relevant aspects of the node, specifically, managing
+ * attributes, parent/children relations and rendering. The latter is split into three
+ * different functions for maximum flexibility. So you can call render() to output the
+ * complete node HTML, or you can call render_start() for the opening tag, render_content()
+ * for the node's content (or children) and render_end() for the colsing tag.
+ *
  * @package openpsa.createphp
  */
 abstract class node
@@ -64,16 +70,31 @@ abstract class node
      */
     protected $_is_rendering = false;
 
+    /**
+     * Parent node setter
+     *
+     * @var node $parent The parent object
+     */
     public function set_parent(node $parent)
     {
         $this->_parent = $parent;
     }
 
+    /**
+     * Parent node getter
+     *
+     * @return node The parent object (if any)
+     */
     public function get_parent()
     {
         return $this->_parent;
     }
 
+    /**
+     * Children getter
+     *
+     * @return array The child nodes (if any)
+     */
     public function get_children()
     {
         return $this->_children;
