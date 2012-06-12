@@ -22,14 +22,25 @@ namespace openpsa\createphp;
 class propertyNode extends node
 {
     /**
-     * the element's content
+     * The element's content
      *
      * @var string
      */
     private $_value = '';
 
+    /**
+     * The property's identifier in the currently active controller
+     *
+     * @var string
+     */
     protected $_identifier;
 
+    /**
+     * Flag that tracks whether or not the property is rendered as part of its
+     * controller or standalone
+     *
+     * @var boolean
+     */
     protected $_render_standalone = false;
 
     public function __construct(array $config, $identifier)
@@ -68,6 +79,10 @@ class propertyNode extends node
         return $this->_identifier;
     }
 
+    /**
+     * Render the property's opening tag (and the controller wrapper if we're in
+     * standalone mode)
+     */
     public function render_start($tag_name = false)
     {
         $output = '';
@@ -84,6 +99,10 @@ class propertyNode extends node
         return $this->get_value();
     }
 
+    /**
+     * Render the property's closing tag (and the controller wrapper's if we're in
+     * standalone mode)
+     */
     public function render_end()
     {
         $output = parent::render_end();

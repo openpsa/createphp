@@ -65,6 +65,12 @@ class controller extends node
         return $this->_vocabularies;
     }
 
+    /**
+     * Object setter. This connects both the controller and the derived elements,
+     * i.e. collections and properties
+     *
+     * @param mixed $object the storage "object"
+     */
     public function set_object($object)
     {
         $this->_object = $object;
@@ -82,6 +88,11 @@ class controller extends node
         }
     }
 
+    /**
+     * Object getter
+     *
+     * @return mixed
+     */
     public function get_object()
     {
         return $this->_object;
