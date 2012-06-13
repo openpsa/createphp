@@ -1,16 +1,19 @@
 <?php
 /**
- * Collection holder
- *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
  * @package openpsa.createphp
  */
 
-namespace openpsa\createphp;
+namespace openpsa\createphp\entity;
+use openpsa\createphp\node;
 
 /**
+ * Collection holder. Acts at the same time as a property to a parent controller and
+ * and as a holder for controllers of other objects which are linked to the first one
+ * with some kind of relation
+ *
  * @package openpsa.createphp
  */
 class collection extends node implements \ArrayAccess, \Iterator

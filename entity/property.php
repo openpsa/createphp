@@ -6,7 +6,8 @@
  * @package openpsa.createphp
  */
 
-namespace openpsa\createphp;
+namespace openpsa\createphp\entity;
+use openpsa\createphp\node;
 
 /**
  * Encapsulates a property node in the DOM tree.
@@ -19,7 +20,7 @@ namespace openpsa\createphp;
  *
  * @package openpsa.createphp
  */
-class propertyNode extends node
+class property extends node
 {
     /**
      * The element's content

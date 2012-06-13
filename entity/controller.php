@@ -8,7 +8,9 @@
  * @package openpsa.createphp
  */
 
-namespace openpsa\createphp;
+namespace openpsa\createphp\entity;
+use openpsa\createphp\node;
+use openpsa\createphp\rdfMapper;
 
 /**
  * @package openpsa.createphp
@@ -76,7 +78,7 @@ class controller extends node
         $this->_object = $object;
         foreach ($this->_children as $fieldname => $node)
         {
-            if ($node instanceof propertyNode)
+            if ($node instanceof property)
             {
                 $node->set_value($this->_mapper->get_property_value($object, $node));
             }

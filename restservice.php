@@ -9,6 +9,9 @@
  */
 
 namespace openpsa\createphp;
+use openpsa\createphp\entity\property;
+use openpsa\createphp\entity\collection;
+use openpsa\createphp\entity\controller;
 
 /**
  * @package openpsa.createphp
@@ -163,7 +166,7 @@ class restservice
 
         foreach ($controller->get_children() as $fieldname => $node)
         {
-            if (!$node instanceof propertyNode)
+            if (!$node instanceof property)
             {
                 continue;
             }
@@ -189,7 +192,7 @@ class restservice
         $jsonld['@subject'] = $this->_mapper->create_identifier($object);
         foreach ($controller->get_children() as $fieldname => $node)
         {
-            if (!$node instanceof propertyNode)
+            if (!$node instanceof property)
             {
                 continue;
             }

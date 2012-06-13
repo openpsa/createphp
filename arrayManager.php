@@ -1,7 +1,5 @@
 <?php
 /**
- * Setup controllers based on a configuration array
- *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
@@ -9,8 +7,12 @@
  */
 
 namespace openpsa\createphp;
+use openpsa\createphp\entity\property;
+use openpsa\createphp\entity\controller;
 
 /**
+ * Setup controllers based on a configuration array
+ *
  * @package openpsa.createphp
  */
 class arrayManager extends manager
@@ -45,7 +47,7 @@ class arrayManager extends manager
             {
                 if (empty($field_config['type']))
                 {
-                    $classname = 'openpsa\createphp\propertyNode';
+                    $classname = 'openpsa\createphp\entity\property';
                 }
                 else
                 {
@@ -53,7 +55,7 @@ class arrayManager extends manager
                 }
                 $node = new $classname($field_config, $property_name);
 
-                if ($node instanceof propertyNode)
+                if ($node instanceof property)
                 {
                     if (empty($field_config['attributes']['property']))
                     {
