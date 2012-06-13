@@ -189,7 +189,7 @@ class restservice
     private function _convert_to_jsonld($object, controller $controller)
     {
         $jsonld = $this->_data;
-        $jsonld['@subject'] = $this->_mapper->create_identifier($object);
+        $jsonld['@subject'] = '<' . $this->_mapper->create_identifier($object) . '>';
         foreach ($controller->get_children() as $fieldname => $node)
         {
             if (!$node instanceof property)
