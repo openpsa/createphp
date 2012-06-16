@@ -44,7 +44,8 @@ $config = array
 );
 
 $mapper = new my_mapper_class;
-$manager = new createphp\arrayManager($mapper, $config);
+$loader = new createphp\arrayLoader($config);
+$manager = $loader->get_manager($mapper);
 $controller = $manager->get_controller('blog_article', $object);
 ```
 
@@ -106,7 +107,8 @@ To actually save the data, you will have to provide an access point for the REST
 ```php
 <?php
 $mapper = new my_mapper_class;
-$manager = new createphp\arrayManager($mapper, load_my_configuration_from_somewhere());
+$loader = new createphp\arrayLoader(load_my_configuration_from_somewhere());
+$manager = $loader->get_manager($mapper);
 $controller = $manager->get_controller('blog_article');
 
 $received_data = json_decode(file_get_contents("php://input"), true);
@@ -125,8 +127,9 @@ GET request which can hold the current model ID. You can implement a backend URL
 
 ```php
 <?php
-$mapper = new my_mapper_class;
-$manager = new createphp\arrayManager($mapper, load_my_configuration_from_somewhere());
+$loader = new createphp\arrayLoader($config_array);
+$manager = $loader->get_manager(new my_mapper_class);
+
 $manager->register_workflow($workflow_name, new my_workflow_class);
 
 $toolbar_config = $manager->get_workflows($object_identifier);
