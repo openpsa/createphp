@@ -9,6 +9,7 @@
  */
 
 namespace openpsa\createphp;
+use openpsa\createphp\entity\controller;
 
 /**
  * @package openpsa.createphp

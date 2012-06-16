@@ -15,17 +15,24 @@ use openpsa\createphp\entity\controller;
  *
  * @package openpsa.createphp
  */
-class arrayManager extends manager
+class arrayLoader
 {
     protected $_references = array();
 
-    public function __construct(rdfMapper $mapper, array $configs)
-    {
-        parent::__construct($mapper);
+    protected $_configs = array();
 
-        foreach ($configs as $identifier => $config)
+    public function __construct(array $configs)
+    {
+        $this->_configs = $configs;
+    }
+
+    public function get_manager(rdfMapper $mapper)
+    {
+        $manager = new manager($mapper);
+        $controllers = array();
+        foreach ($this->_configs as $identifier => $config)
         {
-            $this->_controllers[$identifier] = $this->_prepare_controller($identifier, $config);
+            $controllers[$identifier] = $this->_prepare_controller($identifier, $mapper, $config);
         }
 
         foreach ($this->_references as $ref_config)
@@ -33,13 +40,19 @@ class arrayManager extends manager
             $property_name = $ref_config['property_name'];
             $parent_id = $ref_config['identifier'];
             $ref_id = $ref_config['ref_id'];
-            $this->_controllers[$parent_id]->$property_name->set_controller($this->_controllers[$ref_id]);
+            $controllers[$parent_id]->$property_name->set_controller($controllers[$ref_id]);
         }
+
+        foreach ($controllers as $identifier => $controller)
+        {
+            $manager->set_controller($identifier, $controller);
+        }
+        return $manager;
     }
 
-    private function _prepare_controller($identifier, $config)
+    private function _prepare_controller($identifier, $mapper, $config)
     {
-        $controller = new controller($this->_mapper, $config);
+        $controller = new controller($mapper, $config);
         $add_default_vocabulary = false;
         if (!empty($config['properties']))
         {
