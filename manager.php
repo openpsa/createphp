@@ -23,6 +23,13 @@ class manager
     protected $_controllers = array();
 
     /**
+     * Array of available workflows
+     *
+     * @var array
+     */
+    protected $_workflows = array();
+
+    /**
      * The mapper implementation to use
      *
      * @var rdfMapper
@@ -65,6 +72,32 @@ class manager
             $this->_controllers[$identifier]->set_attribute('about', $this->_mapper->create_identifier($object));
         }
         return $this->_controllers[$identifier];
+    }
+
+    /**
+     * Register a workflow
+     *
+     * @param string $identifier
+     * @param workflow $Workflow
+     */
+    public function register_workflow($identifier, workflow $workflow)
+    {
+        $this->_workflows[$identifier] = $workflow;
+    }
+
+    public function get_workflows($subject)
+    {
+        $response = array();
+        $object = $this->_mapper->get_by_identifier(trim($subject, '<>'));
+        foreach ($this->_workflows as $identifier => $workflow)
+        {
+            $toolbar_config = $workflow->get_toolbar_config($object);
+            if (null !== $toolbar_config)
+            {
+                $response[] = $toolbar_config;
+            }
+        }
+        return $response;
     }
 }
 ?>
