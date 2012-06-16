@@ -58,13 +58,13 @@ class arrayLoader
         {
             foreach ($config['properties'] as $property_name => $field_config)
             {
-                if (empty($field_config['type']))
+                if (empty($field_config['nodeType']))
                 {
                     $classname = 'openpsa\createphp\entity\property';
                 }
                 else
                 {
-                    $classname = array_shift($field_config['type']);
+                    $classname = $field_config['nodeType'];
                 }
                 $node = new $classname($field_config, $property_name);
 
@@ -76,9 +76,9 @@ class arrayLoader
                         $add_default_vocabulary = true;
                     }
                 }
-                if (!empty($field_config['type']))
+                if (!empty($field_config['controller']))
                 {
-                    $ref_id = array_shift($field_config['type']);
+                    $ref_id = $field_config['controller'];
                     $this->_references[] = array
                     (
                         'identifier' => $identifier,
