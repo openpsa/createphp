@@ -127,6 +127,19 @@ abstract class node
     }
 
     /**
+     * Sets multiple attributes at once
+     *
+     * @param array $attributes
+     */
+    public function set_attributes($attributes)
+    {
+        foreach ($attributes as $key => $value)
+        {
+            $this->set_attribute($key, $value);
+        }
+    }
+
+    /**
      * Get an attribute
      *
      * @param string $key

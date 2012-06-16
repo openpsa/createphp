@@ -88,10 +88,7 @@ class arrayLoader
                 }
                 if (!empty($field_config['attributes']))
                 {
-                    foreach ($field_config['attributes'] as $key => $value)
-                    {
-                        $node->set_attribute($key, $value);
-                    }
+                    $node->set_attributes($field_config['attributes']);
                 }
                 $node->set_parent($controller);
                 $controller->$property_name = $node;
@@ -99,10 +96,7 @@ class arrayLoader
         }
         if (!empty($config['attributes']))
         {
-            foreach ($config['attributes'] as $key => $value)
-            {
-                $controller->set_attribute($key, $value);
-            }
+            $node->set_attributes($config['attributes']);
         }
         if (!empty($config['vocabularies']))
         {
