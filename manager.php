@@ -75,6 +75,11 @@ class manager
         return $this->_controllers[$identifier];
     }
 
+    public function get_resthandler(array $received_data = null)
+    {
+        return new restservice($this->_mapper, $received_data);
+    }
+
     /**
      * Register a workflow
      *

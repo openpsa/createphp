@@ -106,13 +106,12 @@ To actually save the data, you will have to provide an access point for the REST
 
 ```php
 <?php
-$mapper = new my_mapper_class;
 $loader = new createphp\arrayLoader(load_my_configuration_from_somewhere());
-$manager = $loader->get_manager($mapper);
+$manager = $loader->get_manager(new my_mapper_class);
 $controller = $manager->get_controller('blog_article');
 
 $received_data = json_decode(file_get_contents("php://input"), true);
-$service = new createphp\restservice($mapper, $received_data);
+$service = $manager->get_resthandler($received_data);
 
 $jsonld = $service->run($controller);
 send_as_json($jsonld);
