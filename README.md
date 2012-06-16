@@ -7,8 +7,8 @@ into existing PHP applications/frameworks.
 Usage
 -----
 
-To use createphp, you need to implement the rdfMapper class, instantiate it with a
-configuration for your data source and then you're good to go
+To use createphp, you need to implement the rdfMapper interface, instantiate it with a
+configuration for your data source, and then you're good to go
 
 ```php
 <?php
@@ -46,7 +46,14 @@ $config = array
 $mapper = new my_mapper_class;
 $manager = new createphp\arrayManager($mapper, $config);
 $controller = $manager->get_controller('blog_article', $object);
+```
 
+### Rendering HTML
+
+Using the default markup is as simple as this:
+
+```php
+<?php
 echo $controller
 ?>
 ```
@@ -90,7 +97,10 @@ echo $controller->render_end();
 ?>
 ```
 
-If you include the CreateJS files into your page, all specified fields will become editable. 
+If you include the CreateJS files into your page, all specified fields will become editable.
+
+### Implementing the REST backend
+
 To actually save the data, you will have to provide an access point for the REST service, like so:
 
 ```php
@@ -106,6 +116,25 @@ $jsonld = $service->run($controller);
 send_as_json($jsonld);
 ?>
 ```
+
+### Registering Workflows
+
+In addition to the CreateJS's builtin Create and Update support, you can also define additional workflows.
+ These are read per-object when an appropriate content field is focused in the HTML page. CreateJS then sends a
+GET request which can hold the current model ID. You can implement a backend URL like so:
+
+```php
+<?php
+$mapper = new my_mapper_class;
+$manager = new createphp\arrayManager($mapper, load_my_configuration_from_somewhere());
+$manager->register_workflow($workflow_name, new my_workflow_class);
+
+$toolbar_config = $manager->get_workflows($object_identifier);
+send_as_json($toolbar_config);
+?>
+```
+
+See the CreateJS documentation for available configuration options in workflows
 
 Word of Warning
 ---------------
