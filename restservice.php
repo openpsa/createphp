@@ -40,6 +40,13 @@ class restservice
     protected $_data;
 
     /**
+     * Custom workflows for post, put, delete or get
+     *
+     * @var array
+     */
+    protected $_workflows = array();
+
+    /**
      * The constructor
      *
      * @param rdfMapper $mapper
@@ -78,6 +85,17 @@ class restservice
     }
 
     /**
+     * Workflow setter
+     *
+     * @param string $identifier
+     * @param workflow $workflow
+     */
+    public function set_workflow($identifier, workflow $workflow)
+    {
+        $this->_workflows[$identifier] = $workflow;
+    }
+
+    /**
      * Mapper setter
      *
      * @param rdfMapper $mapper
@@ -102,13 +120,18 @@ class restservice
      */
     public function run(controller $controller)
     {
+        if (array_key_exists($this->_verb, $this->_workflows))
+        {
+            $object = $this->_mapper->get_by_identifier($_REQUEST["uri"]);
+            return $this->_workflows[$this->_verb]->run($object);
+        }
         switch ($this->_verb)
         {
             case 'get':
                 // do not handle get
                 break;
             case 'delete':
-                return $this->_handle_delete($controller);
+                //delete is a workflow, so it's not handled here directly
                 break;
             case 'post':
                 return $this->_handle_create($controller);
@@ -214,18 +237,6 @@ class restservice
         $name = explode(":", $name);
         $vocabularies = $controller->get_vocabularies();
         return $vocabularies[$name[0]] . $name[1];
-    }
-
-    /**
-     * Handle delete request
-     */
-    private function _handle_delete(controller $controller)
-    {
-        $object = $this->_mapper->get_by_identifier($_REQUEST["uri"]);
-        if ($this->_mapper->delete($object))
-        {
-            return $this->_convert_to_jsonld($object, $controller);
-        }
     }
 }
 ?>

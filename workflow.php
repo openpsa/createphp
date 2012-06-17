@@ -22,5 +22,13 @@ interface workflow
      * @return array|null
      */
     public function get_toolbar_config($object);
+
+    /**
+     * Execute workflow for the given object
+     *
+     * @param mixed $object
+     * @return array
+     */
+    public function run($object);
 }
 ?>

@@ -77,7 +77,12 @@ class manager
 
     public function get_resthandler(array $received_data = null)
     {
-        return new restservice($this->_mapper, $received_data);
+        $restservice = new restservice($this->_mapper, $received_data);
+        foreach ($this->_workflows as $identifier => $workflow)
+        {
+            $restservice->set_workflow($identifier, $workflow);
+        }
+        return $restservice;
     }
 
     /**

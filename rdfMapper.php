@@ -71,12 +71,5 @@ interface rdfMapper
      * @return string
      */
     public function create_identifier($object);
-
-    /**
-     * Delete an object
-     *
-     * @param mixed $object
-     */
-    public function delete($object);
 }
 ?>
