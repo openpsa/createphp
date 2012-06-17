@@ -19,18 +19,18 @@ class arrayLoader
 {
     protected $_references = array();
 
-    protected $_configs = array();
+    protected $_config = array();
 
-    public function __construct(array $configs)
+    public function __construct(array $config)
     {
-        $this->_configs = $configs;
+        $this->_config = $config;
     }
 
     public function get_manager(rdfMapper $mapper)
     {
         $manager = new manager($mapper);
         $controllers = array();
-        foreach ($this->_configs as $identifier => $config)
+        foreach ($this->_config['controllers'] as $identifier => $config)
         {
             $controllers[$identifier] = $this->_prepare_controller($identifier, $mapper, $config);
         }
@@ -46,6 +46,14 @@ class arrayLoader
         foreach ($controllers as $identifier => $controller)
         {
             $manager->set_controller($identifier, $controller);
+        }
+
+        if (!empty($this->_config['workflows']))
+        {
+            foreach ($this->_config['workflows'] as $identifier => $classname)
+            {
+                $manager->register_workflow($identifier, new $classname);
+            }
         }
         return $manager;
     }

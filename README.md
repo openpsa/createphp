@@ -16,30 +16,35 @@ $object = load_your_data_from_somewhere();
 
 $config = array
 (
-    'blog_article' => array(
-        'storage' => 'some_db_table',
-        'attributes' => array(
-            'typeof' => 'sioc:Blog',
-        ),
-        'vocabularies' => array(
-           'dcterms' => 'http://purl.org/dc/terms/',
-           'sioc' => 'http://rdfs.org/sioc/ns#'
-        ),
-        'properties' => array(
-            'title' => array
-            (
-                'attributes' => array
-                (
-                    'property' => 'dcterms:title'
-                )
+    'workflows' => array(
+        'delete' => 'my_delete_workflow_class'
+    ),
+    'controllers' => array(
+        'blog_article' => array(
+            'storage' => 'some_db_table',
+            'attributes' => array(
+                'typeof' => 'sioc:Blog',
             ),
-            'content' => array(
-                'attributes' => array
-                (
-                    'property' => 'sioc:content'
-                )
+            'vocabularies' => array(
+               'dcterms' => 'http://purl.org/dc/terms/',
+               'sioc' => 'http://rdfs.org/sioc/ns#'
             ),
-        ),
+            'properties' => array(
+                'title' => array
+                (
+                    'attributes' => array
+                    (
+                        'property' => 'dcterms:title'
+                    )
+                ),
+                'content' => array(
+                    'attributes' => array
+                    (
+                        'property' => 'sioc:content'
+                    )
+                )
+            )
+        )
     )
 );
 
