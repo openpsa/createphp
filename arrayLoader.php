@@ -55,7 +55,40 @@ class arrayLoader
                 $manager->register_workflow($identifier, new $classname);
             }
         }
+
+        if (!empty($this->_config['widget']))
+        {
+            $manager->set_widget($this->_prepare_widget($this->_config['widget']));
+        }
         return $manager;
+    }
+
+    private function _prepare_widget(array $config)
+    {
+        $widget = new widget;
+        if (!empty($config['urls']))
+        {
+            foreach ($config['urls'] as $type => $url)
+            {
+                $widget->register_url($type, $url);
+            }
+        }
+        if (!empty($config['options']))
+        {
+            foreach ($config['options'] as $key => $value)
+            {
+                $widget->set_option($key, $value);
+            }
+        }
+        if (!empty($config['editors']))
+        {
+            foreach ($config['editors'] as $key => $value)
+            {
+                $widget->set_editor_config($key, $value);
+            }
+        }
+
+        return $widget;
     }
 
     private function _prepare_controller($identifier, $mapper, $config)

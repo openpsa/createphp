@@ -122,7 +122,7 @@ class restservice
     {
         if (array_key_exists($this->_verb, $this->_workflows))
         {
-            $object = $this->_mapper->get_by_identifier($_REQUEST["uri"]);
+            $object = $this->_mapper->get_by_identifier($_REQUEST["subject"]);
             return $this->_workflows[$this->_verb]->run($object);
         }
         switch ($this->_verb)

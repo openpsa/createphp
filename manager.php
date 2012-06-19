@@ -37,6 +37,13 @@ class manager
      */
     protected $_mapper;
 
+    /**
+     * The widget (JS constructor) to use
+     *
+     * @var widget
+     */
+    protected $_widget;
+
     public function __construct(rdfMapper $mapper)
     {
         $this->_mapper = $mapper;
@@ -73,6 +80,26 @@ class manager
             $this->_controllers[$identifier]->set_attribute('about', $this->_mapper->create_identifier($object));
         }
         return $this->_controllers[$identifier];
+    }
+
+    /**
+     * Widget setter
+     *
+     * @param widget $widget
+     */
+    public function set_widget(widget $widget)
+    {
+        $this->_widget = $widget;
+    }
+
+    /**
+     * Widget getter
+     *
+     * @return widget
+     */
+    public function get_widget()
+    {
+        return $this->_widget;
     }
 
     public function get_resthandler(array $received_data = null)
