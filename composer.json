@@ -1,7 +1,7 @@
 {
     "name": "openpsa/createphp",
     "type": "library",
-    "description": "PHP adapter for CreateJS",
+    "description": "PHP adapter for Create.js",
     "keywords": ["rdfa"],
     "version": "0.0.1",
     "license": "LGPL",
@@ -11,5 +11,10 @@
             "email": "flack@contentcontrol-berlin.de",
             "homepage": "http://www.contentcontrol-berlin.de/"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-0": {
+            "openpsa\\createphp": "src"
+        }
+    }
 }
