@@ -3,19 +3,19 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp;
-use openpsa\createphp\entity\property;
-use openpsa\createphp\entity\controller;
+namespace OpenPSA\CreatePHP;
+use OpenPSA\CreatePHP\Entity\Croperty;
+use OpenPSA\CreatePHP\Entity\Controller;
 
 /**
  * Interface for rdfMapper implementations
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-interface rdfMapper
+interface RdfMapper
 {
     /**
      * Set object property
@@ -25,7 +25,7 @@ interface rdfMapper
      * @param mixed $value
      * @return mixed
      */
-    public function set_property_value($object, property $node, $value);
+    public function setPropertyValue($object, property $node, $value);
 
     /**
      * Get object property
@@ -34,9 +34,9 @@ interface rdfMapper
      * @param property $node
      * @return mixed
      */
-    public function get_property_value($object, property $node);
+    public function getPropertyValue($object, property $node);
 
-    public function is_editable($object);
+    public function isEditable($object);
 
     /**
      * Get object's children
@@ -45,9 +45,9 @@ interface rdfMapper
      * @param array $config
      * @return array
      */
-    public function get_children($object, array $config);
+    public function getChildren($object, array $config);
 
-    public function prepare_object(controller $controller, $parent = null);
+    public function prepareObject(Controller $controller, $parent = null);
 
     /**
      * Save object
@@ -62,7 +62,7 @@ interface rdfMapper
      * @param string $identifier
      * @return mixed The storage object or false if nothing is found
      */
-    public function get_by_identifier($identifier);
+    public function getByIdentifier($identifier);
 
     /**
      * Create identifier for passed object
@@ -70,6 +70,5 @@ interface rdfMapper
      * @param mixed $object
      * @return string
      */
-    public function create_identifier($object);
+    public function createIdentifier($object);
 }
-?>

@@ -5,17 +5,17 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp\entity;
-use openpsa\createphp\node;
-use openpsa\createphp\rdfMapper;
+namespace OpenPSA\CreatePHP\Entity;
+use OpenPSA\CreatePHP\Node;
+use OpenPSA\CreatePHP\RdfMapper;
 
 /**
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-class controller extends node
+class Controller extends Node
 {
     /**
      * Flag that shows whether or not the object is editable
@@ -50,19 +50,19 @@ class controller extends node
      *
      * @param rdfMapper $mapper
      */
-    public function __construct(rdfMapper $mapper, array $config = array())
+    public function __construct(RdfMapper $mapper, array $config = array())
     {
         $this->_mapper = $mapper;
         $this->_config = $config;
     }
 
-    public function set_vocabulary($prefix, $uri)
+    public function setVocabulary($prefix, $uri)
     {
         $this->_vocabularies[$prefix] = $uri;
-        $this->set_attribute('xmlns:' . $prefix, $uri);
+        $this->setAttribute('xmlns:' . $prefix, $uri);
     }
 
-    public function get_vocabularies()
+    public function getVocabularies()
     {
         return $this->_vocabularies;
     }
@@ -73,19 +73,15 @@ class controller extends node
      *
      * @param mixed $object the storage "object"
      */
-    public function set_object($object)
+    public function setObject($object)
     {
         $this->_object = $object;
-        foreach ($this->_children as $fieldname => $node)
-        {
-            if ($node instanceof property)
-            {
-                $node->set_value($this->_mapper->get_property_value($object, $node));
-            }
-            else if ($node instanceof collection)
-            {
-                $node->set_attribute('about', $this->_mapper->create_identifier($object));
-                $node->load_from_parent($object);
+        foreach ($this->_children as $fieldname => $node) {
+            if ($node instanceof Property) {
+                $node->setValue($this->_mapper->getPropertyValue($object, $node));
+            } elseif ($node instanceof Collection) {
+                $node->setAttribute('about', $this->_mapper->createIdentifier($object));
+                $node->loadFromParent($object);
             }
         }
     }
@@ -95,7 +91,7 @@ class controller extends node
      *
      * @return mixed
      */
-    public function get_object()
+    public function getObject()
     {
         return $this->_object;
     }
@@ -104,12 +100,11 @@ class controller extends node
      * Magic getter
      *
      * @param string $key
-     * @return node
+     * @return Node
      */
     public function __get($key)
     {
-        if (isset($this->_children[$key]))
-        {
+        if (isset($this->_children[$key])) {
             return $this->_children[$key];
         }
         return null;
@@ -119,9 +114,9 @@ class controller extends node
      * Magic setter
      *
      * @param string $key
-     * @param node $node
+     * @param Node $node
      */
-    public function __set($key, node $node)
+    public function __set($key, Node $node)
     {
         $this->_children[$key] = $node;
     }
@@ -129,19 +124,19 @@ class controller extends node
     /**
      * Mapper getter
      *
-     * @return rdfMapper
+     * @return RdfMapper
      */
-    public function get_mapper()
+    public function getMapper()
     {
         return $this->_mapper;
     }
 
-    public function set_editable($value)
+    public function setEditable($value)
     {
         $this->_editable = (bool) $value;
     }
 
-    public function is_editable()
+    public function isEditable()
     {
         return $this->_editable;
     }
@@ -152,27 +147,24 @@ class controller extends node
      * @param string $tag_name
      * @return string
      */
-    public function render_start($tag_name = false)
+    public function renderStart($tag_name = false)
     {
         // render this for admin users only
-        if (!$this->is_editable())
-        {
+        if (!$this->isEditable()) {
             // add about
-            $this->unset_attribute('about');
+            $this->unsetAttribute('about');
         }
 
-        return parent::render_start($tag_name);
+        return parent::renderStart($tag_name);
     }
 
-    public function render_content()
+    public function renderContent()
     {
         $output = '';
-        foreach ($this->_children as $key => $prop)
-        {
+        foreach ($this->_children as $key => $prop) {
             // add rdf name for admin only
-            if (!$this->is_editable())
-            {
-                $prop->unset_attribute('property');
+            if (!$this->isEditable()) {
+                $prop->unsetAttribute('property');
             }
             $output .= $prop->render();
         }
@@ -184,8 +176,7 @@ class controller extends node
         foreach ($this->_children as $name => $node)
         {
             $this->$name = clone $node;
-            $this->$name->set_parent($this);
+            $this->$name->setParent($this);
         }
     }
 }
-?>
