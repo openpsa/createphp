@@ -3,10 +3,10 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp;
+namespace OpenPSA\CreatePHP;
 
 /**
  * Baseclass for (DOM) nodes.
@@ -17,9 +17,9 @@ namespace openpsa\createphp;
  * complete node HTML, or you can call render_start() for the opening tag, render_content()
  * for the node's content (or children) and render_end() for the colsing tag.
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-abstract class node
+abstract class Node
 {
     /**
      * HTML element to use
@@ -75,7 +75,7 @@ abstract class node
      *
      * @var node $parent The parent object
      */
-    public function set_parent(node $parent)
+    public function setParent(node $parent)
     {
         $this->_parent = $parent;
     }
@@ -85,7 +85,7 @@ abstract class node
      *
      * @return node The parent object (if any)
      */
-    public function get_parent()
+    public function getParent()
     {
         return $this->_parent;
     }
@@ -95,12 +95,12 @@ abstract class node
      *
      * @return array The child nodes (if any)
      */
-    public function get_children()
+    public function getChildren()
     {
         return $this->_children;
     }
 
-    public function is_rendering()
+    public function isRendering()
     {
         return $this->_is_rendering;
     }
@@ -110,7 +110,7 @@ abstract class node
      *
      * @return string
      */
-    public function get_config()
+    public function getConfig()
     {
         return $this->_config;
     }
@@ -121,7 +121,7 @@ abstract class node
      * @param string $key
      * @param string $value
      */
-    public function set_attribute($key, $value)
+    public function setAttribute($key, $value)
     {
         $this->_attributes[$key] = $value;
     }
@@ -131,10 +131,9 @@ abstract class node
      *
      * @param array $attributes
      */
-    public function set_attributes($attributes)
+    public function setAttributes($attributes)
     {
-        foreach ($attributes as $key => $value)
-        {
+        foreach ($attributes as $key => $value) {
             $this->set_attribute($key, $value);
         }
     }
@@ -144,7 +143,7 @@ abstract class node
      *
      * @param string $key
      */
-    public function get_attribute($key)
+    public function getAttribute($key)
     {
         return $this->_attributes[$key];
     }
@@ -154,10 +153,9 @@ abstract class node
      *
      * @param string $key
      */
-    public function unset_attribute($key)
+    public function unsetAttribute($key)
     {
-        if (isset($this->_attributes[$key]))
-        {
+        if (isset($this->_attributes[$key])) {
             unset($this->_attributes[$key]);
         }
     }
@@ -167,7 +165,7 @@ abstract class node
      *
      * @param string $template
      */
-    public function set_template($template)
+    public function setTemplate($template)
     {
         $this->_template = $template;
     }
@@ -177,10 +175,9 @@ abstract class node
      *
      * @param string $tag_name
      */
-    public function render_start($tag_name = false)
+    public function renderStart($tag_name = false)
     {
-        if (is_string($tag_name))
-        {
+        if (is_string($tag_name)) {
             $this->_tag_name = $tag_name;
         }
 
@@ -190,7 +187,7 @@ abstract class node
         $replace = array
         (
             "__TAG_NAME__" => $this->_tag_name,
-            "__ATTRIBUTES__" => $this->render_attributes(),
+            "__ATTRIBUTES__" => $this->renderAttributes(),
         );
         $this->_is_rendering = true;
         return strtr($template, $replace);
@@ -204,28 +201,27 @@ abstract class node
      */
     public function render($tag_name = false)
     {
-        $output = $this->render_start($tag_name);
+        $output = $this->renderStart($tag_name);
 
-        $output .= $this->render_content();
+        $output .= $this->renderContent();
 
-        $output .= $this->render_end();
+        $output .= $this->renderEnd();
         return $output;
     }
 
-    public function render_attributes()
+    public function renderAttributes()
     {
         // add additional attributes
         $attributes = '';
-        foreach ($this->_attributes as $key => $value)
-        {
+        foreach ($this->_attributes as $key => $value) {
             $attributes .= ' ' . $key . '="' . $value . '"';
         }
         return $attributes;
     }
 
-    abstract function render_content();
+    abstract function renderContent();
 
-    public function render_end()
+    public function renderEnd()
     {
         $template = explode('__CONTENT__', $this->_template);
         $template = $template[1];
@@ -243,4 +239,3 @@ abstract class node
         return $this->render();
     }
 }
-?>

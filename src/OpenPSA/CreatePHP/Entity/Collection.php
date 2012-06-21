@@ -3,20 +3,22 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp\entity;
-use openpsa\createphp\node;
+namespace OpenPSA\CreatePHP\Entity;
+use OpenPSA\CreatePHP\Node;
+use ArrayAccess;
+use Iterator;
 
 /**
  * Collection holder. Acts at the same time as a property to a parent controller and
  * and as a holder for controllers of other objects which are linked to the first one
  * with some kind of relation
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-class collection extends node implements \ArrayAccess, \Iterator
+class Collection extends Node implements ArrayAccess, Iterator
 {
     protected $_position = 0;
 
@@ -27,42 +29,38 @@ class collection extends node implements \ArrayAccess, \Iterator
         $this->_config = $config;
     }
 
-    public function set_controller(controller $controller)
+    public function setController(Controller $controller)
     {
         $this->_controller = $controller;
-        foreach ($controller->get_vocabularies() as $prefix => $uri)
-        {
-            $this->set_attribute('xmlns:' . $prefix, $uri);
+        foreach ($controller->getVocabularies() as $prefix => $uri) {
+            $this->setAttribute('xmlns:' . $prefix, $uri);
         }
     }
 
-    public function get_controller()
+    public function getController()
     {
         return $this->_controller;
     }
 
-    public function load_from_parent($object)
+    public function loadFromParent($object)
     {
         $this->_children = array();
-        $mapper = $this->_controller->get_mapper();
-        $config = $this->_controller->get_config();
-        $children = $mapper->get_children($object, $config);
+        $mapper = $this->_controller->getMapper();
+        $config = $this->_controller->getConfig();
+        $children = $mapper->getChildren($object, $config);
 
         // create controllers for children
-        foreach ($children as $child)
-        {
+        foreach ($children as $child) {
             $controller = clone $this->_controller;
-            $controller->set_object($child);
-            $controller->set_attribute('about', $mapper->create_identifier($child));
+            $controller->setObject($child);
+            $controller->setAttribute('about', $mapper->createIdentifier($child));
             $this->_children[] = $controller;
         }
-        if (   $this->_parent->is_editable($object)
-            && sizeof($this->_children) == 0)
-        {
-            $object = $mapper->prepare_object($this->_controller, $object);
+        if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
+            $object = $mapper->prepareObject($this->_controller, $object);
             $controller = clone $this->_controller;
-            $controller->set_object($object);
-            $controller->set_attribute('style', 'display:none');
+            $controller->setObject($object);
+            $controller->setAttribute('style', 'display:none');
             $this->_children[] = $controller;
         }
     }
@@ -94,12 +92,9 @@ class collection extends node implements \ArrayAccess, \Iterator
 
     public function offsetSet($offset, $value)
     {
-        if (is_null($offset))
-        {
+        if (is_null($offset)) {
             $this->_children[] = $value;
-        }
-        else
-        {
+        } else {
             $this->_children[$offset] = $value;
         }
     }
@@ -125,25 +120,22 @@ class collection extends node implements \ArrayAccess, \Iterator
      * @param string $tag_name
      * @return string
      */
-    public function render_start($tag_name = false)
+    public function renderStart($tag_name = false)
     {
         // render this for admin users only
-        if (!$this->_parent->is_editable())
-        {
-            $this->unset_attribute('about');
+        if (!$this->_parent->isEditable()) {
+            $this->unsetAttribute('about');
         }
 
-        return parent::render_start($tag_name);
+        return parent::renderStart($tag_name);
     }
 
-    public function render_content()
+    public function renderContent()
     {
         $ret = '';
-        foreach ($this->_children as $child)
-        {
+        foreach ($this->_children as $child) {
             $ret .= $child->render();
         }
         return $ret;
     }
 }
-?>

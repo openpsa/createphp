@@ -3,19 +3,19 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp;
-use openpsa\createphp\entity\property;
-use openpsa\createphp\entity\controller;
+namespace OpenPSA\CreatePHP;
+use OpenPSA\CreatePHP\Entity\Property;
+use OpenPSA\CreatePHP\Entity\Controller;
 
 /**
  * Wrapper for CreateJS's constructor & config
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-class widget
+class Widget
 {
     private $_urls = array();
 
@@ -23,17 +23,17 @@ class widget
 
     private $_editors = array();
 
-    public function register_url($type, $url)
+    public function registerUrl($type, $url)
     {
         $this->_urls[$type] = $url;
     }
 
-    public function set_editor_config($key, $value)
+    public function setEditorConfig($key, $value)
     {
         $this->_editors[$key] = $value;
     }
 
-    public function set_option($key, $value)
+    public function setOption($key, $value)
     {
         $this->_options[$key] = $value;
     }
@@ -43,25 +43,18 @@ class widget
         $js = '$(document).ready(function() {' . "\n";
         $js .= '$("body").midgardCreate({' . "\n";
 
-        if (isset($this->_urls['rest']))
-        {
+        if (isset($this->_urls['rest'])) {
             $js .= 'url: function() {' . "\n";
             $js .= 'return "' . $this->_urls['rest'] . '?subject=" + this.id' . "\n";
             $js .= '},' . "\n";
         }
 
-        foreach ($this->_options as $name => $value)
-        {
-            if (is_string($value))
-            {
+        foreach ($this->_options as $name => $value) {
+            if (is_string($value)) {
                 $value = '"' . $value . '"';
-            }
-            else if ($value === true)
-            {
+            } elseif ($value === true) {
                 $value = 'true';
-            }
-            else if ($value === false)
-            {
+            } elseif ($value === false) {
                 $value = 'false';
             }
             $js .= $name . ': ' . $value . ",\n";
@@ -79,10 +72,8 @@ class widget
         if (!empty($this->_editors))
         {
             $js .= 'editorOptions: {' . "\n";
-            foreach ($this->_editors as $name => $config)
-            {
-                if (isset($this->_urls['upload']))
-                {
+            foreach ($this->_editors as $name => $config) {
+                if (isset($this->_urls['upload'])) {
                     $config = str_replace('__UPLOAD_URL__', $this->_urls['upload'], $config);
                 }
                 $js .= '"' . $name . '": {' . "\n";
@@ -105,4 +96,3 @@ class widget
         return $this->render();
     }
 }
-?>
