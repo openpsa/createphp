@@ -137,7 +137,7 @@ class arrayLoader
         }
         if (!empty($config['attributes']))
         {
-            $node->set_attributes($config['attributes']);
+            $controller->set_attributes($config['attributes']);
         }
         if (!empty($config['vocabularies']))
         {
