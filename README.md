@@ -2,7 +2,8 @@ createphp
 =========
 
 This is a small standalone library designed to make it easier to integrate CreateJS
-into existing PHP applications/frameworks.
+into existing PHP applications/frameworks. You can see a live demonstration of an integration 
+with the MidCOM framework under http://demo.contentcontrol-berlin.de
 
 Usage
 -----
