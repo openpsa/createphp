@@ -3,11 +3,11 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp\entity;
-use openpsa\createphp\node;
+namespace OpenPSA\CreatePHP\Entity;
+use OpenPSA\CreatePHP\Node;
 
 /**
  * Encapsulates a property node in the DOM tree.
@@ -18,9 +18,9 @@ use openpsa\createphp\node;
  * template as well, so that we have XML namespaces and about attributes required by the
  * JS interface
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-class property extends node
+class Property extends Node
 {
     /**
      * The element's content
@@ -55,7 +55,7 @@ class property extends node
      *
      * @param string $value
      */
-    public function set_value($value)
+    public function setValue($value)
     {
         $this->_value = $value;
     }
@@ -65,7 +65,7 @@ class property extends node
      *
      * @return string
      */
-    public function get_value()
+    public function getValue()
     {
         return $this->_value;
     }
@@ -75,7 +75,7 @@ class property extends node
      *
      * @return string
      */
-    public function get_identifier()
+    public function getIdentifier()
     {
         return $this->_identifier;
     }
@@ -84,35 +84,32 @@ class property extends node
      * Render the property's opening tag (and the controller wrapper if we're in
      * standalone mode)
      */
-    public function render_start($tag_name = false)
+    public function renderStart($tag_name = false)
     {
         $output = '';
-        if (!$this->_parent->is_rendering())
-        {
-            $output .= $this->_parent->render_start();
+        if (!$this->_parent->isRendering()) {
+            $output .= $this->_parent->renderStart();
             $this->_render_standalone = true;
         }
-        return $output . parent::render_start($tag_name);
+        return $output . parent::renderStart($tag_name);
     }
 
-    public function render_content()
+    public function renderContent()
     {
-        return $this->get_value();
+        return $this->getValue();
     }
 
     /**
      * Render the property's closing tag (and the controller wrapper's if we're in
      * standalone mode)
      */
-    public function render_end()
+    public function renderEnd()
     {
-        $output = parent::render_end();
-        if ($this->_render_standalone)
-        {
-            $output .= $this->_parent->render_end();
+        $output = parent::renderEnd();
+        if ($this->_render_standalone) {
+            $output .= $this->_parent->renderEnd();
             $this->_render_standalone = false;
         }
         return $output;
     }
 }
-?>

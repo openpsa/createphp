@@ -1,14 +1,21 @@
-createphp
+CreatePHP
 =========
 
+<<<<<<< HEAD
 This is a small standalone library designed to make it easier to integrate CreateJS
 into existing PHP applications/frameworks. You can see a live demonstration of an integration 
 with the MidCOM framework under http://demo.contentcontrol-berlin.de
+||||||| merged common ancestors
+This is a small standalone library designed to make it easier to integrate CreateJS
+into existing PHP applications/frameworks.
+=======
+This is a small standalone library designed to make it easier to integrate [Create.js](http://createjs.org) into existing PHP applications/frameworks.
+>>>>>>> d78b7b09f62a75c4b2324163724c719171d91e0a
 
 Usage
 -----
 
-To use createphp, you need to implement the rdfMapper interface, instantiate it with a
+To use CreatePHP, you need to implement the RdfMapper interface, instantiate it with a
 configuration for your data source, and then you're good to go
 
 ```php
@@ -50,9 +57,9 @@ $config = array
 );
 
 $mapper = new my_mapper_class;
-$loader = new createphp\arrayLoader($config);
-$manager = $loader->get_manager($mapper);
-$controller = $manager->get_controller('blog_article', $object);
+$loader = new OpenPSA\CreatePHP\ArrayLoader($config);
+$manager = $loader->getManager($mapper);
+$controller = $manager->getController('blog_article', $object);
 ```
 
 ### Rendering HTML
@@ -88,23 +95,22 @@ individual fields separately:
 
 ```php
 <?php
-$controller->title->set_attribute('class', 'headline');
-$controller->content->set_attribute('class', 'content-inner');
-$controller->content->set_template('<div class="content-outer"><span __ATTRIBUTES__>__CONTENT__</span></div>');
+$controller->title->setAttribute('class', 'headline');
+$controller->content->setAttribute('class', 'content-inner');
+$controller->content->setTemplate('<div class="content-outer"><span __ATTRIBUTES__>__CONTENT__</span></div>');
 
-echo $controller->render_start('article');
+echo $controller->renderStart('article');
 $i = 0;
-foreach ($controller->get_children() as $fieldname => $node)
-{
-    $node->set_attribute('id', 'childnode-' . $i);
+foreach ($controller->getChildren() as $fieldname => $node) {
+    $node->setAttribute('id', 'childnode-' . $i);
     echo $node;
     $i++;
 }
-echo $controller->render_end();
+echo $controller->renderEnd();
 ?>
 ```
 
-If you include the CreateJS files into your page, all specified fields will become editable.
+If you include the Create.js files into your page, all specified fields will become editable.
 
 ### Implementing the REST backend
 
@@ -112,12 +118,12 @@ To actually save the data, you will have to provide an access point for the REST
 
 ```php
 <?php
-$loader = new createphp\arrayLoader(load_my_configuration_from_somewhere());
-$manager = $loader->get_manager(new my_mapper_class);
-$controller = $manager->get_controller('blog_article');
+$loader = new OpenPSA\CreatePHP\ArrayLoader(load_my_configuration_from_somewhere());
+$manager = $loader->getManager(new my_mapper_class);
+$controller = $manager->getController('blog_article');
 
 $received_data = json_decode(file_get_contents("php://input"), true);
-$service = $manager->get_resthandler($received_data);
+$service = $manager->getRestHandler($received_data);
 
 $jsonld = $service->run($controller);
 send_as_json($jsonld);
@@ -126,23 +132,23 @@ send_as_json($jsonld);
 
 ### Registering Workflows
 
-In addition to the CreateJS's builtin Create and Update support, you can also define additional workflows.
- These are read per-object when an appropriate content field is focused in the HTML page. CreateJS then sends a
+In addition to the Create.js's builtin Create and Update support, you can also define additional workflows.
+ These are read per-object when an appropriate content field is focused in the HTML page. Create.js then sends a
 GET request which can hold the current model ID. You can implement a backend URL like so:
 
 ```php
 <?php
-$loader = new createphp\arrayLoader($config_array);
-$manager = $loader->get_manager(new my_mapper_class);
+$loader = new OpenPSA\CreatePHP\ArrayLoader($config_array);
+$manager = $loader->getManager(new my_mapper_class);
 
-$manager->register_workflow($workflow_name, new my_workflow_class);
+$manager->registerWorkflow($workflow_name, new my_workflow_class);
 
-$toolbar_config = $manager->get_workflows($object_identifier);
+$toolbar_config = $manager->getWorkflows($object_identifier);
 send_as_json($toolbar_config);
 ?>
 ```
 
-See the CreateJS documentation for available configuration options in workflows
+See the Create.js documentation for available configuration options in workflows
 
 Word of Warning
 ---------------

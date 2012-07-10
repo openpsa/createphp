@@ -5,16 +5,16 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp;
-use openpsa\createphp\entity\controller;
+namespace OpenPSA\CreatePHP;
+use OpenPSA\CreatePHP\Entity\Controller;
 
 /**
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-class manager
+class Manager
 {
     /**
      * Array of available controller types
@@ -33,18 +33,18 @@ class manager
     /**
      * The mapper implementation to use
      *
-     * @var rdfMapper
+     * @var RdfMapper
      */
     protected $_mapper;
 
     /**
      * The widget (JS constructor) to use
      *
-     * @var widget
+     * @var Widget
      */
     protected $_widget;
 
-    public function __construct(rdfMapper $mapper)
+    public function __construct(RdfMapper $mapper)
     {
         $this->_mapper = $mapper;
     }
@@ -53,9 +53,9 @@ class manager
      * Set a controller
      *
      * @param string $identifier
-     * @param controller $controller
+     * @param Controller $controller
      */
-    public function set_controller($identifier, controller $controller)
+    public function setController($identifier, Controller $controller)
     {
         $this->_controllers[$identifier] = $controller;
     }
@@ -65,19 +65,17 @@ class manager
      *
      * @param string $identifier
      * @param mixed $object
-     * @return controller
+     * @return Controller
      */
-    public function get_controller($identifier, $object = null)
+    public function getController($identifier, $object = null)
     {
-        if (!isset($this->_controllers[$identifier]))
-        {
+        if (!isset($this->_controllers[$identifier])) {
             return null;
         }
-        if (null !== $object)
-        {
-            $this->_controllers[$identifier]->set_editable($this->_mapper->is_editable($object));
-            $this->_controllers[$identifier]->set_object($object);
-            $this->_controllers[$identifier]->set_attribute('about', $this->_mapper->create_identifier($object));
+        if (null !== $object) {
+            $this->_controllers[$identifier]->setEditable($this->_mapper->isEditable($object));
+            $this->_controllers[$identifier]->setObject($object);
+            $this->_controllers[$identifier]->setAttribute('about', $this->_mapper->createIdentifier($object));
         }
         return $this->_controllers[$identifier];
     }
@@ -87,7 +85,7 @@ class manager
      *
      * @param widget $widget
      */
-    public function set_widget(widget $widget)
+    public function setWidget(widget $widget)
     {
         $this->_widget = $widget;
     }
@@ -97,16 +95,15 @@ class manager
      *
      * @return widget
      */
-    public function get_widget()
+    public function getWidget()
     {
         return $this->_widget;
     }
 
-    public function get_resthandler(array $received_data = null)
+    public function getRestHandler(array $received_data = null)
     {
-        $restservice = new restservice($this->_mapper, $received_data);
-        foreach ($this->_workflows as $identifier => $workflow)
-        {
+        $restservice = new RestService($this->_mapper, $received_data);
+        foreach ($this->_workflows as $identifier => $workflow) {
             $restservice->set_workflow($identifier, $workflow);
         }
         return $restservice;
@@ -116,26 +113,23 @@ class manager
      * Register a workflow
      *
      * @param string $identifier
-     * @param workflow $Workflow
+     * @param Workflow $Workflow
      */
-    public function register_workflow($identifier, workflow $workflow)
+    public function registerWorkflow($identifier, Workflow $workflow)
     {
         $this->_workflows[$identifier] = $workflow;
     }
 
-    public function get_workflows($subject)
+    public function getWorkflows($subject)
     {
         $response = array();
-        $object = $this->_mapper->get_by_identifier(trim($subject, '<>'));
-        foreach ($this->_workflows as $identifier => $workflow)
-        {
-            $toolbar_config = $workflow->get_toolbar_config($object);
-            if (null !== $toolbar_config)
-            {
+        $object = $this->_mapper->getByIdentifier(trim($subject, '<>'));
+        foreach ($this->_workflows as $identifier => $workflow) {
+            $toolbar_config = $workflow->getToolbarConfig($object);
+            if (null !== $toolbar_config) {
                 $response[] = $toolbar_config;
             }
         }
         return $response;
     }
 }
-?>

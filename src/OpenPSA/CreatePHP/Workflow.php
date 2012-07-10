@@ -3,17 +3,17 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
 
-namespace openpsa\createphp;
+namespace OpenPSA\CreatePHP;
 
 /**
  * Interface for workflow implementations
  *
- * @package openpsa.createphp
+ * @package OpenPSA.CreatePHP
  */
-interface workflow
+interface Workflow
 {
     /**
      * Get toolbar config for the given object
@@ -21,7 +21,7 @@ interface workflow
      * @param mixed $object
      * @return array|null
      */
-    public function get_toolbar_config($object);
+    public function getToolbarConfig($object);
 
     /**
      * Execute workflow for the given object
@@ -31,4 +31,3 @@ interface workflow
      */
     public function run($object);
 }
-?>
