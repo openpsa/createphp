@@ -1,5 +1,5 @@
 {
-    "name": "Midgard/createphp",
+    "name": "midgard/createphp",
     "type": "library",
     "description": "PHP adapter for Create.js",
     "keywords": ["rdfa"],
