@@ -134,7 +134,7 @@ abstract class Node
     public function setAttributes($attributes)
     {
         foreach ($attributes as $key => $value) {
-            $this->set_attribute($key, $value);
+            $this->setAttribute($key, $value);
         }
     }
 

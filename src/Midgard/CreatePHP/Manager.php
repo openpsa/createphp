@@ -104,7 +104,7 @@ class Manager
     {
         $restservice = new RestService($this->_mapper, $received_data);
         foreach ($this->_workflows as $identifier => $workflow) {
-            $restservice->set_workflow($identifier, $workflow);
+            $restservice->setWorkflow($identifier, $workflow);
         }
         return $restservice;
     }

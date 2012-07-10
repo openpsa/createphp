@@ -155,7 +155,7 @@ class RestService
             if (!empty($received_data[$parentfield])) {
                 $parent_identifier = trim($received_data[$parentfield][0], '<>');
                 $parent = $this->_mapper->getByIdentifier($parent_identifier);
-                $object = $this->_mapper->prepare_object($child_controller, $parent);
+                $object = $this->_mapper->prepareObject($child_controller, $parent);
                 $child_controller->setObject($object);
                 return $this->_storeData($child_controller);
             }
@@ -184,7 +184,7 @@ class RestService
             if (!$node instanceof property) {
                 continue;
             }
-            $rdf_name = $node->get_attribute('property');
+            $rdf_name = $node->getAttribute('property');
 
             $expanded_name = $this->_expandPropertyName($rdf_name, $controller);
 
@@ -207,7 +207,7 @@ class RestService
             if (!$node instanceof Property) {
                 continue;
             }
-            $rdf_name = $node->get_attribute('property');
+            $rdf_name = $node->getAttribute('property');
 
             $expanded_name = '<' . $this->_expandPropertyName($rdf_name, $controller) . '>';
 
