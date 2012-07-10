@@ -75,7 +75,7 @@ abstract class Node
      *
      * @var node $parent The parent object
      */
-    public function setParent(node $parent)
+    public function setParent(Node $parent)
     {
         $this->_parent = $parent;
     }

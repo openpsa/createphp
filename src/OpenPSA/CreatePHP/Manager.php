@@ -85,7 +85,7 @@ class Manager
      *
      * @param widget $widget
      */
-    public function setWidget(widget $widget)
+    public function setWidget(Widget $widget)
     {
         $this->_widget = $widget;
     }

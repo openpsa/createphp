@@ -7,7 +7,7 @@
  */
 
 namespace OpenPSA\CreatePHP;
-use OpenPSA\CreatePHP\Entity\Croperty;
+use OpenPSA\CreatePHP\Entity\Property;
 use OpenPSA\CreatePHP\Entity\Controller;
 
 /**
