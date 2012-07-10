@@ -1,5 +1,5 @@
 {
-    "name": "openpsa/createphp",
+    "name": "Midgard/createphp",
     "type": "library",
     "description": "PHP adapter for Create.js",
     "keywords": ["rdfa"],
@@ -14,7 +14,7 @@
     ],
     "autoload": {
         "psr-0": {
-            "OpenPSA\\CreatePHP": "src"
+            "Midgard\\CreatePHP": "src"
         }
     }
 }

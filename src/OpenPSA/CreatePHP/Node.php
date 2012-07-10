@@ -3,10 +3,10 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP;
+namespace Midgard\CreatePHP;
 
 /**
  * Baseclass for (DOM) nodes.
@@ -17,7 +17,7 @@ namespace OpenPSA\CreatePHP;
  * complete node HTML, or you can call render_start() for the opening tag, render_content()
  * for the node's content (or children) and render_end() for the colsing tag.
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 abstract class Node
 {

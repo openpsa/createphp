@@ -3,15 +3,15 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP;
+namespace Midgard\CreatePHP;
 
 /**
  * Interface for workflow implementations
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 interface Workflow
 {

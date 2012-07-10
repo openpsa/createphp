@@ -5,15 +5,15 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP\Entity;
-use OpenPSA\CreatePHP\Node;
-use OpenPSA\CreatePHP\RdfMapper;
+namespace Midgard\CreatePHP\Entity;
+use Midgard\CreatePHP\Node;
+use Midgard\CreatePHP\RdfMapper;
 
 /**
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 class Controller extends Node
 {

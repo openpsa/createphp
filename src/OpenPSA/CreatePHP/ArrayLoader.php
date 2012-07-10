@@ -3,17 +3,17 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP;
-use OpenPSA\CreatePHP\Entity\Property;
-use OpenPSA\CreatePHP\Entity\Controller;
+namespace Midgard\CreatePHP;
+use Midgard\CreatePHP\Entity\Property;
+use Midgard\CreatePHP\Entity\Controller;
 
 /**
  * Setup controllers based on a configuration array
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 class ArrayLoader
 {
@@ -86,7 +86,7 @@ class ArrayLoader
         if (!empty($config['properties'])) {
             foreach ($config['properties'] as $property_name => $field_config) {
                 if (empty($field_config['nodeType'])) {
-                    $classname = 'OpenPSA\CreatePHP\Entity\Property';
+                    $classname = 'Midgard\CreatePHP\Entity\Property';
                 } else {
                     $classname = $field_config['nodeType'];
                 }

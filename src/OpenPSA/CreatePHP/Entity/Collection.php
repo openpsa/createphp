@@ -3,11 +3,11 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP\Entity;
-use OpenPSA\CreatePHP\Node;
+namespace Midgard\CreatePHP\Entity;
+use Midgard\CreatePHP\Node;
 use ArrayAccess;
 use Iterator;
 
@@ -16,7 +16,7 @@ use Iterator;
  * and as a holder for controllers of other objects which are linked to the first one
  * with some kind of relation
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 class Collection extends Node implements ArrayAccess, Iterator
 {

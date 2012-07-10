@@ -3,11 +3,11 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP\Entity;
-use OpenPSA\CreatePHP\Node;
+namespace Midgard\CreatePHP\Entity;
+use Midgard\CreatePHP\Node;
 
 /**
  * Encapsulates a property node in the DOM tree.
@@ -18,7 +18,7 @@ use OpenPSA\CreatePHP\Node;
  * template as well, so that we have XML namespaces and about attributes required by the
  * JS interface
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 class Property extends Node
 {

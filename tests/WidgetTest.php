@@ -1,7 +1,7 @@
 <?php
-namespace OpenPSA\Createphp\tests;
+namespace Midgard\Createphp\tests;
 
-use OpenPSA\CreatePHP\Widget;
+use Midgard\CreatePHP\Widget;
 
 class WidgetTest extends \PHPUnit_Framework_TestCase {
     public function testMethods() {

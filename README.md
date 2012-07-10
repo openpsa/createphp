@@ -50,7 +50,7 @@ $config = array
 );
 
 $mapper = new my_mapper_class;
-$loader = new OpenPSA\CreatePHP\ArrayLoader($config);
+$loader = new Midgard\CreatePHP\ArrayLoader($config);
 $manager = $loader->getManager($mapper);
 $controller = $manager->getController('blog_article', $object);
 ```
@@ -111,7 +111,7 @@ To actually save the data, you will have to provide an access point for the REST
 
 ```php
 <?php
-$loader = new OpenPSA\CreatePHP\ArrayLoader(load_my_configuration_from_somewhere());
+$loader = new Midgard\CreatePHP\ArrayLoader(load_my_configuration_from_somewhere());
 $manager = $loader->getManager(new my_mapper_class);
 $controller = $manager->getController('blog_article');
 
@@ -131,7 +131,7 @@ GET request which can hold the current model ID. You can implement a backend URL
 
 ```php
 <?php
-$loader = new OpenPSA\CreatePHP\ArrayLoader($config_array);
+$loader = new Midgard\CreatePHP\ArrayLoader($config_array);
 $manager = $loader->getManager(new my_mapper_class);
 
 $manager->registerWorkflow($workflow_name, new my_workflow_class);
