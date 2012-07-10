@@ -1,16 +1,9 @@
 CreatePHP
 =========
 
-<<<<<<< HEAD
-This is a small standalone library designed to make it easier to integrate CreateJS
-into existing PHP applications/frameworks. You can see a live demonstration of an integration 
+This is a small standalone library designed to make it easier to integrate [Create.js](http://createjs.org)
+into existing PHP applications/frameworks. You can see a live demonstration of an integration
 with the MidCOM framework under http://demo.contentcontrol-berlin.de
-||||||| merged common ancestors
-This is a small standalone library designed to make it easier to integrate CreateJS
-into existing PHP applications/frameworks.
-=======
-This is a small standalone library designed to make it easier to integrate [Create.js](http://createjs.org) into existing PHP applications/frameworks.
->>>>>>> d78b7b09f62a75c4b2324163724c719171d91e0a
 
 Usage
 -----
