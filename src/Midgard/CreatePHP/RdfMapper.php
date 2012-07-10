@@ -3,17 +3,17 @@
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 
-namespace OpenPSA\CreatePHP;
-use OpenPSA\CreatePHP\Entity\Property;
-use OpenPSA\CreatePHP\Entity\Controller;
+namespace Midgard\CreatePHP;
+use Midgard\CreatePHP\Entity\Property;
+use Midgard\CreatePHP\Entity\Controller;
 
 /**
  * Interface for rdfMapper implementations
  *
- * @package OpenPSA.CreatePHP
+ * @package Midgard.CreatePHP
  */
 interface RdfMapper
 {
