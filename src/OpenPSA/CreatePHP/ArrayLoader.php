@@ -7,8 +7,8 @@
  */
 
 namespace OpenPSA\CreatePHP;
-use OpenPSA\CreatePHP\entity\property;
-use OpenPSA\CreatePHP\entity\controller;
+use OpenPSA\CreatePHP\Entity\Property;
+use OpenPSA\CreatePHP\Entity\Controller;
 
 /**
  * Setup controllers based on a configuration array
@@ -115,7 +115,7 @@ class ArrayLoader
             }
         }
         if (!empty($config['attributes'])) {
-            $node->setAttributes($config['attributes']);
+            $controller->setAttributes($config['attributes']);
         }
         if (!empty($config['vocabularies'])) {
             foreach ($config['vocabularies'] as $prefix => $uri) {
