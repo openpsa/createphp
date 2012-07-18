@@ -25,7 +25,7 @@ interface RdfMapper
      * @param mixed $value
      * @return mixed
      */
-    public function setPropertyValue($object, property $node, $value);
+    public function setPropertyValue($object, Property $node, $value);
 
     /**
      * Get object property
@@ -34,7 +34,7 @@ interface RdfMapper
      * @param property $node
      * @return mixed
      */
-    public function getPropertyValue($object, property $node);
+    public function getPropertyValue($object, Property $node);
 
     public function isEditable($object);
 
