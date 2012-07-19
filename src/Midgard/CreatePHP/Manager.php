@@ -73,9 +73,7 @@ class Manager
             return null;
         }
         if (null !== $object) {
-            $this->_controllers[$identifier]->setEditable($this->_mapper->isEditable($object));
             $this->_controllers[$identifier]->setObject($object);
-            $this->_controllers[$identifier]->setAttribute('about', $this->_mapper->createIdentifier($object));
         }
         return $this->_controllers[$identifier];
     }

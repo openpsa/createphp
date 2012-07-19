@@ -75,6 +75,8 @@ class Controller extends Node
      */
     public function setObject($object)
     {
+        $this->setEditable($this->_mapper->isEditable($object));
+
         $this->_object = $object;
         foreach ($this->_children as $fieldname => $node) {
             if ($node instanceof Property) {
@@ -84,6 +86,8 @@ class Controller extends Node
                 $node->loadFromParent($object);
             }
         }
+
+        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
     }
 
     /**
