@@ -10,7 +10,7 @@
 
 namespace Midgard\CreatePHP\Entity;
 use Midgard\CreatePHP\Node;
-use Midgard\CreatePHP\RdfMapper;
+use Midgard\CreatePHP\RdfMapperInterface;
 
 /**
  * @package Midgard.CreatePHP
@@ -27,7 +27,7 @@ class Controller extends Node
     /**
      * The mapper
      *
-     * @var rdfMapper
+     * @var RdfMapperInterface
      */
     protected $_mapper;
 
@@ -48,9 +48,9 @@ class Controller extends Node
     /**
      * The constructor
      *
-     * @param rdfMapper $mapper
+     * @param RdfMapperInterface $mapper
      */
-    public function __construct(RdfMapper $mapper, array $config = array())
+    public function __construct(RdfMapperInterface $mapper, array $config = array())
     {
         $this->_mapper = $mapper;
         $this->_config = $config;
@@ -124,7 +124,7 @@ class Controller extends Node
     /**
      * Mapper getter
      *
-     * @return RdfMapper
+     * @return RdfMapperInterface
      */
     public function getMapper()
     {

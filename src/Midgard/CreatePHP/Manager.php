@@ -33,7 +33,7 @@ class Manager
     /**
      * The mapper implementation to use
      *
-     * @var RdfMapper
+     * @var RdfMapperInterface
      */
     protected $_mapper;
 
@@ -44,7 +44,7 @@ class Manager
      */
     protected $_widget;
 
-    public function __construct(RdfMapper $mapper)
+    public function __construct(RdfMapperInterface $mapper)
     {
         $this->_mapper = $mapper;
     }
