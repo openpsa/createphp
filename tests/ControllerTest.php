@@ -22,4 +22,20 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $controller->unsetAttribute('name');
         $this->assertNull($controller->getAttribute('name'));
     }
+
+    public function test_getMapper()
+    {
+        $mapper = new MockMapper;
+        $controller = new Controller($mapper);
+        $this->assertEquals($mapper, $controller->getMapper());
+    }
+
+    public function test_set_isEditable()
+    {
+        $controller = new Controller(new MockMapper);
+        $this->assertTrue($controller->isEditable());
+        $controller->setEditable(false);
+        $this->assertFalse($controller->isEditable());
+    }
+
 }
