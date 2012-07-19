@@ -12,4 +12,10 @@
         </testsuite>
     </testsuites>
 
+    <filter>
+      <whitelist>
+        <directory suffix=".php">src/Midgard/CreatePHP</directory>
+      </whitelist>
+    </filter>
+
 </phpunit>
