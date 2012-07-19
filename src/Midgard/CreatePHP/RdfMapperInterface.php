@@ -11,7 +11,7 @@ use Midgard\CreatePHP\Entity\Property;
 use Midgard\CreatePHP\Entity\Controller;
 
 /**
- * Map from createphp to your domain objects
+ * Map from CreatePHP to your domain objects
  *
  * You can have a mapper per type or a generic mapper that handles all types.
  *
@@ -62,7 +62,7 @@ interface RdfMapperInterface
      *
      * Used as empty template for collections, and when storing a new entity.
      *
-     * @param Entity\Controller $controller
+     * @param Controller $controller
      * @param mixed $parent
      *
      * @return mixed the object
