@@ -41,6 +41,52 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('createphp:test1', $controller->test1->getAttribute('property'));
     }
 
+    public function test_collection_property()
+    {
+        $config = array
+        (
+            'controllers' => array
+            (
+                'test1' => array
+                (
+                    'properties' => array
+                    (
+                        'test1' => array
+                        (
+                            'nodeType' => 'Midgard\\CreatePHP\\Entity\\Collection',
+                            'controller' => 'test2',
+                            'attributes' => array
+                            (
+                                'controller' => 'test2',
+                            )
+                        )
+                    )
+                ),
+                'test2' => array
+                (
+                    'properties' => array
+                    (
+                        'test1' => array
+                        (
+                            'attributes' => array
+                            (
+                                'class' => 'test_prop'
+                            )
+                        )
+                    )
+                )
+
+            )
+        );
+        $mapper = new MockMapper;
+        $loader = new ArrayLoader($config);
+        $manager = $loader->getManager($mapper);
+        $controller = $manager->getController('test1');
+        $child_controller = $manager->getController('test2');
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Collection', $controller->test1);
+
+    }
+
     public function test_workflows()
     {
         $config = array
