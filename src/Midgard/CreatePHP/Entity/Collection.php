@@ -53,7 +53,7 @@ class Collection extends Node implements ArrayAccess, Iterator
         foreach ($children as $child) {
             $controller = clone $this->_controller;
             $controller->setObject($child);
-            $controller->setAttribute('about', $mapper->createIdentifier($child));
+
             $this->_children[] = $controller;
         }
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
