@@ -12,8 +12,8 @@ use Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
- * Collection holder. Acts at the same time as a property to a parent controller and
- * and as a holder for controllers of other objects which are linked to the first one
+ * Collection holder. Acts at the same time as a property to a parent entity and
+ * and as a holder for entities of other objects which are linked to the first one
  * with some kind of relation
  *
  * @package Midgard.CreatePHP

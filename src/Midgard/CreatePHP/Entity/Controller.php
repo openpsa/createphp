@@ -1,6 +1,6 @@
 <?php
 /**
- * The type/object controller
+ * The type/entity implementation
  *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
@@ -61,8 +61,9 @@ class Controller extends Node implements EntityInterface
 
     public function bindObject($object)
     {
-        $controller = clone $this;
-        $controller->setObject($object);
+        $entity = clone $this;
+        $entity->setObject($object);
+        return $entity;
     }
 
     /**

@@ -13,8 +13,8 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
- * Collection holder. Acts at the same time as a property to a parent controller and
- * and as a holder for controllers of other objects which are linked to the first one
+ * Collection holder. Acts at the same time as a property to a parent entity and
+ * and as a holder for entities of other objects which are linked to the first one
  * with some kind of relation
  *
  * @package Midgard.CreatePHP
@@ -33,10 +33,10 @@ class Collection extends Node implements CollectionInterface
         $this->_config = $config;
     }
 
-    public function setType(TypeInterface $controller)
+    public function setType(TypeInterface $entity)
     {
-        $this->_type = $controller;
-        foreach ($controller->getVocabularies() as $prefix => $uri) {
+        $this->_type = $entity;
+        foreach ($entity->getVocabularies() as $prefix => $uri) {
             $this->setAttribute('xmlns:' . $prefix, $uri);
         }
     }
@@ -50,6 +50,7 @@ class Collection extends Node implements CollectionInterface
     {
         $collection = clone $this;
         $collection->loadFromParent($parent);
+        return $collection;
     }
     /**
      * Never call this method directly, but use bindFromParent on your CollectionDefinition
@@ -67,7 +68,7 @@ class Collection extends Node implements CollectionInterface
         $config = $parent->getConfig();
         $children = $parentMapper->getChildren($object, $config);
 
-        // create controllers for children
+        // create entities for children
         foreach ($children as $child) {
             $this->_children[] = $this->_type->bindObject($child);
         }
@@ -76,9 +77,9 @@ class Collection extends Node implements CollectionInterface
             // create an empty element to allow adding new elements to an empty editable collection
             $mapper = $this->_type->getMapper();
             $object = $mapper->prepareObject($this->_type, $object);
-            $controller = $this->_type->bindObject($object);
-            $controller->setAttribute('style', 'display:none');
-            $this->_children[] = $controller;
+            $entity = $this->_type->bindObject($object);
+            $entity->setAttribute('style', 'display:none');
+            $this->_children[] = $entity;
         }
     }
 

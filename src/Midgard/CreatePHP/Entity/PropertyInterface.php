@@ -16,7 +16,7 @@ use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
  *
  * These nodes need a "property" attribute to function correctly
  *
- * When rendering a property node separately, it will automatically render the controller
+ * When rendering a property node separately, it will automatically render the entity
  * template as well, so that we have XML namespaces and about attributes as required by the
  * JS interface
  *
@@ -30,4 +30,11 @@ interface PropertyInterface extends NodeInterface, PropertyDefinitionInterface
      * @return string
      */
     function getValue();
+
+    /**
+     * Change the value of this property
+     *
+     * @param string $value
+     */
+    function setValue($value);
 }

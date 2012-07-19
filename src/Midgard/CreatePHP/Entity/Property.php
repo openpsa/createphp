@@ -14,7 +14,7 @@ use Midgard\CreatePHP\Node;
  *
  * These nodes need the a "property" attribute to function correctly
  *
- * When rendering a property node separately, it will automatically render the controller
+ * When rendering a property node separately, it will automatically render the entity
  * template as well, so that we have XML namespaces and about attributes required by the
  * JS interface
  *
@@ -30,7 +30,7 @@ class Property extends Node implements PropertyInterface
     private $_value = '';
 
     /**
-     * The property's identifier in the currently active controller
+     * The property's identifier in the currently active entity
      *
      * @var string
      */
@@ -38,7 +38,7 @@ class Property extends Node implements PropertyInterface
 
     /**
      * Flag that tracks whether or not the property is rendered as part of its
-     * controller or standalone
+     * entity or standalone
      *
      * @var boolean
      */
@@ -81,7 +81,7 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Render the property's opening tag (and the controller wrapper if we're in
+     * Render the property's opening tag (and the entity wrapper if we're in
      * standalone mode)
      */
     public function renderStart($tag_name = false)
@@ -100,7 +100,7 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Render the property's closing tag (and the controller wrapper's if we're in
+     * Render the property's closing tag (and the entity wrapper's if we're in
      * standalone mode)
      */
     public function renderEnd()
