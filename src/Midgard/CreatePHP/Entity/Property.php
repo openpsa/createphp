@@ -20,7 +20,7 @@ use Midgard\CreatePHP\Node;
  *
  * @package Midgard.CreatePHP
  */
-class Property extends Node
+class Property extends Node implements PropertyInterface
 {
     /**
      * The element's content
@@ -111,5 +111,12 @@ class Property extends Node
             $this->_render_standalone = false;
         }
         return $output;
+    }
+
+    public function bindValue($value)
+    {
+        $property = clone $this;
+        $property->setValue($value);
+        return $property;
     }
 }

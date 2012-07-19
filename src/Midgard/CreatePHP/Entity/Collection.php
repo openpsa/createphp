@@ -7,9 +7,10 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
+
 use Midgard\CreatePHP\Node;
-use ArrayAccess;
-use Iterator;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Collection holder. Acts at the same time as a property to a parent controller and
@@ -18,48 +19,47 @@ use Iterator;
  *
  * @package Midgard.CreatePHP
  */
-class Collection extends Node implements ArrayAccess, Iterator
+class Collection extends Node implements CollectionInterface
 {
     protected $_position = 0;
 
-    protected $_controller;
+    /**
+     * @var TypeInterface
+     */
+    protected $_type;
 
     public function __construct(array $config, $identifier)
     {
         $this->_config = $config;
     }
 
-    public function setController(Controller $controller)
+    public function setType(TypeInterface $controller)
     {
-        $this->_controller = $controller;
+        $this->_type = $controller;
         foreach ($controller->getVocabularies() as $prefix => $uri) {
             $this->setAttribute('xmlns:' . $prefix, $uri);
         }
     }
 
-    public function getController()
+    public function getType()
     {
-        return $this->_controller;
+        return $this->_type;
     }
 
     public function loadFromParent($object)
     {
         $this->_children = array();
-        $mapper = $this->_controller->getMapper();
-        $config = $this->_controller->getConfig();
+        $mapper = $this->_type->getMapper();
+        $config = $this->_type->getConfig();
         $children = $mapper->getChildren($object, $config);
 
         // create controllers for children
         foreach ($children as $child) {
-            $controller = clone $this->_controller;
-            $controller->setObject($child);
-
-            $this->_children[] = $controller;
+            $this->_children[] = $this->_type->bindObject($child);
         }
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
-            $object = $mapper->prepareObject($this->_controller, $object);
-            $controller = clone $this->_controller;
-            $controller->setObject($object);
+            $object = $mapper->prepareObject($this->_type, $object);
+            $controller = $this->_type->bindObject($object);
             $controller->setAttribute('style', 'display:none');
             $this->_children[] = $controller;
         }
@@ -134,6 +134,7 @@ class Collection extends Node implements ArrayAccess, Iterator
     {
         $ret = '';
         foreach ($this->_children as $child) {
+            /** @var $child \Midgard\CreatePHP\NodeInterface */
             $ret .= $child->render();
         }
         return $ret;

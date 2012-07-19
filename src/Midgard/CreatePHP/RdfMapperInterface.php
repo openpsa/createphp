@@ -7,8 +7,9 @@
  */
 
 namespace Midgard\CreatePHP;
-use Midgard\CreatePHP\Entity\Property;
-use Midgard\CreatePHP\Entity\Controller;
+
+use Midgard\CreatePHP\Entity\PropertyInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Map from CreatePHP to your domain objects
@@ -23,20 +24,22 @@ interface RdfMapperInterface
      * Set property on object
      *
      * @param mixed $object
-     * @param Property $node
+     * @param PropertyInterface $node
      * @param mixed $value
+     *
      * @return mixed
      */
-    public function setPropertyValue($object, Property $node, $value);
+    function setPropertyValue($object, PropertyInterface $node, $value);
 
     /**
      * Get property from this object
      *
      * @param mixed $object
-     * @param Property $node
+     * @param PropertyInterface $node
+     *
      * @return mixed
      */
-    public function getPropertyValue($object, Property $node);
+    function getPropertyValue($object, PropertyInterface $node);
 
     /**
      * Tell if the object is editable
@@ -45,7 +48,7 @@ interface RdfMapperInterface
      *
      * @return boolean
      */
-    public function isEditable($object);
+    function isEditable($object);
 
     /**
      * Get object's children
@@ -55,26 +58,27 @@ interface RdfMapperInterface
      *
      * @return array of children objects
      */
-    public function getChildren($object, array $config);
+    function getChildren($object, array $config);
 
     /**
-     * Instantiate a new object for the type defined by this controller
+     * Instantiate a new object for the specified RDFa type
      *
-     * Used as empty template for collections, and when storing a new entity.
+     * Used as empty template for collections, and to instantiate an empty
+     * object when storing a new entity.
      *
-     * @param Controller $controller
+     * @param TypeInterface $type
      * @param mixed $parent
      *
      * @return mixed the object
      */
-    public function prepareObject(Controller $controller, $parent = null);
+    function prepareObject(TypeInterface $controller, $parent = null);
 
     /**
      * Save object
      *
      * @param mixed $object
      */
-    public function store($object);
+    function store($object);
 
     /**
      * Load object by identifier
@@ -82,7 +86,7 @@ interface RdfMapperInterface
      * @param string $identifier
      * @return mixed The storage object or false if nothing is found
      */
-    public function getByIdentifier($identifier);
+    function getByIdentifier($identifier);
 
     /**
      * Create RDFa identifier for this object (could be simply the id, but should be a URI)
@@ -91,5 +95,5 @@ interface RdfMapperInterface
      *
      * @return string
      */
-    public function createIdentifier($object);
+    function createIdentifier($object);
 }

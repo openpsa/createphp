@@ -9,13 +9,14 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
+
 use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\RdfMapperInterface;
 
 /**
  * @package Midgard.CreatePHP
  */
-class Controller extends Node
+class Controller extends Node implements EntityInterface
 {
     /**
      * Flag that shows whether or not the object is editable
@@ -56,6 +57,37 @@ class Controller extends Node
         $this->_config = $config;
     }
 
+    public function bindObject($object)
+    {
+        $controller = clone $this;
+        $controller->setObject($object);
+    }
+
+    /**
+     * Internal method to map the object. Never call this method
+     * but use bindObject on the type object.
+     *
+     * @private
+     */
+    public function setObject($object)
+    {
+        $this->setEditable($this->_mapper->isEditable($object));
+        $this->_object = $object;
+        foreach ($this->_children as $name => $node) {
+            if ($node instanceof Property) {
+                /** @var $node PropertyInterface */
+                // the magic setter will also update the parent reference of the node
+                $this->$name = $node->bindValue($this->_mapper->getPropertyValue($object, $node));
+            } elseif ($node instanceof Collection) {
+                /** @var $node CollectionInterface */
+                $node->setAttribute('about', $this->_mapper->createIdentifier($object));
+                $node->loadFromParent($object);
+            }
+        }
+
+        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
+    }
+
     public function setVocabulary($prefix, $uri)
     {
         $this->_vocabularies[$prefix] = $uri;
@@ -65,29 +97,6 @@ class Controller extends Node
     public function getVocabularies()
     {
         return $this->_vocabularies;
-    }
-
-    /**
-     * Object setter. This connects both the controller and the derived elements,
-     * i.e. collections and properties
-     *
-     * @param mixed $object the storage "object"
-     */
-    public function setObject($object)
-    {
-        $this->setEditable($this->_mapper->isEditable($object));
-
-        $this->_object = $object;
-        foreach ($this->_children as $fieldname => $node) {
-            if ($node instanceof Property) {
-                $node->setValue($this->_mapper->getPropertyValue($object, $node));
-            } elseif ($node instanceof Collection) {
-                $node->setAttribute('about', $this->_mapper->createIdentifier($object));
-                $node->loadFromParent($object);
-            }
-        }
-
-        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
     }
 
     /**
@@ -167,6 +176,7 @@ class Controller extends Node
     {
         $output = '';
         foreach ($this->_children as $key => $prop) {
+            /** @var $prop PropertyInterface */
             // add rdf name for admin only
             if (!$this->isEditable()) {
                 $prop->unsetAttribute('property');
@@ -174,13 +184,5 @@ class Controller extends Node
             $output .= $prop->render();
         }
         return $output;
-    }
-
-    public function __clone()
-    {
-        foreach ($this->_children as $name => $node)
-        {
-            $this->$name = clone $node;
-        }
     }
 }
