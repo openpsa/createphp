@@ -12,6 +12,8 @@ namespace Midgard\CreatePHP\Entity;
 
 use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
  * @package Midgard.CreatePHP
@@ -74,14 +76,14 @@ class Controller extends Node implements EntityInterface
         $this->setEditable($this->_mapper->isEditable($object));
         $this->_object = $object;
         foreach ($this->_children as $name => $node) {
-            if ($node instanceof Property) {
-                /** @var $node PropertyInterface */
+            if ($node instanceof PropertyDefinitionInterface) {
+                /** @var $node PropertyDefinitionInterface */
                 // the magic setter will also update the parent reference of the node
                 $this->$name = $node->bindValue($this->_mapper->getPropertyValue($object, $node));
-            } elseif ($node instanceof Collection) {
-                /** @var $node CollectionInterface */
-                $node->setAttribute('about', $this->_mapper->createIdentifier($object));
-                $node->loadFromParent($object);
+            } elseif ($node instanceof CollectionDefinitionInterface) {
+                /** @var $node CollectionDefinitionInterface */
+                $collection = $node->bindFromParent($this);
+                $collection->setAttribute('about', $this->_mapper->createIdentifier($object));
             }
         }
 
@@ -176,7 +178,7 @@ class Controller extends Node implements EntityInterface
     {
         $output = '';
         foreach ($this->_children as $key => $prop) {
-            /** @var $prop PropertyInterface */
+            /** @var $prop \Midgard\CreatePHP\NodeInterface */
             // add rdf name for admin only
             if (!$this->isEditable()) {
                 $prop->unsetAttribute('property');

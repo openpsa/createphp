@@ -20,5 +20,4 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
  */
 interface CollectionInterface extends NodeInterface, CollectionDefinitionInterface
 {
-    public function loadFromParent($object);
 }

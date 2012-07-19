@@ -8,9 +8,10 @@
 
 namespace Midgard\CreatePHP\Type;
 
-use Midgard\CreatePHP\Node;
-use ArrayAccess;
 use Iterator;
+use ArrayAccess;
+use Midgard\CreatePHP\Node;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 /**
  * A collection is a special type of property that can hold a list of entities.
@@ -27,4 +28,14 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
      * @param TypeInterface $type
      */
     function setType(TypeInterface $type);
+
+    /**
+     * Create a concrete collection from this definition with the children of the specified parent
+     *
+     * @param EntityInterface $parent
+     *
+     * @return \Midgard\CreatePHP\Entity\CollectionInterface
+     */
+    public function bindFromParent(EntityInterface $parent);
+
 }

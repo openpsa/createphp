@@ -2,20 +2,20 @@
 namespace Midgard\CreatePHP\tests;
 
 use Midgard\CreatePHP\RdfMapperInterface;
-use Midgard\CreatePHP\Entity\Controller;
-use Midgard\CreatePHP\Entity\Property;
+use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Entity\PropertyInterface;
 
 /**
  * Mock RdfMapper implementation for unittests
  */
 class MockMapper implements RdfMapperInterface
 {
-    public function setPropertyValue($object, Property $node, $value)
+    public function setPropertyValue($object, PropertyInterface $node, $value)
     {
 
     }
 
-    public function getPropertyValue($object, Property $node)
+    public function getPropertyValue($object, PropertyInterface $node)
     {
         if (isset($object[$node->getIdentifier()]))
         {
@@ -34,7 +34,7 @@ class MockMapper implements RdfMapperInterface
 
     }
 
-    public function prepareObject(Controller $controller, $parent = null)
+    public function prepareObject(TypeInterface $controller, $parent = null)
     {
 
     }
