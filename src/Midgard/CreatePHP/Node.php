@@ -145,6 +145,9 @@ abstract class Node
      */
     public function getAttribute($key)
     {
+        if (!isset($this->_attributes[$key])) {
+            return null;
+        }
         return $this->_attributes[$key];
     }
 
