@@ -118,6 +118,7 @@ class Controller extends Node
      */
     public function __set($key, Node $node)
     {
+        $node->setParent($this);
         $this->_children[$key] = $node;
     }
 
@@ -176,7 +177,6 @@ class Controller extends Node
         foreach ($this->_children as $name => $node)
         {
             $this->$name = clone $node;
-            $this->$name->setParent($this);
         }
     }
 }

@@ -110,7 +110,6 @@ class ArrayLoader
                 if (!empty($field_config['attributes'])) {
                     $node->setAttributes($field_config['attributes']);
                 }
-                $node->setParent($controller);
                 $controller->$property_name = $node;
             }
         }
