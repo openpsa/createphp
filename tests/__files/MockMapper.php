@@ -1,14 +1,14 @@
 <?php
 namespace Midgard\CreatePHP\tests;
 
-use Midgard\CreatePHP\RdfMapper;
+use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Entity\Controller;
 use Midgard\CreatePHP\Entity\Property;
 
 /**
  * Mock RdfMapper implementation for unittests
  */
-class MockMapper implements RdfMapper
+class MockMapper implements RdfMapperInterface
 {
     public function setPropertyValue($object, Property $node, $value)
     {

@@ -21,7 +21,7 @@ class RestService
     /**
      * The mapper object
      *
-     * @var RdfMapper
+     * @var RdfMapperInterface
      */
     protected $_mapper;
 
@@ -49,9 +49,9 @@ class RestService
     /**
      * The constructor
      *
-     * @param RdfMapper $mapper
+     * @param RdfMapperInterface $mapper
      */
-    public function __construct(RdfMapper $mapper, array $data = null)
+    public function __construct(RdfMapperInterface $mapper, array $data = null)
     {
         $this->_data = $data;
         $this->setMapper($mapper);
@@ -95,9 +95,9 @@ class RestService
     /**
      * Mapper setter
      *
-     * @param RdfMapper $mapper
+     * @param RdfMapperInterface $mapper
      */
-    public function setMapper(RdfMapper $mapper)
+    public function setMapper(RdfMapperInterface $mapper)
     {
         $this->_mapper = $mapper;
     }
@@ -105,7 +105,7 @@ class RestService
     /**
      * Mapper getter
      *
-     * @return RdfMapper
+     * @return RdfMapperInterface
      */
     public function getMapper()
     {
