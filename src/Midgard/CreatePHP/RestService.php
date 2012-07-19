@@ -54,7 +54,6 @@ class RestService
     public function __construct(RdfMapper $mapper, array $data = null)
     {
         $this->_data = $data;
-        $this->_verb = strtolower($_SERVER['REQUEST_METHOD']);
         $this->setMapper($mapper);
     }
 
@@ -118,6 +117,8 @@ class RestService
      */
     public function run(Controller $controller)
     {
+        $this->_verb = strtolower($_SERVER['REQUEST_METHOD']);
+
         if (array_key_exists($this->_verb, $this->_workflows)) {
             $object = $this->_mapper->getByIdentifier($_REQUEST["subject"]);
             return $this->_workflows[$this->_verb]->run($object);
