@@ -219,8 +219,8 @@ abstract class Node
         foreach ($this->_attributes as $key => $value) {
             $attributes .= ' ' . $key . '="' . $value . '"';
         }
-        if ($attributes !== '') {
-            $attributes = ' ' . $attributes;
+        if ($attributes === ' ') {
+            $attributes = '';
         }
         return $attributes;
     }
