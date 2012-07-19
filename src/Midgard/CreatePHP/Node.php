@@ -190,7 +190,7 @@ abstract class Node
         $replace = array
         (
             "__TAG_NAME__" => $this->_tag_name,
-            "__ATTRIBUTES__" => $this->renderAttributes(),
+            " __ATTRIBUTES__" => $this->renderAttributes(),
         );
         $this->_is_rendering = true;
         return strtr($template, $replace);
@@ -218,6 +218,9 @@ abstract class Node
         $attributes = '';
         foreach ($this->_attributes as $key => $value) {
             $attributes .= ' ' . $key . '="' . $value . '"';
+        }
+        if ($attributes !== '') {
+            $attributes = ' ' . $attributes;
         }
         return $attributes;
     }
