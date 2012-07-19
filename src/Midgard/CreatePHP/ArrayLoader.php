@@ -26,7 +26,7 @@ class ArrayLoader
         $this->_config = $config;
     }
 
-    public function getManager(RdfMapper $mapper)
+    public function getManager(RdfMapperInterface $mapper)
     {
         $manager = new Manager($mapper);
         $controllers = array();
