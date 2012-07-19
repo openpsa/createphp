@@ -37,5 +37,4 @@ class ControllerTest extends \PHPUnit_Framework_TestCase
         $controller->setEditable(false);
         $this->assertFalse($controller->isEditable());
     }
-
 }

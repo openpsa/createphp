@@ -17,12 +17,16 @@ class MockMapper implements RdfMapperInterface
 
     public function getPropertyValue($object, Property $node)
     {
-
+        if (isset($object[$node->getIdentifier()]))
+        {
+            return $object[$node->getIdentifier()];
+        }
+        return null;
     }
 
     public function isEditable($object)
     {
-
+        return true;
     }
 
     public function getChildren($object, array $config)
@@ -47,7 +51,11 @@ class MockMapper implements RdfMapperInterface
 
     public function createIdentifier($object)
     {
-
+        if (isset($object['id']))
+        {
+            return $object['id'];
+        }
+        return '';
     }
 }
 ?>
