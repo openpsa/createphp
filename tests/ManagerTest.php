@@ -1,6 +1,7 @@
 <?php
 namespace Midgard\CreatePHP\tests;
 
+use Midgard\CreatePHP\Entity\Controller;
 use Midgard\CreatePHP\Manager;
 use Midgard\CreatePHP\Widget;
 use Midgard\CreatePHP\RestHandler;
@@ -13,6 +14,14 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $widget = new Widget;
         $manager->setWidget($widget);
         $this->assertEquals($widget, $manager->getWidget());
+    }
+
+    public function test_get_setController()
+    {
+        $manager = new Manager(new MockMapper);
+        $controller = new Controller(new MockMapper);
+        $manager->setController('test', $controller);
+        $this->assertEquals($controller, $manager->getController('test'));
     }
 
     public function test_get_registerWorkflow()
