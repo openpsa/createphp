@@ -48,12 +48,12 @@ class MockMapper implements RdfMapperInterface
 
     }
 
-    public function getByIdentifier($identifier)
+    public function getBySubject($identifier)
     {
 
     }
 
-    public function createIdentifier($object)
+    public function createSubject($object)
     {
         if (isset($object['id']))
         {

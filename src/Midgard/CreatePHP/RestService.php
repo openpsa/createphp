@@ -135,7 +135,7 @@ class RestService
         if (array_key_exists($method, $this->_workflows)) {
             $object = null;
             if (isset($_GET["subject"])) {
-                $object = $this->_mapper->getByIdentifier($_GET["subject"]);
+                $object = $this->_mapper->getBySubject($_GET["subject"]);
             }
             return $this->_workflows[$method]->run($object);
         }
@@ -172,7 +172,7 @@ class RestService
             $parentfield = $this->_expandPropertyName($node->getAttribute('rev'), $child_type);
             if (!empty($received_data[$parentfield])) {
                 $parent_identifier = trim($received_data[$parentfield][0], '<>');
-                $parent = $this->_mapper->getByIdentifier($parent_identifier);
+                $parent = $this->_mapper->getBySubject($parent_identifier);
                 $object = $this->_mapper->prepareObject($child_type, $parent);
                 $entity = $child_type->createWithObject($object);
                 return $this->_storeData($entity);
@@ -188,7 +188,7 @@ class RestService
      */
     private function _handleUpdate(TypeInterface $type)
     {
-        $object = $this->_mapper->getByIdentifier(trim($this->_data['@subject'], '<>'));
+        $object = $this->_mapper->getBySubject(trim($this->_data['@subject'], '<>'));
         $entity = $type->createWithObject($object);
         return $this->_storeData($entity);
     }
@@ -223,7 +223,7 @@ class RestService
     private function _convertToJsonld($object, EntityInterface $controller)
     {
         $jsonld = $this->_data;
-        $jsonld['@subject'] = '<' . $this->_mapper->createIdentifier($object) . '>';
+        $jsonld['@subject'] = '<' . $this->_mapper->createSubject($object) . '>';
         foreach ($controller->getChildren() as $fieldname => $node) {
             if (!$node instanceof PropertyInterface) {
                 continue;
