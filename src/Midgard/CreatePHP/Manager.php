@@ -62,21 +62,22 @@ class Manager
     }
 
     /**
-     * Get a controller
+     * Returns the type with that identifier
      *
      * @param string $identifier
      * @param mixed $object
      * @return TypeInterface
      */
-    public function getController($identifier, $object = null)
+    public function getType($identifier, $object = null)
     {
         if (!isset($this->_controllers[$identifier])) {
             return null;
         }
+        $type = $this->_controllers[$identifier];
         if (null !== $object) {
-            $this->_controllers[$identifier]->setObject($object);
+            $type = $type->createWithObject($object);
         }
-        return $this->_controllers[$identifier];
+        return $type;
     }
 
     /**
@@ -129,7 +130,7 @@ class Manager
     public function getWorkflows($subject)
     {
         $response = array();
-        $object = $this->_mapper->getByIdentifier(trim($subject, '<>'));
+        $object = $this->_mapper->getBySubject(trim($subject, '<>'));
         foreach ($this->_workflows as $identifier => $workflow) {
             /** @var $workflow WorkflowInterface */
             $toolbar_config = $workflow->getToolbarConfig($object);

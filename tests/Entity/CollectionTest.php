@@ -38,7 +38,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $children = $parent_controller->test->getChildren();
         $this->assertEquals(2, sizeof($children));
         $this->assertInstanceOf('Midgard\CreatePHP\Entity\Controller', $children[0]);
-        $this->assertEquals('child1', $mapper->createIdentifier($children[0]->getObject()));
+        $this->assertEquals('child1', $mapper->createSubject($children[0]->getObject()));
     }
 
     public function test_loadFromParent_no_children()
@@ -58,7 +58,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $children = $parent_controller->test->getChildren();
         $this->assertEquals(1, sizeof($children));
         $this->assertInstanceOf('Midgard\CreatePHP\Entity\Controller', $children[0]);
-        $this->assertEquals('', $mapper->createIdentifier($children[0]->getObject()));
+        $this->assertEquals('', $mapper->createSubject($children[0]->getObject()));
        $this->assertEquals('display:none', $children[0]->getAttribute('style'));
     }
 

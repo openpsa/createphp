@@ -85,7 +85,7 @@ class Controller extends Node implements EntityInterface
             } elseif ($node instanceof CollectionDefinitionInterface) {
                 /** @var $node CollectionDefinitionInterface */
                 $instance = $node->createWithParent($this);
-                $instance->setAttribute('about', $this->_mapper->createIdentifier($object));
+                $instance->setAttribute('about', $this->_mapper->createSubject($object));
             } else {
                 // we had a generic node in our tree. make sure the node gets its parent set.
                 $instance = $node;
@@ -93,7 +93,7 @@ class Controller extends Node implements EntityInterface
             $this->$name = $instance;
         }
 
-        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
+        $this->setAttribute('about', $this->_mapper->createSubject($object));
     }
 
     public function setVocabulary($prefix, $uri)
