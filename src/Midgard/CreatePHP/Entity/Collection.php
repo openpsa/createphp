@@ -7,61 +7,80 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
+
 use Midgard\CreatePHP\Node;
-use ArrayAccess;
-use Iterator;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
- * Collection holder. Acts at the same time as a property to a parent controller and
- * and as a holder for controllers of other objects which are linked to the first one
+ * Collection holder. Acts at the same time as a property to a parent entity and
+ * and as a holder for entities of other objects which are linked to the first one
  * with some kind of relation
  *
  * @package Midgard.CreatePHP
  */
-class Collection extends Node implements ArrayAccess, Iterator
+class Collection extends Node implements CollectionInterface
 {
     protected $_position = 0;
 
-    protected $_controller;
+    /**
+     * @var TypeInterface
+     */
+    protected $_type;
 
     public function __construct(array $config, $identifier)
     {
         $this->_config = $config;
     }
 
-    public function setController(Controller $controller)
+    public function setType(TypeInterface $type)
     {
-        $this->_controller = $controller;
-        foreach ($controller->getVocabularies() as $prefix => $uri) {
+        $this->_type = $type;
+        foreach ($type->getVocabularies() as $prefix => $uri) {
             $this->setAttribute('xmlns:' . $prefix, $uri);
         }
     }
 
-    public function getController()
+    public function getType()
     {
-        return $this->_controller;
+        return $this->_type;
     }
 
-    public function loadFromParent($object)
+    public function createWithParent(EntityInterface $parent)
+    {
+        $collection = clone $this;
+        $collection->loadFromParent($parent);
+        return $collection;
+    }
+
+    /**
+     * Never call this method directly, but use createWithParent on your CollectionDefinition
+     * to get a collection tied to concrete data.
+     *
+     * @private
+     *
+     * @param EntityInterface $parent
+     */
+    public function loadFromParent(EntityInterface $parent)
     {
         $this->_children = array();
-        $mapper = $this->_controller->getMapper();
-        $config = $this->_controller->getConfig();
-        $children = $mapper->getChildren($object, $config);
+        $object = $parent->getObject();
+        $parentMapper = $parent->getMapper();
+        $config = $parent->getConfig();
+        $children = $parentMapper->getChildren($object, $config);
 
-        // create controllers for children
+        // create entities for children
         foreach ($children as $child) {
-            $controller = clone $this->_controller;
-            $controller->setObject($child);
-
-            $this->_children[] = $controller;
+            $this->_children[] = $this->_type->createWithObject($child);
         }
+
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
-            $object = $mapper->prepareObject($this->_controller, $object);
-            $controller = clone $this->_controller;
-            $controller->setObject($object);
-            $controller->setAttribute('style', 'display:none');
-            $this->_children[] = $controller;
+            // create an empty element to allow adding new elements to an empty editable collection
+            $mapper = $this->_type->getMapper();
+            $object = $mapper->prepareObject($this->_type, $object);
+            $entity = $this->_type->createWithObject($object);
+            $entity->setAttribute('style', 'display:none');
+            $this->_children[] = $entity;
         }
     }
 
@@ -134,6 +153,7 @@ class Collection extends Node implements ArrayAccess, Iterator
     {
         $ret = '';
         foreach ($this->_children as $child) {
+            /** @var $child \Midgard\CreatePHP\NodeInterface */
             $ret .= $child->render();
         }
         return $ret;

@@ -38,7 +38,8 @@ class ArrayLoader
             $property_name = $ref_config['property_name'];
             $parent_id = $ref_config['identifier'];
             $ref_id = $ref_config['ref_id'];
-            $controllers[$parent_id]->$property_name->setController($controllers[$ref_id]);
+
+            $controllers[$parent_id]->$property_name->setType($controllers[$ref_id]);
         }
 
         foreach ($controllers as $identifier => $controller) {
@@ -90,6 +91,7 @@ class ArrayLoader
                 } else {
                     $classname = $field_config['nodeType'];
                 }
+                /** @var $node NodeInterface */
                 $node = new $classname($field_config, $property_name);
 
                 if ($node instanceof Property) {

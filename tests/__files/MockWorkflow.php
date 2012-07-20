@@ -1,12 +1,12 @@
 <?php
 namespace Midgard\CreatePHP\tests;
 
-use Midgard\CreatePHP\Workflow;
+use Midgard\CreatePHP\WorkflowInterface;
 
 /**
  * This is a mock workflow implementation for unittests
  */
-class MockWorkflow implements Workflow
+class MockWorkflow implements WorkflowInterface
 {
     public function getToolbarConfig($object)
     {

@@ -1,6 +1,6 @@
 <?php
 /**
- * The type/object controller
+ * The type/entity implementation
  *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
@@ -9,13 +9,16 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
+
 use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
  * @package Midgard.CreatePHP
  */
-class Controller extends Node
+class Controller extends Node implements EntityInterface
 {
     /**
      * Flag that shows whether or not the object is editable
@@ -56,6 +59,43 @@ class Controller extends Node
         $this->_config = $config;
     }
 
+    public function createWithObject($object)
+    {
+        $entity = clone $this;
+        $entity->setObject($object);
+        return $entity;
+    }
+
+    /**
+     * Internal method to map the object. Never call this method
+     * but use createWithObject on the type object.
+     *
+     * @private
+     */
+    public function setObject($object)
+    {
+        $this->setEditable($this->_mapper->isEditable($object));
+        $this->_object = $object;
+        foreach ($this->_children as $name => $node) {
+            $instance = null;
+            if ($node instanceof PropertyDefinitionInterface) {
+                /** @var $node PropertyDefinitionInterface */
+                // the magic setter will also update the parent reference of the node
+                $instance = $node->createWithValue($this->_mapper->getPropertyValue($object, $node));
+            } elseif ($node instanceof CollectionDefinitionInterface) {
+                /** @var $node CollectionDefinitionInterface */
+                $instance = $node->createWithParent($this);
+                $instance->setAttribute('about', $this->_mapper->createIdentifier($object));
+            } else {
+                // we had a generic node in our tree. make sure the node gets its parent set.
+                $instance = $node;
+            }
+            $this->$name = $instance;
+        }
+
+        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
+    }
+
     public function setVocabulary($prefix, $uri)
     {
         $this->_vocabularies[$prefix] = $uri;
@@ -65,29 +105,6 @@ class Controller extends Node
     public function getVocabularies()
     {
         return $this->_vocabularies;
-    }
-
-    /**
-     * Object setter. This connects both the controller and the derived elements,
-     * i.e. collections and properties
-     *
-     * @param mixed $object the storage "object"
-     */
-    public function setObject($object)
-    {
-        $this->setEditable($this->_mapper->isEditable($object));
-
-        $this->_object = $object;
-        foreach ($this->_children as $fieldname => $node) {
-            if ($node instanceof Property) {
-                $node->setValue($this->_mapper->getPropertyValue($object, $node));
-            } elseif ($node instanceof Collection) {
-                $node->setAttribute('about', $this->_mapper->createIdentifier($object));
-                $node->loadFromParent($object);
-            }
-        }
-
-        $this->setAttribute('about', $this->_mapper->createIdentifier($object));
     }
 
     /**
@@ -167,6 +184,7 @@ class Controller extends Node
     {
         $output = '';
         foreach ($this->_children as $key => $prop) {
+            /** @var $prop \Midgard\CreatePHP\NodeInterface */
             // add rdf name for admin only
             if (!$this->isEditable()) {
                 $prop->unsetAttribute('property');
@@ -174,13 +192,5 @@ class Controller extends Node
             $output .= $prop->render();
         }
         return $output;
-    }
-
-    public function __clone()
-    {
-        foreach ($this->_children as $name => $node)
-        {
-            $this->$name = clone $node;
-        }
     }
 }

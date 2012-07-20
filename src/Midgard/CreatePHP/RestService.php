@@ -9,28 +9,29 @@
  */
 
 namespace Midgard\CreatePHP;
-use Midgard\CreatePHP\Entity\Property;
-use Midgard\CreatePHP\Entity\Collection;
-use Midgard\CreatePHP\Entity\Controller;
+
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
+
+use Midgard\CreatePHP\Entity\EntityInterface;
+use Midgard\CreatePHP\Entity\PropertyInterface;
 
 /**
  * @package Midgard.CreatePHP
  */
 class RestService
 {
+    const HTTP_GET = 'get';
+    const HTTP_POST = 'post';
+    const HTTP_PUT = 'put';
+    const HTTP_DELETE = 'delete';
+
     /**
      * The mapper object
      *
      * @var RdfMapperInterface
      */
     protected $_mapper;
-
-    /**
-     * The operation verb
-     *
-     * @var string
-     */
-    protected $_verb;
 
     /**
      * The passed data, if any
@@ -82,12 +83,15 @@ class RestService
     }
 
     /**
-     * Workflow setter
+     * You can overwrite the handling for the basic http methods get, put, post
+     * and delete here.
      *
-     * @param string $identifier
-     * @param Workflow $workflow
+     * Note that for delete you need to register a workflow to have it happen.
+     *
+     * @param string $identifier one of the HTTP constants of this class
+     * @param WorkflowInterface $workflow
      */
-    public function setWorkflow($identifier, Workflow $workflow)
+    public function setWorkflow($identifier, WorkflowInterface $workflow)
     {
         $this->_workflows[$identifier] = $workflow;
     }
@@ -113,81 +117,95 @@ class RestService
     }
 
     /**
-     * Run the service
+     * Execute the rest operation
+     *
+     * @param TypeInterface $entity the bound entity with data to process
+     * @param string $method the http request method, one of the HTTP constants,
+     *      if omitted, $_SERVER['REQUEST_METHOD'] is used
+     *
+     * @return null|array if this is a successful post or put, returns the json
+     *      data for the processed item
      */
-    public function run(Controller $controller)
+    public function run(TypeInterface $type, $method = null)
     {
-        $this->_verb = strtolower($_SERVER['REQUEST_METHOD']);
-
-        if (array_key_exists($this->_verb, $this->_workflows)) {
-            $object = $this->_mapper->getByIdentifier($_REQUEST["subject"]);
-            return $this->_workflows[$this->_verb]->run($object);
+        if (null === $method) {
+            $method = strtolower($_SERVER['REQUEST_METHOD']);
         }
-        switch ($this->_verb) {
-            case 'get':
+
+        if (array_key_exists($method, $this->_workflows)) {
+            $object = null;
+            if (isset($_GET["subject"])) {
+                $object = $this->_mapper->getByIdentifier($_GET["subject"]);
+            }
+            return $this->_workflows[$method]->run($object);
+        }
+
+        switch ($method) {
+            case self::HTTP_GET:
                 // do not handle get
-                break;
-            case 'delete':
+                return null;
+            case self::HTTP_DELETE:
                 //delete is a workflow, so it's not handled here directly
-                break;
-            case 'post':
-                return $this->_handleCreate($controller);
-                break;
-            case 'put':
-                return $this->_handleUpdate($controller);
-                break;
+                return null;
+            case self::HTTP_POST:
+                return $this->_handleCreate($type);
+            case self::HTTP_PUT:
+                return $this->_handleUpdate($type);
+            default:
+                throw new \UnexpectedValueException("No workflow found to handle $method");
         }
     }
 
     /**
      * Handle post request
      */
-    private function _handleCreate(Controller $controller)
+    private function _handleCreate(TypeInterface $type)
     {
         $received_data = $this->_getProperties();
 
-        $child_controller = null;
-        foreach ($controller->getChildren() as $fieldname => $node) {
-            if (!$node instanceof Collection) {
+        foreach ($type->getChildren() as $fieldname => $node) {
+            if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }
-            $child_controller = $node->getController();
-            $parentfield = $this->_expandPropertyName($node->getAttribute('rev'), $child_controller);
+            /** @var $node CollectionDefinitionInterface */
+            $child_type = $node->getType();
+            $parentfield = $this->_expandPropertyName($node->getAttribute('rev'), $child_type);
             if (!empty($received_data[$parentfield])) {
                 $parent_identifier = trim($received_data[$parentfield][0], '<>');
                 $parent = $this->_mapper->getByIdentifier($parent_identifier);
-                $object = $this->_mapper->prepareObject($child_controller, $parent);
-                $child_controller->setObject($object);
-                return $this->_storeData($child_controller);
+                $object = $this->_mapper->prepareObject($child_type, $parent);
+                $entity = $child_type->createWithObject($object);
+                return $this->_storeData($entity);
             }
         }
-        $object = $this->_mapper->prepareObject($controller);
-        $controller->setObject($object);
-        return $this->_storeData($controller);
+        $object = $this->_mapper->prepareObject($type);
+        $type->createWithObject($object);
+        return $this->_storeData($type);
     }
 
     /**
      * Handle put request
      */
-    private function _handleUpdate(Controller $controller)
+    private function _handleUpdate(TypeInterface $type)
     {
         $object = $this->_mapper->getByIdentifier(trim($this->_data['@subject'], '<>'));
-        $controller->setObject($object);
-        return $this->_storeData($controller);
+        $entity = $type->createWithObject($object);
+        return $this->_storeData($entity);
     }
 
-    private function _storeData(Controller $controller)
+    private function _storeData(EntityInterface $entity)
     {
         $new_values = $this->_getProperties();
-        $object = $controller->getObject();
+        $object = $entity->getObject();
 
-        foreach ($controller->getChildren() as $fieldname => $node) {
-            if (!$node instanceof property) {
+        foreach ($entity->getChildren() as $fieldname => $node) {
+            if (!$node instanceof PropertyInterface) {
                 continue;
             }
+            /** @var $node PropertyInterface */
             $rdf_name = $node->getAttribute('property');
 
-            $expanded_name = $this->_expandPropertyName($rdf_name, $controller);
+            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $new_values)) {
                 $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
@@ -196,18 +214,21 @@ class RestService
 
         if ($this->_mapper->store($object))
         {
-            return $this->_convertToJsonld($object, $controller);
+            return $this->_convertToJsonld($object, $entity);
         }
+
+        return null;
     }
 
-    private function _convertToJsonld($object, Controller $controller)
+    private function _convertToJsonld($object, EntityInterface $controller)
     {
         $jsonld = $this->_data;
         $jsonld['@subject'] = '<' . $this->_mapper->createIdentifier($object) . '>';
         foreach ($controller->getChildren() as $fieldname => $node) {
-            if (!$node instanceof Property) {
+            if (!$node instanceof PropertyInterface) {
                 continue;
             }
+            /** @var $node PropertyInterface */
             $rdf_name = $node->getAttribute('property');
 
             $expanded_name = '<' . $this->_expandPropertyName($rdf_name, $controller) . '>';
@@ -220,7 +241,7 @@ class RestService
         return $jsonld;
     }
 
-    private function _expandPropertyName($name, Controller $controller)
+    private function _expandPropertyName($name, TypeInterface $controller)
     {
         $name = explode(":", $name);
         $vocabularies = $controller->getVocabularies();
