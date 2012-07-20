@@ -83,6 +83,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $manager = $loader->getManager($mapper);
         $controller = $manager->getType('test1');
         $child_controller = $manager->getType('test2');
+        $this->assertEquals($child_controller, $controller->test1->getType());
         $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Collection', $controller->test1);
 
     }

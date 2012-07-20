@@ -31,6 +31,10 @@ class MockMapper implements RdfMapperInterface
 
     public function getChildren($object, array $config)
     {
+        if (empty($config['is_child']))
+        {
+            throw new \Exception('wrong config');
+        }
         if (isset($object['children']))
         {
             return $object['children'];

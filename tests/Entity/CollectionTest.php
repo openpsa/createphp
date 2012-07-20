@@ -20,7 +20,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
-        $child_controller = new Controller($mapper);
+        $child_controller = new Controller($mapper, array('is_child' => true));
         $collection = new Collection(array(), 'test');
         $collection->setType($child_controller);
 
@@ -45,7 +45,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
-        $child_controller = new Controller($mapper);
+        $child_controller = new Controller($mapper, array('is_child' => true));
         $collection = new Collection(array(), 'test');
         $collection->setType($child_controller);
 
@@ -66,7 +66,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
-        $child_controller = new Controller($mapper);
+        $child_controller = new Controller($mapper, array('is_child' => true));
         $collection = new Collection(array(), 'test');
         $collection->setType($child_controller);
 
@@ -94,7 +94,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
-        $child_controller = new Controller($mapper);
+        $child_controller = new Controller($mapper, array('is_child' => true));
         $collection = new Collection(array(), 'test');
         $collection->setType($child_controller);
 
