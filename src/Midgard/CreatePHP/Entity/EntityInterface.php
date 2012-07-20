@@ -40,4 +40,14 @@ interface EntityInterface extends TypeInterface, NodeInterface
      * @param boolean $value
      */
     function setEditable($value);
+
+    /**
+     * Whether this entity is currently in process of being rendered.
+     *
+     * This is checked by the property when it is rendered to decide if it
+     * should render the vocabulary as well.
+     *
+     * @return boolean
+     */
+    function isRendering();
 }
