@@ -8,6 +8,8 @@
 
 namespace Midgard\CreatePHP;
 
+use Midgard\CreatePHP\Entity\EntityInterface;
+
 /**
  * Baseclass for (DOM) nodes.
  *
@@ -19,7 +21,7 @@ namespace Midgard\CreatePHP;
  *
  * @package Midgard.CreatePHP
  */
-abstract class Node
+abstract class Node implements NodeInterface
 {
     /**
      * HTML element to use
@@ -45,7 +47,7 @@ abstract class Node
     /**
      * The parent node
      *
-     * @var node
+     * @var EntityInterface
      */
     protected $_parent;
 
@@ -75,7 +77,7 @@ abstract class Node
      *
      * @var node $parent The parent object
      */
-    public function setParent(Node $parent)
+    public function setParent(EntityInterface $parent)
     {
         $this->_parent = $parent;
     }
@@ -224,8 +226,6 @@ abstract class Node
         }
         return $attributes;
     }
-
-    abstract function renderContent();
 
     public function renderEnd()
     {

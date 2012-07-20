@@ -11,8 +11,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $controller = new Controller(new MockMapper);
         $controller->setVocabulary('test', 'http:://test.org/');
         $collection = new Collection(array(), 'test');
-        $collection->setController($controller);
-        $this->assertEquals($controller, $collection->getController());
+        $collection->setType($controller);
+        $this->assertEquals($controller, $collection->getType());
         $this->assertEquals('http:://test.org/', $collection->getAttribute('xmlns:test'));
     }
 
@@ -22,7 +22,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper);
         $collection = new Collection(array(), 'test');
-        $collection->setController($child_controller);
+        $collection->setType($child_controller);
 
         $parent = array
         (
@@ -47,7 +47,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper);
         $collection = new Collection(array(), 'test');
-        $collection->setController($child_controller);
+        $collection->setType($child_controller);
 
         $parent = array
         (
@@ -68,7 +68,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper);
         $collection = new Collection(array(), 'test');
-        $collection->setController($child_controller);
+        $collection->setType($child_controller);
 
         $parent = array
         (
@@ -96,7 +96,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper);
         $collection = new Collection(array(), 'test');
-        $collection->setController($child_controller);
+        $collection->setType($child_controller);
 
         $parent = array
         (
