@@ -46,7 +46,7 @@ class Collection extends Node implements CollectionInterface
         return $this->_type;
     }
 
-    public function bindFromParent(EntityInterface $parent)
+    public function createWithParent(EntityInterface $parent)
     {
         $collection = clone $this;
         $collection->loadFromParent($parent);
@@ -54,7 +54,7 @@ class Collection extends Node implements CollectionInterface
     }
 
     /**
-     * Never call this method directly, but use bindFromParent on your CollectionDefinition
+     * Never call this method directly, but use createWithParent on your CollectionDefinition
      * to get a collection tied to concrete data.
      *
      * @private
@@ -71,14 +71,14 @@ class Collection extends Node implements CollectionInterface
 
         // create entities for children
         foreach ($children as $child) {
-            $this->_children[] = $this->_type->bindObject($child);
+            $this->_children[] = $this->_type->createWithObject($child);
         }
 
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
             // create an empty element to allow adding new elements to an empty editable collection
             $mapper = $this->_type->getMapper();
             $object = $mapper->prepareObject($this->_type, $object);
-            $entity = $this->_type->bindObject($object);
+            $entity = $this->_type->createWithObject($object);
             $entity->setAttribute('style', 'display:none');
             $this->_children[] = $entity;
         }

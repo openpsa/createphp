@@ -59,7 +59,7 @@ class Controller extends Node implements EntityInterface
         $this->_config = $config;
     }
 
-    public function bindObject($object)
+    public function createWithObject($object)
     {
         $entity = clone $this;
         $entity->setObject($object);
@@ -68,7 +68,7 @@ class Controller extends Node implements EntityInterface
 
     /**
      * Internal method to map the object. Never call this method
-     * but use bindObject on the type object.
+     * but use createWithObject on the type object.
      *
      * @private
      */
@@ -81,10 +81,10 @@ class Controller extends Node implements EntityInterface
             if ($node instanceof PropertyDefinitionInterface) {
                 /** @var $node PropertyDefinitionInterface */
                 // the magic setter will also update the parent reference of the node
-                $instance = $node->bindValue($this->_mapper->getPropertyValue($object, $node));
+                $instance = $node->createWithValue($this->_mapper->getPropertyValue($object, $node));
             } elseif ($node instanceof CollectionDefinitionInterface) {
                 /** @var $node CollectionDefinitionInterface */
-                $instance = $node->bindFromParent($this);
+                $instance = $node->createWithParent($this);
                 $instance->setAttribute('about', $this->_mapper->createIdentifier($object));
             } else {
                 // we had a generic node in our tree. make sure the node gets its parent set.

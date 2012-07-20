@@ -21,7 +21,7 @@ interface PropertyDefinitionInterface
      * @param string $value
      * @return \Midgard\CreatePHP\Entity\PropertyInterface
      */
-    function bindValue($value);
+    function createWithValue($value);
 
     /**
      * Get the identifier value of this property (RDFa attribute)

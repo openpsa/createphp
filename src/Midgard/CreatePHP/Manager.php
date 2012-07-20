@@ -9,7 +9,8 @@
  */
 
 namespace Midgard\CreatePHP;
-use Midgard\CreatePHP\Entity\Controller;
+
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * @package Midgard.CreatePHP
@@ -26,7 +27,7 @@ class Manager
     /**
      * Array of available workflows
      *
-     * @var array
+     * @var array of WorkflowInterface
      */
     protected $_workflows = array();
 
@@ -53,11 +54,11 @@ class Manager
      * Set a controller
      *
      * @param string $identifier
-     * @param Controller $controller
+     * @param TypeInterface $type
      */
-    public function setController($identifier, Controller $controller)
+    public function setController($identifier, TypeInterface $type)
     {
-        $this->_controllers[$identifier] = $controller;
+        $this->_controllers[$identifier] = $type;
     }
 
     /**
@@ -65,7 +66,7 @@ class Manager
      *
      * @param string $identifier
      * @param mixed $object
-     * @return Controller
+     * @return TypeInterface
      */
     public function getController($identifier, $object = null)
     {
@@ -111,18 +112,26 @@ class Manager
      * Register a workflow
      *
      * @param string $identifier
-     * @param Workflow $Workflow
+     * @param WorkflowInterface $Workflow
      */
-    public function registerWorkflow($identifier, Workflow $workflow)
+    public function registerWorkflow($identifier, WorkflowInterface $workflow)
     {
         $this->_workflows[$identifier] = $workflow;
     }
 
+    /**
+     * Get all workflows available for this subject
+     *
+     * @param string $subject the RDFa identifier of the subject to get workflows for
+     *
+     * @return array of WorkflowInterface
+     */
     public function getWorkflows($subject)
     {
         $response = array();
         $object = $this->_mapper->getByIdentifier(trim($subject, '<>'));
         foreach ($this->_workflows as $identifier => $workflow) {
+            /** @var $workflow WorkflowInterface */
             $toolbar_config = $workflow->getToolbarConfig($object);
             if (null !== $toolbar_config) {
                 $response[] = $toolbar_config;

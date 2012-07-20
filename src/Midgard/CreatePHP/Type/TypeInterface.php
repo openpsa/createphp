@@ -22,7 +22,7 @@ interface TypeInterface
      *
      * @return \Midgard\CreatePHP\Entity\EntityInterface the entity of this type bound to the supplied object
      */
-    function bindObject($object);
+    function createWithObject($object);
 
     /**
      * Config getter
@@ -69,4 +69,11 @@ interface TypeInterface
      */
     function getMapper();
 
+    /**
+     * Get all children definitions of this type
+     *
+     * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
+     *      with the child definitions of this type
+     */
+    function getChildren();
 }

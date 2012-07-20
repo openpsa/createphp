@@ -30,12 +30,33 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
     function setType(TypeInterface $type);
 
     /**
+     * Get the RDFa type for the items of this collection
+     *
+     * same TODO as above
+     *
+     * @return TypeInterface
+     */
+    function getType();
+
+    /**
+     * Get a html attribute.
+     *
+     * A collection must have rev attribute that names the attribute name that
+     * child types use to point back to the parent. i.e. dcterms:partOf
+     *
+     * @param string $key
+     *
+     * @return string the value for this attribute or null if no such attribute
+     */
+    public function getAttribute($key);
+
+    /**
      * Create a concrete collection from this definition with the children of the specified parent
      *
      * @param EntityInterface $parent
      *
      * @return \Midgard\CreatePHP\Entity\CollectionInterface
      */
-    function bindFromParent(EntityInterface $parent);
+    function createWithParent(EntityInterface $parent);
 
 }

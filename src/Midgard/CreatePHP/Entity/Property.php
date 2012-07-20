@@ -113,7 +113,7 @@ class Property extends Node implements PropertyInterface
         return $output;
     }
 
-    public function bindValue($value)
+    public function createWithValue($value)
     {
         $property = clone $this;
         $property->setValue($value);
