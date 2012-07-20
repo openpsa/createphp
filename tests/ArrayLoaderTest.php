@@ -32,7 +32,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new ArrayLoader($config);
         $manager = $loader->getManager($mapper);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Manager', $manager);
-        $controller = $manager->getController('test1');
+        $controller = $manager->getType('test1');
         $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Controller', $controller);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Property', $controller->test1);
         $this->assertEquals($mapper, $controller->getMapper());
@@ -81,8 +81,8 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $loader = new ArrayLoader($config);
         $manager = $loader->getManager($mapper);
-        $controller = $manager->getController('test1');
-        $child_controller = $manager->getController('test2');
+        $controller = $manager->getType('test1');
+        $child_controller = $manager->getType('test2');
         $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Collection', $controller->test1);
 
     }

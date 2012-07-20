@@ -83,19 +83,24 @@ interface RdfMapperInterface
     function store($object);
 
     /**
-     * Load object by identifier
+     * Load object by json-ld subject (this is the RDFa about field)
      *
-     * @param string $identifier
+     * @param string $subject
+     *
      * @return mixed The storage object or false if nothing is found
      */
-    function getByIdentifier($identifier);
+    function getBySubject($subject);
 
     /**
-     * Create RDFa identifier for this object (could be simply the id, but should be a URI)
+     * Create json-ld subject (RDFa about) for this object (could be simply the
+     * id, but should be a URI)
+     *
+     * This needs to be unique for your application so you can load the object
+     * just from the subject.
      *
      * @param mixed $object
      *
      * @return string
      */
-    function createIdentifier($object);
+    function createSubject($object);
 }

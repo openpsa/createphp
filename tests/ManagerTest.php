@@ -21,7 +21,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $manager = new Manager(new MockMapper);
         $controller = new Controller(new MockMapper);
         $manager->setController('test', $controller);
-        $this->assertEquals($controller, $manager->getController('test'));
+        $this->assertEquals($controller, $manager->getType('test'));
     }
 
     public function test_get_registerWorkflow()
