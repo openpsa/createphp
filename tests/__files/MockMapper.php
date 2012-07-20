@@ -31,7 +31,11 @@ class MockMapper implements RdfMapperInterface
 
     public function getChildren($object, array $config)
     {
-
+        if (isset($object['children']))
+        {
+            return $object['children'];
+        }
+        return array();
     }
 
     public function prepareObject(TypeInterface $controller, $parent = null)
