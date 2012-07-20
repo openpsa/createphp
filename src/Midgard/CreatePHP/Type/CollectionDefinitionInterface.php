@@ -36,6 +36,6 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
      *
      * @return \Midgard\CreatePHP\Entity\CollectionInterface
      */
-    public function bindFromParent(EntityInterface $parent);
+    function bindFromParent(EntityInterface $parent);
 
 }

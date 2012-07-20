@@ -33,10 +33,10 @@ class Collection extends Node implements CollectionInterface
         $this->_config = $config;
     }
 
-    public function setType(TypeInterface $entity)
+    public function setType(TypeInterface $type)
     {
-        $this->_type = $entity;
-        foreach ($entity->getVocabularies() as $prefix => $uri) {
+        $this->_type = $type;
+        foreach ($type->getVocabularies() as $prefix => $uri) {
             $this->setAttribute('xmlns:' . $prefix, $uri);
         }
     }
@@ -52,6 +52,7 @@ class Collection extends Node implements CollectionInterface
         $collection->loadFromParent($parent);
         return $collection;
     }
+
     /**
      * Never call this method directly, but use bindFromParent on your CollectionDefinition
      * to get a collection tied to concrete data.

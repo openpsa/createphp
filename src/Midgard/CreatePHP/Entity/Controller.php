@@ -77,15 +77,20 @@ class Controller extends Node implements EntityInterface
         $this->setEditable($this->_mapper->isEditable($object));
         $this->_object = $object;
         foreach ($this->_children as $name => $node) {
+            $instance = null;
             if ($node instanceof PropertyDefinitionInterface) {
                 /** @var $node PropertyDefinitionInterface */
                 // the magic setter will also update the parent reference of the node
-                $this->$name = $node->bindValue($this->_mapper->getPropertyValue($object, $node));
+                $instance = $node->bindValue($this->_mapper->getPropertyValue($object, $node));
             } elseif ($node instanceof CollectionDefinitionInterface) {
                 /** @var $node CollectionDefinitionInterface */
-                $collection = $node->bindFromParent($this);
-                $collection->setAttribute('about', $this->_mapper->createIdentifier($object));
+                $instance = $node->bindFromParent($this);
+                $instance->setAttribute('about', $this->_mapper->createIdentifier($object));
+            } else {
+                // we had a generic node in our tree. make sure the node gets its parent set.
+                $instance = $node;
             }
+            $this->$name = $instance;
         }
 
         $this->setAttribute('about', $this->_mapper->createIdentifier($object));

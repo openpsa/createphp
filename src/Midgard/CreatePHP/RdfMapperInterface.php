@@ -21,13 +21,13 @@ use Midgard\CreatePHP\Type\TypeInterface;
 interface RdfMapperInterface
 {
     /**
-     * Set property on object
+     * Set property on object and return the updated object
      *
      * @param mixed $object
      * @param PropertyInterface $node
      * @param mixed $value
      *
-     * @return mixed
+     * @return mixed the updated object
      */
     function setPropertyValue($object, PropertyInterface $node, $value);
 
@@ -77,6 +77,8 @@ interface RdfMapperInterface
      * Save object
      *
      * @param mixed $object
+     *
+     * @return boolean whether storing was successful
      */
     function store($object);
 
