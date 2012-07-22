@@ -31,16 +31,13 @@ $config = array
                'sioc' => 'http://rdfs.org/sioc/ns#'
             ),
             'properties' => array(
-                'title' => array
-                (
-                    'attributes' => array
-                    (
+                'title' => array(
+                    'attributes' => array(
                         'property' => 'dcterms:title'
                     )
                 ),
                 'content' => array(
-                    'attributes' => array
-                    (
+                    'attributes' => array(
                         'property' => 'sioc:content'
                     )
                 )
