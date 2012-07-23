@@ -29,4 +29,11 @@ interface PropertyDefinitionInterface
      * @return string
      */
     function getIdentifier();
+
+    /**
+     * Set the tag name to use when rendering properties of this type
+     *
+     * @param string $tag the html tag name without brackets
+     */
+    function setTagName($tag);
 }
