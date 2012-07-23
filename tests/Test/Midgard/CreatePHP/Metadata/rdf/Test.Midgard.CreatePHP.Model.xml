@@ -1,0 +1,8 @@
+<type
+     xmlns:sioc="http://rdfs.org/sioc/ns#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     typeof="sioc:Post"
+>
+    <property property="dcterms:title" identifier="title" tag-name="h2"/>
+    <property property="sioc:content" identifier="content" />
+</type>
