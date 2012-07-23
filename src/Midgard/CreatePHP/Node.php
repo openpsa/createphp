@@ -175,6 +175,11 @@ abstract class Node implements NodeInterface
         $this->_template = $template;
     }
 
+    public function setTagName($tag)
+    {
+        $this->_tag_name = $tag;
+    }
+
     /**
      * Renders the element
      *

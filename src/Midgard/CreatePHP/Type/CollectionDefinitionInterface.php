@@ -59,4 +59,10 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
      */
     function createWithParent(EntityInterface $parent);
 
+    /**
+     * Set the tag name to use when rendering collections of this type
+     *
+     * @param string $tag the html tag name without brackets
+     */
+    function setTagName($tag);
 }
