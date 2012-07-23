@@ -76,4 +76,11 @@ interface TypeInterface
      *      with the child definitions of this type
      */
     function getChildren();
+
+    /**
+     * Set the tag name to use when rendering entities of this type
+     *
+     * @param string $tag the html tag name without brackets
+     */
+    function setTagName($tag);
 }

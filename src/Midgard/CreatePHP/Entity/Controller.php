@@ -143,6 +143,11 @@ class Controller extends Node implements EntityInterface
         $this->_children[$key] = $node;
     }
 
+    public function __isset($key)
+    {
+        return isset($this->_children[$key]);
+    }
+
     /**
      * Mapper getter
      *
