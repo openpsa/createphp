@@ -180,6 +180,11 @@ abstract class Node implements NodeInterface
         $this->_tag_name = $tag;
     }
 
+    public function getTagName()
+    {
+        return $this->_tag_name;
+    }
+
     /**
      * Renders the element
      *

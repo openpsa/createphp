@@ -47,6 +47,20 @@ interface TypeInterface
     function getVocabularies();
 
     /**
+     * Set the rdf type of this type, i.e. sioc:Post
+     *
+     * @param string $type the namespaced rdf type
+     */
+    function setRdfType($type);
+
+    /**
+     * Get the rdf type string of this type
+     *
+     * @return string
+     */
+    function getRdfType();
+
+    /**
      * Magic getter
      *
      * @param string $key
@@ -83,4 +97,11 @@ interface TypeInterface
      * @param string $tag the html tag name without brackets
      */
     function setTagName($tag);
+
+    /**
+     * Get the current tag name of this type
+     *
+     * @return string the tag name
+     */
+    function getTagName();
 }
