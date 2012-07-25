@@ -107,6 +107,15 @@ class Controller extends Node implements EntityInterface
         return $this->_vocabularies;
     }
 
+    public function setRdfType($type)
+    {
+        $this->setAttribute('typeof', $type);
+    }
+    public function getRdfType()
+    {
+        return $this->getAttribute('typeof');
+    }
+
     /**
      * Object getter
      *
