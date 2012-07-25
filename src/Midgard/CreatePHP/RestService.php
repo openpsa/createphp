@@ -51,11 +51,13 @@ class RestService
     }
 
     /**
+     * Method to encode links to other entities
+     *
      * @param string $value the value to encode
      *
      * @return string the value wrapped in <>
      */
-    private function jsonldEncode($value)
+    protected function jsonldEncode($value)
     {
         return "<$value>";
     }
@@ -64,7 +66,7 @@ class RestService
      *
      * @return string the value without <>
      */
-    private function jsonldDecode($value)
+    protected function jsonldDecode($value)
     {
         return trim($value, '<>');
     }
@@ -198,8 +200,8 @@ class RestService
 
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
-            if (array_key_exists($this->jsonldEncode("$expanded_name"), $new_values)) {
-                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$this->jsonldEncode("$expanded_name")]);
+            if (array_key_exists($expanded_name, $new_values)) {
+                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
             }
         }
 
@@ -224,7 +226,7 @@ class RestService
             /** @var $node PropertyInterface */
             $rdf_name = $node->getAttribute('property');
 
-            $expanded_name = $this->jsonldEncode($this->_expandPropertyName($rdf_name, $entity));
+            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $jsonld)) {
                 $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
@@ -241,6 +243,6 @@ class RestService
         if (!isset($vocabularies[$parts[0]])) {
             throw new \RuntimeException('Undefined namespace prefix '.$parts[0]." in $name");
         }
-        return $vocabularies[$parts[0]] . $parts[1];
+        return $this->jsonldEncode($vocabularies[$parts[0]] . $parts[1]);
     }
 }
