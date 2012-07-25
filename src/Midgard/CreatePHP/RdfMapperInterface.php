@@ -67,7 +67,8 @@ interface RdfMapperInterface
      * object when storing a new entity.
      *
      * @param TypeInterface $type
-     * @param mixed $parent
+     * @param mixed $parent the parent object, if any. used for creating a
+     *      collection entry
      *
      * @return mixed the object
      */

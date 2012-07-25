@@ -34,13 +34,6 @@ class RestService
     protected $_mapper;
 
     /**
-     * The passed data, if any
-     *
-     * @var array
-     */
-    protected $_data;
-
-    /**
      * Custom workflows for post, put, delete or get
      *
      * @var array
@@ -52,34 +45,30 @@ class RestService
      *
      * @param RdfMapperInterface $mapper
      */
-    public function __construct(RdfMapperInterface $mapper, array $data = null)
+    public function __construct(RdfMapperInterface $mapper)
     {
-        $this->_data = $data;
         $this->setMapper($mapper);
     }
 
-    public function getData()
-    {
-        return $this->_data;
-    }
-
     /**
-     * Get transmitted properties
+     * Method to encode links to other entities
      *
-     * @return array
+     * @param string $value the value to encode
+     *
+     * @return string the value wrapped in <>
      */
-    private function _getProperties()
+    protected function jsonldEncode($value)
     {
-        $return = array();
-
-        foreach ($this->_data as $key => $value) {
-            if (substr($key, 0, 1) === '@') {
-                continue;
-            }
-            $key = trim($key, '<>');
-            $return[$key] = $value;
-        }
-        return $return;
+        return "<$value>";
+    }
+    /**
+     * @param string $value the value to decode
+     *
+     * @return string the value without <>
+     */
+    protected function jsonldDecode($value)
+    {
+        return trim($value, '<>');
     }
 
     /**
@@ -119,14 +108,16 @@ class RestService
     /**
      * Execute the rest operation
      *
-     * @param TypeInterface $entity the bound entity with data to process
+     * @param array $data the json-ld data received in the request
+     * @param TypeInterface $type the type information for this data
+     * @param string $subject the request subject for workflows
      * @param string $method the http request method, one of the HTTP constants,
      *      if omitted, $_SERVER['REQUEST_METHOD'] is used
      *
      * @return null|array if this is a successful post or put, returns the json
      *      data for the processed item
      */
-    public function run(TypeInterface $type, $method = null)
+    public function run($data, TypeInterface $type, $subject = null, $method = null)
     {
         if (null === $method) {
             $method = strtolower($_SERVER['REQUEST_METHOD']);
@@ -134,9 +125,11 @@ class RestService
 
         if (array_key_exists($method, $this->_workflows)) {
             $object = null;
-            if (isset($_GET["subject"])) {
-                $object = $this->_mapper->getBySubject($_GET["subject"]);
+            if (null === $subject && isset($_GET["subject"])) {
+                $subject = $_GET["subject"];
             }
+            // TODO: workflows should expect subject rather than instance
+            $object = $this->_mapper->getBySubject($subject);
             return $this->_workflows[$method]->run($object);
         }
 
@@ -148,9 +141,9 @@ class RestService
                 //delete is a workflow, so it's not handled here directly
                 return null;
             case self::HTTP_POST:
-                return $this->_handleCreate($type);
+                return $this->_handleCreate($data, $type);
             case self::HTTP_PUT:
-                return $this->_handleUpdate($type);
+                return $this->_handleUpdate($data, $type, $subject);
             default:
                 throw new \UnexpectedValueException("No workflow found to handle $method");
         }
@@ -159,11 +152,9 @@ class RestService
     /**
      * Handle post request
      */
-    private function _handleCreate(TypeInterface $type)
+    private function _handleCreate($received_data, TypeInterface $type)
     {
-        $received_data = $this->_getProperties();
-
-        foreach ($type->getChildren() as $fieldname => $node) {
+        foreach ($type->getChildren() as $node) {
             if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }
@@ -171,31 +162,33 @@ class RestService
             $child_type = $node->getType();
             $parentfield = $this->_expandPropertyName($node->getAttribute('rev'), $child_type);
             if (!empty($received_data[$parentfield])) {
-                $parent_identifier = trim($received_data[$parentfield][0], '<>');
+                $parent_identifier = $this->jsonldDecode($received_data[$parentfield][0]);
                 $parent = $this->_mapper->getBySubject($parent_identifier);
                 $object = $this->_mapper->prepareObject($child_type, $parent);
                 $entity = $child_type->createWithObject($object);
-                return $this->_storeData($entity);
+                return $this->_storeData($received_data, $entity);
             }
         }
         $object = $this->_mapper->prepareObject($type);
-        $type->createWithObject($object);
-        return $this->_storeData($type);
+        $entity = $type->createWithObject($object);
+        return $this->_storeData($received_data, $entity);
     }
 
     /**
      * Handle put request
      */
-    private function _handleUpdate(TypeInterface $type)
+    private function _handleUpdate($data, TypeInterface $type, $subject = null)
     {
-        $object = $this->_mapper->getBySubject(trim($this->_data['@subject'], '<>'));
+        if (null === $subject) {
+            $subject = $this->jsonldDecode($data['@subject']);
+        }
+        $object = $this->_mapper->getBySubject($subject);
         $entity = $type->createWithObject($object);
-        return $this->_storeData($entity);
+        return $this->_storeData($data, $entity);
     }
 
-    private function _storeData(EntityInterface $entity)
+    private function _storeData($new_values, EntityInterface $entity)
     {
-        $new_values = $this->_getProperties();
         $object = $entity->getObject();
 
         foreach ($entity->getChildren() as $fieldname => $node) {
@@ -214,24 +207,26 @@ class RestService
 
         if ($this->_mapper->store($object))
         {
-            return $this->_convertToJsonld($object, $entity);
+            return $this->_convertToJsonld($new_values, $object, $entity);
         }
 
         return null;
     }
 
-    private function _convertToJsonld($object, EntityInterface $controller)
+    private function _convertToJsonld($data, $object, EntityInterface $entity)
     {
-        $jsonld = $this->_data;
-        $jsonld['@subject'] = '<' . $this->_mapper->createSubject($object) . '>';
-        foreach ($controller->getChildren() as $fieldname => $node) {
+        // lazy: copy stuff from the sent json-ld to not have to rebuild everything.
+        $jsonld = $data;
+
+        $jsonld['@subject'] = $this->jsonldEncode($this->_mapper->createSubject($object));
+        foreach ($entity->getChildren() as $node) {
             if (!$node instanceof PropertyInterface) {
                 continue;
             }
             /** @var $node PropertyInterface */
             $rdf_name = $node->getAttribute('property');
 
-            $expanded_name = '<' . $this->_expandPropertyName($rdf_name, $controller) . '>';
+            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $jsonld)) {
                 $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
@@ -241,10 +236,25 @@ class RestService
         return $jsonld;
     }
 
-    private function _expandPropertyName($name, TypeInterface $controller)
+    /**
+     * Expand a property name to use full namespace instead of short name,
+     * as used in reference fields. Additionally jsonld-encodes that link.
+     *
+     * @param string $name the name to expand, including namespace
+     * @param TypeInterface $type the type context for the vocabulary
+     *
+     * @return string the jsonld-encoded expanded name
+     *
+     * @throws \RuntimeException if the prefix is not in the vocabulary of
+     *      $type
+     */
+    private function _expandPropertyName($name, TypeInterface $type)
     {
-        $name = explode(":", $name);
-        $vocabularies = $controller->getVocabularies();
-        return $vocabularies[$name[0]] . $name[1];
+        $parts = explode(":", $name);
+        $vocabularies = $type->getVocabularies();
+        if (!isset($vocabularies[$parts[0]])) {
+            throw new \RuntimeException('Undefined namespace prefix '.$parts[0]." in $name");
+        }
+        return $this->jsonldEncode($vocabularies[$parts[0]] . $parts[1]);
     }
 }
