@@ -236,6 +236,18 @@ class RestService
         return $jsonld;
     }
 
+    /**
+     * Expand a property name to use full namespace instead of short name,
+     * as used in reference fields. Additionally jsonld-encodes that link.
+     *
+     * @param string $name the name to expand, including namespace
+     * @param TypeInterface $type the type context for the vocabulary
+     *
+     * @return string the jsonld-encoded expanded name
+     *
+     * @throws \RuntimeException if the prefix is not in the vocabulary of
+     *      $type
+     */
     private function _expandPropertyName($name, TypeInterface $type)
     {
         $parts = explode(":", $name);
