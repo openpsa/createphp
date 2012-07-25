@@ -52,7 +52,7 @@ class RdfDriverXml implements RdfDriverInterface
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
         }
-        $type->setAttribute('typeof', $xml['typeof']);
+        $type->setRdfType($xml['typeof']);
         foreach($xml->property as $property) {
             $prop = new \Midgard\CreatePHP\Entity\Property(array(), $property['identifier']);
             $prop->setAttributes(array('property' => $property['property']));

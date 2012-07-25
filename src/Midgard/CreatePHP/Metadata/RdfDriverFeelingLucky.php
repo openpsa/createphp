@@ -70,6 +70,7 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
 
     private function addProperty(TypeInterface $type, $propName)
     {
+// TODO: no cheating!
 if ($propName != 'title' && $propName != 'content') return;
         $prop = new \Midgard\CreatePHP\Entity\Property(array(), $propName);
         $prop->setAttributes(array('property' => "local:$propName"));

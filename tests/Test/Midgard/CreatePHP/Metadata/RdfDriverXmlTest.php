@@ -5,7 +5,7 @@ namespace Test\Midgard\CreatePHP\Metadata;
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
 
-class RdfDriverXmlTest extends \PHPUnit_Framework_TestCase
+class RdfDriverXmlTest extends RdfDriverBaseTest
 {
     /**
      * @var \Midgard\CreatePHP\Metadata\RdfDriverInterface
@@ -22,17 +22,7 @@ class RdfDriverXmlTest extends \PHPUnit_Framework_TestCase
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper);
 
-        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $type);
-        $voc = $type->getVocabularies();
-        $this->assertCount(2, $voc);
-        $this->assertTrue(isset($voc['sioc']));
-
-        $children = $type->getChildren();
-        $this->assertCount(2, $children);
-
-        $this->assertEquals(array('title', 'content'), array_keys($children));
-        $this->assertEquals('title', $children['title']->getIdentifier());
-        $this->assertEquals('dcterms:title', $children['title']->getAttribute('property'));
+        $this->assertTestNodetype($type);
     }
 
     public function testLoadTypeForClassNodefinition()
