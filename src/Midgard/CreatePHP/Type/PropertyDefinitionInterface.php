@@ -36,4 +36,11 @@ interface PropertyDefinitionInterface
      * @param string $tag the html tag name without brackets
      */
     function setTagName($tag);
+
+    /**
+     * Get the current tag name of this type
+     *
+     * @return string the tag name
+     */
+    function getTagName();
 }
