@@ -100,9 +100,9 @@ class Manager
         return $this->_widget;
     }
 
-    public function getRestHandler(array $received_data = null)
+    public function getRestHandler()
     {
-        $restservice = new RestService($this->_mapper, $received_data);
+        $restservice = new RestService($this->_mapper);
         foreach ($this->_workflows as $identifier => $workflow) {
             $restservice->setWorkflow($identifier, $workflow);
         }
