@@ -13,8 +13,9 @@ abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
      * test type definition:
      *
      * * typeof sioc:Post
-     * * two namespaces, one of them sioc
+     * * two namespaces, sioc and dcterms
      * * two properties title and content
+     * * a collection tags
      *
      * @param mixed $type expected to be of type TypeInterface
      */

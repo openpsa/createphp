@@ -17,12 +17,12 @@ class RdfDriverArrayTest extends RdfDriverBase
         $def = array(
             "Test\\Midgard\\CreatePHP\\Model" => array (
                "vocabularies" => array(
-                   "xmlns:sioc" => "http://rdfs.org/sioc/ns#",
-                   "xmlns:dcterms" => "http://purl.org/dc/terms/",
+                   "sioc" => "http://rdfs.org/sioc/ns#",
+                   "dcterms" => "http://purl.org/dc/terms/",
                ),
                "typeof" => "sioc:Post",
                "config" => array(
-                   "key" => "value",
+                   "test" => "testvalue",
                ),
                "children" => array(
                    "title" => array(
@@ -35,10 +35,10 @@ class RdfDriverArrayTest extends RdfDriverBase
                        "rel" => "skos:related",
                        "tag-name" => "ul",
                        "config" => array(
-                           "key" => "value",
+                           "table" => "tags",
                        ),
                    ),
-                   "property" => array(
+                   "content" => array(
                        "type" => "property",
                        "property" => "sioc:content",
                    ),

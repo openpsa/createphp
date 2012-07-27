@@ -71,7 +71,7 @@ class RdfDriverXml implements RdfDriverInterface
                     $type->$child['identifier'] = $prop;
                     break;
                 case 'collection':
-                    $col = new \Midgard\CreatePHP\Entity\Collection($child['identifier'], $this->getConfig($child));
+                    $col = new CollectionDefinition($child['identifier'], $this->getConfig($child));
                     $col->setAttributes(array('rel' => $child['rel']));
                     if (isset($child['tag-name'])) {
                         $col->setTagName($child['tag-name']);

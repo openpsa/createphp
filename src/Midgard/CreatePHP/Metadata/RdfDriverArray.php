@@ -4,6 +4,8 @@ namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Entity\Controller as Type;
+use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
+use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
@@ -12,19 +14,30 @@ use Midgard\CreatePHP\Type\TypeInterface;
  * array(
  *      "My\\Model\\Class" => array (
  *          "vocabularies" => array(
- *              "xmlns:sioc" => "http://rdfs.org/sioc/ns#",
- *              "xmlns:dcterms" => "http://purl.org/dc/terms/",
+ *              "sioc" => "http://rdfs.org/sioc/ns#",
+ *              "dcterms" => "http://purl.org/dc/terms/",
  *          ),
  *          "typeof" => "sioc:Post",
- *          "properties => array(
- *              "property" => array(
+ *          "config" => array(
+ *              "key" => "value",
+ *          ),
+ *          "children" => array(
+ *              "title" => array(
+ *                  "type" => "property",
  *                  "property" => "dcterms:title",
- *                  "identifier" => "title",
  *                  "tag-name" => "h2",
  *              ),
- *              "property" => array(
+ *              "tags" => array(
+ *                  "type" => "collection",
+ *                  "rel" => "skos:related",
+ *                  "tag-name" => "ul",
+ *                  "config" => array(
+ *                      "key" => "value",
+ *                  ),
+ *              ),
+ *              "content" => array(
+ *                  "type" => "property",
  *                  "property" => "sioc:content",
- *                  "identifier" => "content",
  *              ),
  *          ),
  *      ),
@@ -58,43 +71,50 @@ class RdfDriverArray implements RdfDriverInterface
             return null;
         }
 
-        // TODO: build from array
+        $definition = $this->definitions[$className];
+        $type = new Type($mapper, $this->getConfig($definition));
 
-        $type = new Type($mapper);
-
-        foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
+        foreach ($definition['vocabularies'] as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
         }
-        foreach($xml->property as $property) {
-            $prop = new \Midgard\CreatePHP\Entity\Property(array(), $property['identifier']);
-            $prop->setAttributes(array('property' => $property['property']));
-            if (isset($property['tag-name'])) {
-                $prop->setTagName($property['tag-name']);
+        $type->setRdfType($definition['typeof']);
+        foreach($definition['children'] as $identifier => $child) {
+            switch($child['type']) {
+                case 'property':
+                    $prop = new PropertyDefinition($identifier, $this->getConfig($child));
+                    $prop->setAttributes(array('property' => $child['property']));
+                    if (isset($child['tag-name'])) {
+                        $prop->setTagName($child['tag-name']);
+                    }
+                    $type->$identifier = $prop;
+                    break;
+                case 'collection':
+                    $col = new CollectionDefinition($identifier, $this->getConfig($child));
+                    $col->setAttributes(array('rel' => $child['rel']));
+                    if (isset($child['tag-name'])) {
+                        $col->setTagName($child['tag-name']);
+                    }
+                    $type->$identifier = $col;
+                    break;
             }
-            $type->$property['identifier'] = $prop;
         }
 
         return $type;
     }
 
     /**
-     * @param $className
-     * @return \SimpleXMLElement
+     * Get the configuration from <config key="x" value="y"/> elements.
+     *
+     * @param \SimpleXMLElement $xml the element maybe having config children
+     *
+     * @return array built from the config children of the element
      */
-    protected  function getXmlDefinition($className)
+    protected function getConfig(array $node)
     {
-        $filename = $this->buildFileName($className);
-        foreach ($this->directories as $dir) {
-            if (file_exists($dir . DIRECTORY_SEPARATOR . $filename)) {
-                return simplexml_load_file($dir . DIRECTORY_SEPARATOR . $filename);
-            }
+        if (! isset($node['config'])) {
+            return array();
         }
-        return null;
-    }
-
-    protected function buildFileName($className)
-    {
-        return str_replace('\\', '.', $className) . '.xml';
+        return $node['config'];
     }
 
     /**
@@ -104,6 +124,6 @@ class RdfDriverArray implements RdfDriverInterface
      */
     function getAllClassNames()
     {
-        //TODO
+        return array_keys($this->definitions);
     }
 }
