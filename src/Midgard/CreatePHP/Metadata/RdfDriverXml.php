@@ -4,6 +4,8 @@ namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Entity\Controller as Type;
+use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
+use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
@@ -12,10 +14,13 @@ use Midgard\CreatePHP\Type\TypeInterface;
  * <type
  *      xmlns:sioc="http://rdfs.org/sioc/ns#"
  *      xmlns:dcterms="http://purl.org/dc/terms/"
+ *      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
  *      typeof="sioc:Post"
  * >
- *     <property property="dcterms:title" identifier="title" tag-name="h2"/>
- *     <property property="sioc:content" identifier="content" />
+ *      <config key="my" value="value"/>
+ *      <property property="dcterms:title" identifier="title" tag-name="h2"/>
+ *      <collection rel="skos:related" identifier="tags" tag-name="ul"/>
+ *      <property property="sioc:content" identifier="content" />
  * </type>
  *
  * @author David Buchmann <david@liip.ch>
@@ -47,22 +52,51 @@ class RdfDriverXml implements RdfDriverInterface
             return null;
         }
 
-        $type = new Type($mapper);
+        $type = new Type($mapper, $this->getConfig($xml));
 
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
         }
         $type->setRdfType($xml['typeof']);
-        foreach($xml->property as $property) {
-            $prop = new \Midgard\CreatePHP\Entity\Property(array(), $property['identifier']);
-            $prop->setAttributes(array('property' => $property['property']));
-            if (isset($property['tag-name'])) {
-                $prop->setTagName($property['tag-name']);
+        foreach($xml->children() as $child) {
+            switch($child->getName()) {
+                case 'property':
+                    $prop = new PropertyDefinition($child['identifier'], $this->getConfig($child));
+                    $prop->setAttributes(array('property' => $child['property']));
+                    if (isset($child['tag-name'])) {
+                        $prop->setTagName($child['tag-name']);
+                    }
+                    $type->$child['identifier'] = $prop;
+                    break;
+                case 'collection':
+                    $prop = new \Midgard\CreatePHP\Entity\Collection($child['identifier'], $this->getConfig($child));
+                    // TODO? $prop->setAttributes(array('property' => $child['property']));
+                    $prop->setAttributes(array('rel' => $child['rel']));
+                    if (isset($child['tag-name'])) {
+                        $prop->setTagName($child['tag-name']);
+                    }
+                    $type->$child['identifier'] = $prop;
+                    break;
             }
-            $type->$property['identifier'] = $prop;
         }
 
         return $type;
+    }
+
+    /**
+     * Get the configuration from <config key="x" value="y"/> elements.
+     *
+     * @param \SimpleXMLElement $xml the element maybe having config children
+     *
+     * @return array built from the config children of the element
+     */
+    protected function getConfig(\SimpleXMLElement $xml)
+    {
+        $config = array();
+        foreach ($xml->config as $c) {
+            $config[(string)$c['key']] = (string)$c['value'];
+        }
+        return $config;
     }
 
     /**

@@ -10,7 +10,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $controller = new Controller(new MockMapper);
         $controller->setVocabulary('test', 'http:://test.org/');
-        $collection = new Collection(array(), 'test');
+        $collection = new Collection('test', array());
         $collection->setType($controller);
         $this->assertEquals($controller, $collection->getType());
         $this->assertEquals('http:://test.org/', $collection->getAttribute('xmlns:test'));
@@ -21,7 +21,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper, array('is_child' => true));
-        $collection = new Collection(array(), 'test');
+        $collection = new Collection('test', array());
         $collection->setType($child_controller);
 
         $parent = array
@@ -46,7 +46,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper, array('is_child' => true));
-        $collection = new Collection(array(), 'test');
+        $collection = new Collection('test', array());
         $collection->setType($child_controller);
 
         $parent = array
@@ -67,7 +67,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper, array('is_child' => true));
-        $collection = new Collection(array(), 'test');
+        $collection = new Collection('test', array());
         $collection->setType($child_controller);
 
         $parent = array
@@ -95,7 +95,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $parent_controller = new Controller($mapper);
         $child_controller = new Controller($mapper, array('is_child' => true));
-        $collection = new Collection(array(), 'test');
+        $collection = new Collection('test', array());
         $collection->setType($child_controller);
 
         $parent = array
@@ -112,8 +112,8 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Midgard\CreatePHP\Entity\Controller', $parent_controller->test[0]);
         unset($parent_controller->test[1]);
         $this->assertFalse(isset($parent_controller->test[1]));
-        $parent_controller->test[1] = new Collection(array(), 'test2');
-        $parent_controller->test[] = new Collection(array(), 'test3');
+        $parent_controller->test[1] = new Collection('test2', array());
+        $parent_controller->test[] = new Collection('test3', array());
         $this->assertTrue(isset($parent_controller->test[2]));
     }
 }

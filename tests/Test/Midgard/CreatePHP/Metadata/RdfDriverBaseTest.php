@@ -31,14 +31,25 @@ abstract class RdfDriverBaseTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('sioc:Post', $type->getRdfType());
 
-        $children = $type->getChildren();
-        $this->assertCount(2, $children);
+        $this->assertEquals(array('test' => 'testvalue'), $type->getConfig());
 
-        $this->assertEquals(array('title', 'content'), array_keys($children));
+        $children = $type->getChildren();
+        $this->assertCount(3, $children);
+
+        $this->assertEquals(array('title', 'tags', 'content'), array_keys($children));
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $children['title']);
         $this->assertEquals('title', $children['title']->getIdentifier());
         $this->assertEquals('dcterms:title', $children['title']->getAttribute('property'));
         $this->assertEquals('h2', $children['title']->getTagName());
+
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $children['content']);
         $this->assertEquals('content', $children['content']->getIdentifier());
         $this->assertEquals('sioc:content', $children['content']->getAttribute('property'));
+
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $children['tags']);
+        $this->assertEquals('tags', $children['tags']->getIdentifier());
+        $this->assertEquals('skos:related', $children['tags']->getAttribute('rel'));
+        $this->assertEquals('ul', $children['tags']->getTagName());
+        $this->assertEquals(array('table' => 'tags'), $children['tags']->getConfig());
     }
 }
