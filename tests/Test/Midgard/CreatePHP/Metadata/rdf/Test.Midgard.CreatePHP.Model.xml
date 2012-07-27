@@ -4,9 +4,11 @@
      typeof="sioc:Post"
 >
     <config key="test" value="testvalue" />
-    <property property="dcterms:title" identifier="title" tag-name="h2"/>
-    <collection rel="skos:related" identifier="tags" tag-name="ul">
-        <config key="table" value="tags"/>
-    </collection>
-    <property property="sioc:content" identifier="content" />
+    <children>
+        <property property="dcterms:title" identifier="title" tag-name="h2"/>
+        <collection rel="skos:related" identifier="tags" tag-name="ul">
+            <config key="table" value="tags"/>
+        </collection>
+        <property property="sioc:content" identifier="content" />
+    </children>
 </type>

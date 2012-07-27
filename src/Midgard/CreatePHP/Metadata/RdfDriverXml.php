@@ -18,9 +18,11 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *      typeof="sioc:Post"
  * >
  *      <config key="my" value="value"/>
- *      <property property="dcterms:title" identifier="title" tag-name="h2"/>
- *      <collection rel="skos:related" identifier="tags" tag-name="ul"/>
- *      <property property="sioc:content" identifier="content" />
+ *      <children>
+ *          <property property="dcterms:title" identifier="title" tag-name="h2"/>
+ *          <collection rel="skos:related" identifier="tags" tag-name="ul"/>
+ *          <property property="sioc:content" identifier="content" />
+ *      </children>
  * </type>
  *
  * @author David Buchmann <david@liip.ch>
@@ -58,7 +60,7 @@ class RdfDriverXml implements RdfDriverInterface
             $type->setVocabulary($prefix, $uri);
         }
         $type->setRdfType($xml['typeof']);
-        foreach($xml->children() as $child) {
+        foreach($xml->children->children() as $child) {
             switch($child->getName()) {
                 case 'property':
                     $prop = new PropertyDefinition($child['identifier'], $this->getConfig($child));
