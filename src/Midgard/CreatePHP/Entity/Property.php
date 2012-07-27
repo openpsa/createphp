@@ -44,7 +44,12 @@ class Property extends Node implements PropertyInterface
      */
     protected $_render_standalone = false;
 
-    public function __construct(array $config, $identifier)
+    /**
+     * @param string $identifier the php property name used for this property
+     * @param array $config application specific configuration to carry in this
+     *      property
+     */
+    public function __construct($identifier, array $config = array())
     {
         $this->_config = $config;
         $this->_identifier = $identifier;
@@ -94,6 +99,11 @@ class Property extends Node implements PropertyInterface
         return $output . parent::renderStart($tag_name);
     }
 
+    /**
+     * Render the content of the property, that is its value
+     *
+     * @return string the value of this property
+     */
     public function renderContent()
     {
         return $this->getValue();

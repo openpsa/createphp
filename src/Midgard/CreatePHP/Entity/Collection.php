@@ -21,6 +21,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  */
 class Collection extends Node implements CollectionInterface
 {
+    protected $_identifier;
     protected $_position = 0;
 
     /**
@@ -28,8 +29,14 @@ class Collection extends Node implements CollectionInterface
      */
     protected $_type;
 
-    public function __construct(array $config, $identifier)
+    /**
+     * @param string $identifier the php property name used for this collection
+     * @param array $config application specific configuration to carry in this
+     *      collection
+     */
+    public function __construct($identifier, array $config = array())
     {
+        $this->_identifier = $identifier;
         $this->_config = $config;
     }
 
@@ -44,6 +51,16 @@ class Collection extends Node implements CollectionInterface
     public function getType()
     {
         return $this->_type;
+    }
+
+    /**
+     * Identifier getter
+     *
+     * @return string
+     */
+    public function getIdentifier()
+    {
+        return $this->_identifier;
     }
 
     public function createWithParent(EntityInterface $parent)

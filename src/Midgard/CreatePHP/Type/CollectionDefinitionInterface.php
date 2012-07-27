@@ -60,6 +60,13 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
     function createWithParent(EntityInterface $parent);
 
     /**
+     * Get the identifier value of this property (RDFa attribute)
+     *
+     * @return string
+     */
+    function getIdentifier();
+
+    /**
      * Set the tag name to use when rendering collections of this type
      *
      * @param string $tag the html tag name without brackets
