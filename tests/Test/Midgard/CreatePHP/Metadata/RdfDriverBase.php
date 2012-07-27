@@ -5,7 +5,7 @@ namespace Test\Midgard\CreatePHP\Metadata;
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
 
-abstract class RdfDriverBaseTest extends \PHPUnit_Framework_TestCase
+abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
 {
 
     /**
