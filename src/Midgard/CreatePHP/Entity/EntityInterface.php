@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Entity;
 
-use \Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
@@ -16,7 +15,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *
  * An entity is the actual instance of a type for a data entry
  */
-interface EntityInterface extends TypeInterface, NodeInterface
+interface EntityInterface extends TypeInterface
 {
     /**
      * Get the data object of this entity
