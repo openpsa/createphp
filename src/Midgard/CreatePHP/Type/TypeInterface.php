@@ -89,7 +89,7 @@ interface TypeInterface
      * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
      *      with the child definitions of this type
      */
-    function getChildren();
+    function getChildDefinitions();
 
     /**
      * Set the tag name to use when rendering entities of this type

@@ -154,7 +154,7 @@ class RestService
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
-        foreach ($type->getChildren() as $node) {
+        foreach ($type->getChildDefinitions() as $node) {
             if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }

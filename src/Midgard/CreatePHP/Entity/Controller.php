@@ -11,7 +11,6 @@
 namespace Midgard\CreatePHP\Entity;
 
 use Midgard\CreatePHP\Node;
-use Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
@@ -19,7 +18,7 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 /**
  * @package Midgard.CreatePHP
  */
-class Controller extends Node implements EntityInterface, NodeInterface
+class Controller extends Node implements EntityInterface
 {
     /**
      * Flag that shows whether or not the object is editable
@@ -58,6 +57,17 @@ class Controller extends Node implements EntityInterface, NodeInterface
     {
         $this->_mapper = $mapper;
         $this->_config = $config;
+    }
+
+    /**
+     * Get all children definitions of this type
+     *
+     * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
+     *      with the child definitions of this type
+     */
+    public function getChildDefinitions()
+    {
+        return $this->getChildren();
     }
 
     public function createWithObject($object)
