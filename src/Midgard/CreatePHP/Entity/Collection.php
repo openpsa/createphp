@@ -8,6 +8,7 @@
 
 namespace Midgard\CreatePHP\Entity;
 
+use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
@@ -21,22 +22,27 @@ use Midgard\CreatePHP\Type\TypeInterface;
 class Collection extends Node implements CollectionInterface
 {
     protected $_identifier;
+    protected $_typeFactory;
+
     protected $_position = 0;
 
     /**
-     * @var TypeInterface
+     * @var string
      */
-    protected $_type;
+    protected $_typename;
 
     /**
      * @param string $identifier the php property name used for this collection
+     * @param RdfTypeFactory $typeFactory the typefactory to use with fixed child
+     *      types
      * @param array $config application specific configuration to carry in this
      *      collection
      */
-    public function __construct($identifier, array $config = array())
+    public function __construct($identifier, RdfTypeFactory $typeFactory, array $config = array())
     {
+        parent::__construct($config);
         $this->_identifier = $identifier;
-        $this->_config = $config;
+        $this->_typeFactory = $typeFactory;
     }
 
     /**
@@ -44,12 +50,9 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function setType(TypeInterface $type)
+    public function setType($type)
     {
-        $this->_type = $type;
-        foreach ($type->getVocabularies() as $prefix => $uri) {
-            $this->setAttribute('xmlns:' . $prefix, $uri);
-        }
+        $this->_typename = $type;
     }
 
     /**
@@ -59,7 +62,7 @@ class Collection extends Node implements CollectionInterface
      */
     public function getType()
     {
-        return $this->_type;
+        return $this->_typename;
     }
 
     /**
@@ -97,19 +100,24 @@ class Collection extends Node implements CollectionInterface
         $this->_children = array();
         $object = $parent->getObject();
         $parentMapper = $parent->getMapper();
-        $config = $this->_type->getConfig();
-        $children = $parentMapper->getChildren($object, $config);
+        // TODO: get type from child instance
+        $type = $this->_typeFactory->getType($this->_typename);
+        foreach ($type->getVocabularies() as $prefix => $uri) {
+            $this->setAttribute('xmlns:' . $prefix, $uri);
+        }
+
+        $children = $parentMapper->getChildren($object, $type->getConfig());
 
         // create entities for children
         foreach ($children as $child) {
-            $this->_children[] = $this->_type->createWithObject($child);
+            $this->_children[] = $type->createWithObject($child);
         }
 
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
             // create an empty element to allow adding new elements to an empty editable collection
-            $mapper = $this->_type->getMapper();
-            $object = $mapper->prepareObject($this->_type, $object);
-            $entity = $this->_type->createWithObject($object);
+            $mapper = $type->getMapper();
+            $object = $mapper->prepareObject($type, $object);
+            $entity = $type->createWithObject($object);
             $entity->setAttribute('style', 'display:none');
             $this->_children[] = $entity;
         }
@@ -139,7 +147,7 @@ class Collection extends Node implements CollectionInterface
     {
         $ret = '';
         foreach ($this->_children as $child) {
-            /** @var $child \Midgard\CreatePHP\NodeInterface */
+            /** @var $child \Midgard\CreatePHP\Entity\NodeInterface */
             $ret .= $child->render();
         }
         return $ret;

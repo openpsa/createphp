@@ -23,14 +23,13 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
     private $classNames = array();
 
     /**
-     * Return the type for the specified class
+     * {@inheritDoc}
      *
-     * @param string $className
-     * @param RdfMapperInterface $mapper
+     * Build type from introspection of that class
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
+     * @api
      */
-    public function loadTypeForClass($className, RdfMapperInterface $mapper)
+    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! class_exists($className)) {
             return null;
@@ -53,6 +52,7 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
                     && $class->getMethod('set'.$candidate)->getNumberOfParameters() == 1
                     && $class->getMethod('get'.$candidate)->getNumberOfParameters() == 0
                 ) {
+                    // TODO: introspect if method is using array value => collection instead of property
                     $this->addProperty($type, lcfirst($candidate));
                 }
             }

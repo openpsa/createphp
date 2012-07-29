@@ -50,7 +50,7 @@ class Property extends Node implements PropertyInterface
      */
     public function __construct($identifier, array $config = array())
     {
-        $this->_config = $config;
+        parent::__construct($config);
         $this->_identifier = $identifier;
     }
 

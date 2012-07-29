@@ -7,8 +7,12 @@
  */
 
 namespace Midgard\CreatePHP;
+
 use Midgard\CreatePHP\Entity\Property;
 use Midgard\CreatePHP\Entity\Controller;
+
+use Midgard\CreatePHP\Metadata\RdfDriverArray;
+use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
  * Setup controllers based on a configuration array
@@ -28,12 +32,15 @@ class ArrayLoader
 
     public function getManager(RdfMapperInterface $mapper)
     {
-        $manager = new Manager($mapper);
-        $controllers = array();
-        foreach ($this->_config['controllers'] as $identifier => $config) {
-            $controllers[$identifier] = $this->_prepareController($identifier, $mapper, $config);
-        }
+        $driver = new RdfDriverArray($this->_config['types']);
+        $metadata = new RdfTypeFactory($mapper, $driver);
 
+        $manager = new Manager($mapper, $metadata);
+
+        /*
+         * TODO: collections should no longer need "the" type but the metadata
+         * so they can fetch whatever types they need.
+         *
         foreach ($this->_references as $ref_config) {
             $property_name = $ref_config['property_name'];
             $parent_id = $ref_config['identifier'];
@@ -42,9 +49,18 @@ class ArrayLoader
             $controllers[$parent_id]->$property_name->setType($controllers[$ref_id]);
         }
 
-        foreach ($controllers as $identifier => $controller) {
-            $manager->setController($identifier, $controller);
-        }
+
+                if (!empty($field_config['controller'])) {
+                    $ref_id = $field_config['controller'];
+                    $this->_references[] = array
+                    (
+                        'identifier' => $identifier,
+                        'ref_id' => $ref_id,
+                        'property_name' => $property_name,
+                    );
+                }
+
+        */
 
         if (!empty($this->_config['workflows'])) {
             foreach ($this->_config['workflows'] as $identifier => $classname) {
@@ -80,52 +96,4 @@ class ArrayLoader
         return $widget;
     }
 
-    private function _prepareController($identifier, $mapper, $config)
-    {
-        $controller = new Controller($mapper, $config);
-        $add_default_vocabulary = false;
-        if (!empty($config['properties'])) {
-            foreach ($config['properties'] as $property_name => $field_config) {
-                if (empty($field_config['nodeType'])) {
-                    $classname = 'Midgard\CreatePHP\Entity\Property';
-                } else {
-                    $classname = $field_config['nodeType'];
-                }
-                /** @var $node NodeInterface */
-                $node = new $classname($field_config, $property_name);
-
-                if ($node instanceof Property) {
-                    if (empty($field_config['attributes']['property'])) {
-                        $field_config['attributes']['property'] = 'createphp:' . $property_name;
-                        $add_default_vocabulary = true;
-                    }
-                }
-                if (!empty($field_config['controller'])) {
-                    $ref_id = $field_config['controller'];
-                    $this->_references[] = array
-                    (
-                        'identifier' => $identifier,
-                        'ref_id' => $ref_id,
-                        'property_name' => $property_name,
-                    );
-                }
-                if (!empty($field_config['attributes'])) {
-                    $node->setAttributes($field_config['attributes']);
-                }
-                $controller->$property_name = $node;
-            }
-        }
-        if (!empty($config['attributes'])) {
-            $controller->setAttributes($config['attributes']);
-        }
-        if (!empty($config['vocabularies'])) {
-            foreach ($config['vocabularies'] as $prefix => $uri) {
-                $controller->setVocabulary($prefix, $uri);
-            }
-        }
-        if ($add_default_vocabulary) {
-            $controller->setVocabulary('createphp', 'http://openpsa2.org/createphp/');
-        }
-        return $controller;
-    }
 }

@@ -56,8 +56,8 @@ class Controller extends Node implements EntityInterface
      */
     public function __construct(RdfMapperInterface $mapper, array $config = array())
     {
+        parent::__construct($config);
         $this->_mapper = $mapper;
-        $this->_config = $config;
     }
 
     /**

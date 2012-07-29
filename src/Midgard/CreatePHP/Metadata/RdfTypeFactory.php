@@ -45,7 +45,7 @@ class RdfTypeFactory
 
         // TODO: combine types from parent models...
 
-        $type = $this->driver->loadTypeForClass($className, $this->mapper);
+        $type = $this->driver->loadTypeForClass($className, $this->mapper, $this);
 
         if (! is_null($type)) {
             $this->loadedTypes[$className] = $type;

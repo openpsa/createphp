@@ -72,6 +72,11 @@ abstract class Node implements NodeInterface
      */
     protected $_is_rendering = false;
 
+    public function __construct($config)
+    {
+        $this->_config = $config;
+    }
+
     /**
      * {@inheritDoc}
      *

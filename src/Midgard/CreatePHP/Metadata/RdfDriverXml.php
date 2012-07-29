@@ -7,6 +7,7 @@ use Midgard\CreatePHP\Entity\Controller as Type;
 use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 
 /**
  * This driver loads rdf mappings from xml files
@@ -20,14 +21,17 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *      <config key="my" value="value"/>
  *      <children>
  *          <property property="dcterms:title" identifier="title" tag-name="h2"/>
- *          <collection rel="skos:related" identifier="tags" tag-name="ul"/>
+ *          <collection rel="skos:related" identifier="tags" tag-name="ul">
+ *              <config key="my" value="value"/>
+ *              <attribute key="class" value="tags"/>
+ *          </collection>
  *          <property property="sioc:content" identifier="content" />
  *      </children>
  * </type>
  *
  * @author David Buchmann <david@liip.ch>
  */
-class RdfDriverXml implements RdfDriverInterface
+class RdfDriverXml extends AbstractRdfDriver
 {
     private $directories = array();
 
@@ -47,7 +51,7 @@ class RdfDriverXml implements RdfDriverInterface
      *
      * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper)
+    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         $xml = $this->getXmlDefinition($className);
         if (null == $xml) {
@@ -59,29 +63,53 @@ class RdfDriverXml implements RdfDriverInterface
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
         }
-        $type->setRdfType($xml['typeof']);
+        if (isset($xml['typeof'])) {
+            $type->setRdfType($xml['typeof']);
+        }
         foreach($xml->children->children() as $child) {
             switch($child->getName()) {
                 case 'property':
                     $prop = new PropertyDefinition($child['identifier'], $this->getConfig($child));
-                    $prop->setAttributes(array('property' => $child['property']));
-                    if (isset($child['tag-name'])) {
-                        $prop->setTagName($child['tag-name']);
-                    }
+                    $this->parseChild($prop, $child, $child['identifier'], $add_default_vocabulary);
                     $type->$child['identifier'] = $prop;
                     break;
                 case 'collection':
-                    $col = new CollectionDefinition($child['identifier'], $this->getConfig($child));
-                    $col->setAttributes(array('rel' => $child['rel']));
-                    if (isset($child['tag-name'])) {
-                        $col->setTagName($child['tag-name']);
-                    }
+                    $col = new CollectionDefinition($child['identifier'], $typeFactory, $this->getConfig($child));
+                    $this->parseChild($col, $child, $child['identifier'], $add_default_vocabulary);
                     $type->$child['identifier'] = $col;
                     break;
             }
         }
 
         return $type;
+    }
+
+    /**
+     * Build the attributes from the property|rel field and any custom attributes
+     *
+     * @param \ArrayAccess $child the child to read field from
+     * @param string $field the field to be read, property for properties, rel for collections
+     * @param string $identifier to be used in case there is no property field in $child
+     * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
+     *      the default namespace.
+     *
+     * @return array properties
+     */
+    protected function parseChild($prop, $child, $identifier, &$add_default_vocabulary)
+    {
+        $type = $prop instanceof PropertyDefinitionInterface ? 'property' : 'rel';
+        $attributes = array(
+            $type => $this->buildInformation($child, $identifier, $type, $add_default_vocabulary)
+        );
+        if (isset($child->attribute)) {
+            foreach ($child->attribute as $attribute) {
+                $attributes[(string)$attribute['key']] = (string)$attribute['value'];
+            }
+        }
+        $prop->setAttributes($attributes);
+        if (isset($child['tag-name'])) {
+            $prop->setTagName($child['tag-name']);
+        }
     }
 
     /**
@@ -101,8 +129,12 @@ class RdfDriverXml implements RdfDriverInterface
     }
 
     /**
+     * Load the xml information from the file system, if a matching file is
+     * found in any of the configured directories.
+     *
      * @param $className
-     * @return \SimpleXMLElement
+     *
+     * @return \SimpleXMLElement|null the definition or null if none found
      */
     protected  function getXmlDefinition($className)
     {
@@ -115,6 +147,13 @@ class RdfDriverXml implements RdfDriverInterface
         return null;
     }
 
+    /**
+     * Determine the filename from the class name
+     *
+     * @param string $className the fully namespaced class name
+     *
+     * @return string the filename for which to look
+     */
     protected function buildFileName($className)
     {
         return str_replace('\\', '.', $className) . '.xml';

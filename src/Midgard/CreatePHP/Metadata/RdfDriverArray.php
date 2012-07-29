@@ -7,6 +7,7 @@ use Midgard\CreatePHP\Entity\Controller as Type;
 use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 
 /**
  * This driver is injected an array of rdf mapping definitions
@@ -45,7 +46,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *
  * @author David Buchmann <david@liip.ch>
  */
-class RdfDriverArray implements RdfDriverInterface
+class RdfDriverArray extends AbstractRdfDriver
 {
     private $definitions = array();
 
@@ -65,7 +66,7 @@ class RdfDriverArray implements RdfDriverInterface
      *
      * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper)
+    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! isset($this->definitions[$className])) {
             return null;
@@ -74,32 +75,77 @@ class RdfDriverArray implements RdfDriverInterface
         $definition = $this->definitions[$className];
         $type = new Type($mapper, $this->getConfig($definition));
 
-        foreach ($definition['vocabularies'] as $prefix => $uri) {
-            $type->setVocabulary($prefix, $uri);
+        if (isset($definition['vocabularies'])) {
+            foreach ($definition['vocabularies'] as $prefix => $uri) {
+                $type->setVocabulary($prefix, $uri);
+            }
         }
-        $type->setRdfType($definition['typeof']);
+        if (isset($definition['attributes'])) {
+            $type->setAttributes($definition['attributes']);
+        }
+        if (isset($definition['typeof'])) {
+            $type->setRdfType($definition['typeof']);
+        }
+        $add_default_vocabulary = false;
         foreach($definition['children'] as $identifier => $child) {
+            if (! isset($child['type'])) {
+                throw new \Exception("Child $identifier is missing the type key");
+            }
             switch($child['type']) {
                 case 'property':
                     $prop = new PropertyDefinition($identifier, $this->getConfig($child));
-                    $prop->setAttributes(array('property' => $child['property']));
-                    if (isset($child['tag-name'])) {
-                        $prop->setTagName($child['tag-name']);
-                    }
+                    $this->parseChild($prop, $child, $identifier, $add_default_vocabulary);
                     $type->$identifier = $prop;
                     break;
                 case 'collection':
-                    $col = new CollectionDefinition($identifier, $this->getConfig($child));
-                    $col->setAttributes(array('rel' => $child['rel']));
-                    if (isset($child['tag-name'])) {
-                        $col->setTagName($child['tag-name']);
+                    $col = new CollectionDefinition($identifier, $typeFactory, $this->getConfig($child));
+                    $this->parseChild($col, $child, $identifier, $add_default_vocabulary);
+                    if (isset($child['controller'])) {
+                        $col->setType($child['controller']);
                     }
                     $type->$identifier = $col;
                     break;
             }
         }
 
+
+        if (!empty($config['vocabularies'])) {
+            foreach ($config['vocabularies'] as $prefix => $uri) {
+                $type->setVocabulary($prefix, $uri);
+            }
+        }
+        if ($add_default_vocabulary) {
+            $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
+        }
+
+
         return $type;
+    }
+
+    /**
+     * Build the attributes from the property|rel field and any custom attributes
+     *
+     * @param \ArrayAccess $child the child to read field from
+     * @param string $field the field to be read, property for properties, rel for collections
+     * @param string $identifier to be used in case there is no property field in $child
+     * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
+     *      the default namespace.
+     *
+     * @return array properties
+     */
+    protected function parseChild($prop, $child, $identifier, &$add_default_vocabulary)
+    {
+        $type = $prop instanceof PropertyDefinitionInterface ? 'property' : 'rel';
+        $attributes = array(
+            $type => $this->buildInformation($child, $identifier, $type, $add_default_vocabulary)
+        );
+        if (isset($child['attributes'])) {
+            $attributes = array_merge($child['attributes'], $attributes);
+        }
+        $prop->setAttributes($attributes);
+        if (isset($child['tag-name'])) {
+            $prop->setTagName($child['tag-name']);
+        }
     }
 
     /**

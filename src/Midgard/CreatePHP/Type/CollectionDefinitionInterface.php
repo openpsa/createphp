@@ -25,9 +25,9 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator, NodeDefin
      *
      * TODO: this limits the collection to one type - we should find a way to allow mixed collections
      *
-     * @param TypeInterface $type
+     * @param string $typename
      */
-    function setType(TypeInterface $type);
+    function setType($typename);
 
     /**
      * Get the RDFa type for the items of this collection
