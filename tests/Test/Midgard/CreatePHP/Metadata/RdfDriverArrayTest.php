@@ -37,6 +37,9 @@ class RdfDriverArrayTest extends RdfDriverBase
                        "config" => array(
                            "table" => "tags",
                        ),
+                       "attributes" => array(
+                           "class" => "tags",
+                       )
                    ),
                    "content" => array(
                        "type" => "property",
@@ -51,7 +54,8 @@ class RdfDriverArrayTest extends RdfDriverBase
     public function testLoadTypeForClass()
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
-        $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper);
+        $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
+        $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
         $this->assertTestNodetype($type);
     }
@@ -59,7 +63,8 @@ class RdfDriverArrayTest extends RdfDriverBase
     public function testLoadTypeForClassNodefinition()
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
-        $type = $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper);
+        $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
+        $type = $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
         $this->assertNull($type);
     }
 
