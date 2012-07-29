@@ -13,7 +13,7 @@ namespace Midgard\CreatePHP\Type;
  *
  * @package Midgard.CreatePHP
  */
-interface PropertyDefinitionInterface
+interface PropertyDefinitionInterface extends NodeDefinitionInterface
 {
     /**
      * Create a property from this definition and the concrete value
@@ -29,18 +29,4 @@ interface PropertyDefinitionInterface
      * @return string
      */
     function getIdentifier();
-
-    /**
-     * Set the tag name to use when rendering properties of this type
-     *
-     * @param string $tag the html tag name without brackets
-     */
-    function setTagName($tag);
-
-    /**
-     * Get the current tag name of this type
-     *
-     * @return string the tag name
-     */
-    function getTagName();
 }

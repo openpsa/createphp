@@ -7,7 +7,6 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
-use Midgard\CreatePHP\Node;
 
 /**
  * Encapsulates a property node in the DOM tree.
@@ -56,9 +55,9 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Sets the value
+     * {@inheritDoc}
      *
-     * @param string $value
+     * @api
      */
     public function setValue($value)
     {
@@ -66,9 +65,9 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Value getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getValue()
     {
@@ -76,9 +75,9 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Identifier getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getIdentifier()
     {
@@ -88,6 +87,10 @@ class Property extends Node implements PropertyInterface
     /**
      * Render the property's opening tag (and the entity wrapper if we're in
      * standalone mode)
+     *
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function renderStart($tag_name = false)
     {
@@ -100,9 +103,13 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Render the content of the property, that is its value
      *
      * @return string the value of this property
+     *
+     * @api
      */
     public function renderContent()
     {
@@ -112,6 +119,10 @@ class Property extends Node implements PropertyInterface
     /**
      * Render the property's closing tag (and the entity wrapper's if we're in
      * standalone mode)
+     *
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function renderEnd()
     {
@@ -123,6 +134,11 @@ class Property extends Node implements PropertyInterface
         return $output;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function createWithValue($value)
     {
         $property = clone $this;

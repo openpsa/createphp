@@ -18,7 +18,7 @@ use Midgard\CreatePHP\Entity\EntityInterface;
  *
  * @package Midgard.CreatePHP
  */
-interface CollectionDefinitionInterface extends ArrayAccess, Iterator
+interface CollectionDefinitionInterface extends ArrayAccess, Iterator, NodeDefinitionInterface
 {
     /**
      * Set the RDFa type for the items of this collection
@@ -39,18 +39,6 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
     function getType();
 
     /**
-     * Get a html attribute.
-     *
-     * A collection must have rev attribute that names the attribute name that
-     * child types use to point back to the parent. i.e. dcterms:partOf
-     *
-     * @param string $key
-     *
-     * @return string the value for this attribute or null if no such attribute
-     */
-    public function getAttribute($key);
-
-    /**
      * Create a concrete collection from this definition with the children of the specified parent
      *
      * @param EntityInterface $parent
@@ -65,18 +53,4 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator
      * @return string
      */
     function getIdentifier();
-
-    /**
-     * Set the tag name to use when rendering collections of this type
-     *
-     * @param string $tag the html tag name without brackets
-     */
-    function setTagName($tag);
-
-    /**
-     * Get the current tag name of this type
-     *
-     * @return string the tag name
-     */
-    function getTagName();
 }

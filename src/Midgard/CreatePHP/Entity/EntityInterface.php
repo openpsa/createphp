@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Entity;
 
-use \Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**

@@ -6,12 +6,13 @@
  * @package Midgard.CreatePHP
  */
 
-namespace Midgard\CreatePHP;
+namespace Midgard\CreatePHP\Entity;
 
 use Midgard\CreatePHP\Entity\EntityInterface;
+use Midgard\CreatePHP\Type\NodeDefinitionInterface;
 
 /**
- * Base interface for (DOM) nodes.
+ * Base interface for the DOM-like nodes.
  *
  * Provides functionality for managing relevant aspects of the node, specifically, managing
  * attributes, parent/children relations and rendering. The latter is split into three
@@ -21,69 +22,8 @@ use Midgard\CreatePHP\Entity\EntityInterface;
  *
  * @package Midgard.CreatePHP
  */
-interface NodeInterface
+interface NodeInterface extends NodeDefinitionInterface
 {
-    /**
-     * Parent node setter
-     *
-     * @param EntityInterface $parent The parent node
-     */
-    function setParent(EntityInterface $parent);
-
-    /**
-     * Parent node getter
-     *
-     * @return NodeInterface The parent object (if any)
-     */
-    function getParent();
-
-    /**
-     * Children getter
-     *
-     * @return array of NodeInterface (if any)
-     */
-    function getChildren();
-
-    /**
-     * Adds or overwrites an html attribute
-     *
-     * @param string $key
-     * @param string $value
-     */
-    function setAttribute($key, $value);
-
-    /**
-     * Sets the attributes in the passed array, keeping
-     * attributes not mentioned in the array.
-     *
-     * @param array $attributes key => value
-     */
-    function setAttributes($attributes);
-
-    /**
-     * Get a html attribute
-     *
-     * @param string $key
-     *
-     * @return string the value for this attribute or null if no such attribute
-     */
-    public function getAttribute($key);
-
-    /**
-     * Remove an html attribute
-     *
-     * @param string $key
-     */
-    public function unsetAttribute($key);
-
-    /**
-     * Sets the template used for rendering. The template must have the placeholders
-     * __TAG_NAME__, __ATTRIBUTES__ and __CONTENT__
-     *
-     * @param string $template
-     */
-    public function setTemplate($template);
-
     /**
      * Renders everything including wrapper html tag and properties
      *

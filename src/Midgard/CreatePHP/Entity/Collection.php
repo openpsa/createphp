@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Entity;
 
-use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
@@ -40,6 +39,11 @@ class Collection extends Node implements CollectionInterface
         $this->_config = $config;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function setType(TypeInterface $type)
     {
         $this->_type = $type;
@@ -48,21 +52,31 @@ class Collection extends Node implements CollectionInterface
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function getType()
     {
         return $this->_type;
     }
 
     /**
-     * Identifier getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getIdentifier()
     {
         return $this->_identifier;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function createWithParent(EntityInterface $parent)
     {
         $collection = clone $this;
@@ -101,6 +115,38 @@ class Collection extends Node implements CollectionInterface
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function renderStart($tag_name = false)
+    {
+        // render this for admin users only
+        if (!$this->_parent->isEditable()) {
+            $this->unsetAttribute('about');
+        }
+
+        return parent::renderStart($tag_name);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function renderContent()
+    {
+        $ret = '';
+        foreach ($this->_children as $child) {
+            /** @var $child \Midgard\CreatePHP\NodeInterface */
+            $ret .= $child->render();
+        }
+        return $ret;
+    }
+
+
+    /* ----- arrayaccess and iterator implementation methods ----- */
     function rewind()
     {
         $this->_position = 0;
@@ -148,31 +194,5 @@ class Collection extends Node implements CollectionInterface
     public function offsetGet($offset)
     {
         return isset($this->_children[$offset]) ? $this->_children[$offset] : null;
-    }
-
-    /**
-     * Renders the start tag
-     *
-     * @param string $tag_name
-     * @return string
-     */
-    public function renderStart($tag_name = false)
-    {
-        // render this for admin users only
-        if (!$this->_parent->isEditable()) {
-            $this->unsetAttribute('about');
-        }
-
-        return parent::renderStart($tag_name);
-    }
-
-    public function renderContent()
-    {
-        $ret = '';
-        foreach ($this->_children as $child) {
-            /** @var $child \Midgard\CreatePHP\NodeInterface */
-            $ret .= $child->render();
-        }
-        return $ret;
     }
 }
