@@ -1,4 +1,10 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Type;
 

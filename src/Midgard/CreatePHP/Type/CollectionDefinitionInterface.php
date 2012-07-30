@@ -10,7 +10,6 @@ namespace Midgard\CreatePHP\Type;
 
 use Iterator;
 use ArrayAccess;
-use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\Entity\EntityInterface;
 
 /**

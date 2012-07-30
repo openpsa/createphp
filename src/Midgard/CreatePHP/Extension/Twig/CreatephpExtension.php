@@ -1,15 +1,23 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Extension\Twig;
 
-use Midgard\CreatePHP\NodeInterface;
+use Midgard\CreatePHP\Entity\NodeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
- * Twig Extension to integrate createphp into Twig
+ * Twig Extension to integrate createphp into Twig.
  *
- * @author David Buchmann <david@liip.ch>
+ * Provides a createphp construct and the functions createphp_attributes and createphp_content
+ *
+ * @package Midgard.CreatePHP
  */
 class CreatephpExtension extends \Twig_Extension
 {

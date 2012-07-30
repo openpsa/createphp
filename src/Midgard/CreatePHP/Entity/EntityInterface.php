@@ -14,6 +14,8 @@ use Midgard\CreatePHP\Type\TypeInterface;
  * The type holds information about a model class
  *
  * An entity is the actual instance of a type for a data entry
+ *
+ * @package Midgard.CreatePHP
  */
 interface EntityInterface extends TypeInterface, NodeInterface
 {

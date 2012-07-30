@@ -1,11 +1,21 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 
 /**
- * Credit: This metadata loading concept is inspired by the Doctrine Commons mapping loading
+ * Factory for createphp types based on class names.
+ *
+ * Credits: This metadata loading concept is inspired by the Doctrine Commons mapping loading.
+ *
+ * @package Midgard.CreatePHP
  */
 class RdfTypeFactory
 {

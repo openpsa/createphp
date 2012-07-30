@@ -1,4 +1,10 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Metadata;
 
@@ -11,12 +17,12 @@ use Midgard\CreatePHP\Type\TypeInterface;
  * model class.
  *
  * It maps public properties and names that have both a setter and a getter.
- * There is no way this driver can detect collections.
+ * This driver does not detect collections.
  *
  * This is not the recommended way to do the mapping, as you will end with
  * semantically useless RDFa mappings.
  *
- * @author David Buchmann <david@liip.ch>
+ * @package Midgard.CreatePHP
  */
 class RdfDriverFeelingLucky implements RdfDriverInterface
 {

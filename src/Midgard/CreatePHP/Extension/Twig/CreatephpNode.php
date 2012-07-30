@@ -1,9 +1,20 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Extension\Twig;
 
 use Twig_NodeInterface;
 
+/**
+ * A twig node to render the createphp tag
+ *
+ * @package Midgard.CreatePHP
+ */
 class CreatephpNode extends \Twig_Node
 {
     /**

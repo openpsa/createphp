@@ -1,9 +1,20 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
 namespace Midgard\CreatePHP\Extension\Twig;
 
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
+/**
+ * A twig token parser for the createphp tag extension.
+ *
+ * @package Midgard.CreatePHP
+ */
 class CreatephpTokenParser extends \Twig_TokenParser
 {
     private $factory;
@@ -18,7 +29,7 @@ class CreatephpTokenParser extends \Twig_TokenParser
      */
     public function __construct(RdfTypeFactory $factory)
     {
-        $this->factory    = $factory;
+        $this->factory = $factory;
     }
 
     public function parse(\Twig_Token $token)

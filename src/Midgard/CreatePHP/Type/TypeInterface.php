@@ -9,9 +9,9 @@
 namespace Midgard\CreatePHP\Type;
 
 /**
- * The type holds information about a model class
+ * The type holds information about a model class.
  *
- * An entity is the actual instance of a type for a data entry
+ * An entity is the actual instance of a type for a data entry.
  */
 interface TypeInterface extends NodeDefinitionInterface
 {
