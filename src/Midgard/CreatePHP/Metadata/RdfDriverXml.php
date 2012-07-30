@@ -14,6 +14,7 @@ use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
  * This driver loads rdf mappings from xml files
@@ -72,19 +73,18 @@ class RdfDriverXml extends AbstractRdfDriver
         if (isset($xml['typeof'])) {
             $type->setRdfType($xml['typeof']);
         }
+        $add_default_vocabulary = false;
         foreach($xml->children->children() as $child) {
-            switch($child->getName()) {
-                case 'property':
-                    $prop = new PropertyDefinition($child['identifier'], $this->getConfig($child));
-                    $this->parseChild($prop, $child, $child['identifier'], $add_default_vocabulary);
-                    $type->$child['identifier'] = $prop;
-                    break;
-                case 'collection':
-                    $col = new CollectionDefinition($child['identifier'], $typeFactory, $this->getConfig($child));
-                    $this->parseChild($col, $child, $child['identifier'], $add_default_vocabulary);
-                    $type->$child['identifier'] = $col;
-                    break;
+            $c = $this->createChild($child->getName(), $child['identifier'], $child, $typeFactory);
+            $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
+            $type->$child['identifier'] = $c;
+            if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
+                $c->setType($child['controller']);
             }
+        }
+
+        if ($add_default_vocabulary) {
+            $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
 
         return $type;
@@ -125,7 +125,7 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return array built from the config children of the element
      */
-    protected function getConfig(\SimpleXMLElement $xml)
+    protected function getConfig($xml)
     {
         $config = array();
         foreach ($xml->config as $c) {

@@ -14,6 +14,7 @@ use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
+use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
  * This driver is injected an array of rdf mapping definitions
@@ -97,29 +98,14 @@ class RdfDriverArray extends AbstractRdfDriver
             if (! isset($child['type'])) {
                 throw new \Exception("Child $identifier is missing the type key");
             }
-            switch($child['type']) {
-                case 'property':
-                    $prop = new PropertyDefinition($identifier, $this->getConfig($child));
-                    $this->parseChild($prop, $child, $identifier, $add_default_vocabulary);
-                    $type->$identifier = $prop;
-                    break;
-                case 'collection':
-                    $col = new CollectionDefinition($identifier, $typeFactory, $this->getConfig($child));
-                    $this->parseChild($col, $child, $identifier, $add_default_vocabulary);
-                    if (isset($child['controller'])) {
-                        $col->setType($child['controller']);
-                    }
-                    $type->$identifier = $col;
-                    break;
+            $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
+            $this->parseChild($c, $child, $identifier, $add_default_vocabulary);
+            if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
+                $c->setType($child['controller']);
             }
+            $type->$identifier = $c;
         }
 
-
-        if (!empty($config['vocabularies'])) {
-            foreach ($config['vocabularies'] as $prefix => $uri) {
-                $type->setVocabulary($prefix, $uri);
-            }
-        }
         if ($add_default_vocabulary) {
             $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
@@ -161,7 +147,7 @@ class RdfDriverArray extends AbstractRdfDriver
      *
      * @return array built from the config children of the element
      */
-    protected function getConfig(array $node)
+    protected function getConfig($node)
     {
         if (! isset($node['config'])) {
             return array();

@@ -56,4 +56,36 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
         }
         return $property;
     }
+
+    /**
+     * Get the config information for this element
+     *
+     * @param mixed $element the configuration element representing any kind of node to read the config from
+     *
+     * @return array of key-value mappings for configuration
+     */
+    protected abstract function getConfig($element);
+
+    /**
+     * Instantiate a type model for this kind of child element
+     *
+     * @param string $type the type information from the configuration
+     * @param mixed $element the configuration element
+     *
+     * @return \Midgard\CreatePHP\Type\NodeDefinitionInterface
+     */
+    protected function createChild($type, $identifier, $element, RdfTypeFactory $typeFactory)
+    {
+        switch($type) {
+            case 'property':
+                $child = new PropertyDefinition($identifier, $this->getConfig($element));
+                break;
+            case 'collection':
+                $child = new CollectionDefinition($identifier, $typeFactory, $this->getConfig($element));
+                break;
+            default:
+                throw new \Exception('unknown child type '.$type.' with identifier '.$identifier);
+        }
+        return $child;
+    }
 }
