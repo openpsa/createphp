@@ -2,13 +2,11 @@
 /**
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */
 
 namespace Midgard\CreatePHP\Type;
-
-use \Midgard\CreatePHP\Node;
 
 /**
  * The type holds information about a model class
@@ -91,5 +89,19 @@ interface TypeInterface extends NodeDefinitionInterface
      * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
      *      with the child definitions of this type
      */
-    function getChildren();
+    function getChildDefinitions();
+
+    /**
+     * Set the tag name to use when rendering entities of this type
+     *
+     * @param string $tag the html tag name without brackets
+     */
+    function setTagName($tag);
+
+    /**
+     * Get the current tag name of this type
+     *
+     * @return string the tag name
+     */
+    function getTagName();
 }

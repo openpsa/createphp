@@ -2,7 +2,7 @@
 /**
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */
 
@@ -67,7 +67,8 @@ interface RdfMapperInterface
      * object when storing a new entity.
      *
      * @param TypeInterface $type
-     * @param mixed $parent
+     * @param mixed $parent the parent object, if any. used for creating a
+     *      collection entry
      *
      * @return mixed the object
      */

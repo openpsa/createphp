@@ -4,7 +4,7 @@
  *
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
  * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */
 
@@ -51,11 +51,13 @@ class RestService
     }
 
     /**
+     * Method to encode links to other entities
+     *
      * @param string $value the value to encode
      *
      * @return string the value wrapped in <>
      */
-    private function jsonldEncode($value)
+    protected function jsonldEncode($value)
     {
         return "<$value>";
     }
@@ -64,7 +66,7 @@ class RestService
      *
      * @return string the value without <>
      */
-    private function jsonldDecode($value)
+    protected function jsonldDecode($value)
     {
         return trim($value, '<>');
     }
@@ -152,7 +154,7 @@ class RestService
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
-        foreach ($type->getChildren() as $node) {
+        foreach ($type->getChildDefinitions() as $node) {
             if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }
@@ -198,8 +200,8 @@ class RestService
 
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
-            if (array_key_exists($this->jsonldEncode("$expanded_name"), $new_values)) {
-                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$this->jsonldEncode("$expanded_name")]);
+            if (array_key_exists($expanded_name, $new_values)) {
+                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
             }
         }
 
@@ -224,7 +226,7 @@ class RestService
             /** @var $node PropertyInterface */
             $rdf_name = $node->getAttribute('property');
 
-            $expanded_name = $this->jsonldEncode($this->_expandPropertyName($rdf_name, $entity));
+            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $jsonld)) {
                 $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
@@ -234,6 +236,18 @@ class RestService
         return $jsonld;
     }
 
+    /**
+     * Expand a property name to use full namespace instead of short name,
+     * as used in reference fields. Additionally jsonld-encodes that link.
+     *
+     * @param string $name the name to expand, including namespace
+     * @param TypeInterface $type the type context for the vocabulary
+     *
+     * @return string the jsonld-encoded expanded name
+     *
+     * @throws \RuntimeException if the prefix is not in the vocabulary of
+     *      $type
+     */
     private function _expandPropertyName($name, TypeInterface $type)
     {
         $parts = explode(":", $name);
@@ -241,6 +255,6 @@ class RestService
         if (!isset($vocabularies[$parts[0]])) {
             throw new \RuntimeException('Undefined namespace prefix '.$parts[0]." in $name");
         }
-        return $vocabularies[$parts[0]] . $parts[1];
+        return $this->jsonldEncode($vocabularies[$parts[0]] . $parts[1]);
     }
 }

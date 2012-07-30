@@ -113,7 +113,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->type->expects($this->any())
-            ->method('getChildren')
+            ->method('getChildDefinitions')
             ->will($this->returnValue(array('title' => $this->property)))
         ;
 
