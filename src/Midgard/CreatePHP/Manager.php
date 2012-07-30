@@ -11,6 +11,7 @@
 namespace Midgard\CreatePHP;
 
 use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
  * @package Midgard.CreatePHP
@@ -18,11 +19,11 @@ use Midgard\CreatePHP\Type\TypeInterface;
 class Manager
 {
     /**
-     * Array of available controller types
+     * Factory for types
      *
-     * @var array
+     * @var RdfTypeFactory
      */
-    protected $_controllers = array();
+    protected $_metadata;
 
     /**
      * Array of available workflows
@@ -45,20 +46,10 @@ class Manager
      */
     protected $_widget;
 
-    public function __construct(RdfMapperInterface $mapper)
+    public function __construct(RdfMapperInterface $mapper, RdfTypeFactory $metadata)
     {
         $this->_mapper = $mapper;
-    }
-
-    /**
-     * Set a controller
-     *
-     * @param string $identifier
-     * @param TypeInterface $type
-     */
-    public function setController($identifier, TypeInterface $type)
-    {
-        $this->_controllers[$identifier] = $type;
+        $this->_metadata = $metadata;
     }
 
     /**
@@ -70,10 +61,10 @@ class Manager
      */
     public function getType($identifier, $object = null)
     {
-        if (!isset($this->_controllers[$identifier])) {
+        $type = $this->_metadata->getType($identifier);
+        if (null == $type) {
             return null;
         }
-        $type = $this->_controllers[$identifier];
         if (null !== $object) {
             $type = $type->createWithObject($object);
         }

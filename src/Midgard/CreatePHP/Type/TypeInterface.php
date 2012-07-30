@@ -8,14 +8,12 @@
 
 namespace Midgard\CreatePHP\Type;
 
-use \Midgard\CreatePHP\Node;
-
 /**
- * The type holds information about a model class
+ * The type holds information about a model class.
  *
- * An entity is the actual instance of a type for a data entry
+ * An entity is the actual instance of a type for a data entry.
  */
-interface TypeInterface
+interface TypeInterface extends RdfElementDefinitionInterface
 {
     /**
      * Create an entity from this type and the application domain object.
@@ -23,13 +21,6 @@ interface TypeInterface
      * @return \Midgard\CreatePHP\Entity\EntityInterface the entity of this type bound to the supplied object
      */
     function createWithObject($object);
-
-    /**
-     * Config getter
-     *
-     * @return string
-     */
-    public function getConfig();
 
     /**
      * Set a prefix to an uri to build the namespace mapping
@@ -61,20 +52,29 @@ interface TypeInterface
     function getRdfType();
 
     /**
-     * Magic getter
+     * Get the child node at this key
      *
      * @param string $key
-     * @return Node|null
+     * @return RdfElementDefinitionInterface|null
      */
     function __get($key);
 
     /**
-     * Magic setter
+     * Set child node with this key
      *
      * @param string $key
-     * @param Node $node
+     * @param RdfElementDefinitionInterface $node
      */
-    function __set($key, Node $node);
+    function __set($key, RdfElementDefinitionInterface $node);
+
+    /**
+     * Check if child with this key exists
+     *
+     * @param string $key
+     *
+     * @return boolean
+     */
+    function __isset($key);
 
     /**
      * Mapper getter

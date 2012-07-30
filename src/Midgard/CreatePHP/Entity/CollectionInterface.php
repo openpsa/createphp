@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Entity;
 
-use Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
 /**
@@ -18,6 +17,6 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
  *
  * @package Midgard.CreatePHP
  */
-interface CollectionInterface extends NodeInterface, CollectionDefinitionInterface
+interface CollectionInterface extends CollectionDefinitionInterface
 {
 }

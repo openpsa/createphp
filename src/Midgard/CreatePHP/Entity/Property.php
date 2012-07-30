@@ -7,6 +7,7 @@
  */
 
 namespace Midgard\CreatePHP\Entity;
+
 use Midgard\CreatePHP\Node;
 
 /**
@@ -44,16 +45,41 @@ class Property extends Node implements PropertyInterface
      */
     protected $_render_standalone = false;
 
-    public function __construct(array $config, $identifier)
+    /**
+     * @param string $identifier the php property name used for this property
+     * @param array $config application specific configuration to carry in this
+     *      property
+     */
+    public function __construct($identifier, array $config = array())
     {
-        $this->_config = $config;
+        parent::__construct($config);
         $this->_identifier = $identifier;
     }
 
     /**
-     * Sets the value
+     * {@inheritDoc}
      *
-     * @param string $value
+     * @api
+     */
+    public function setProperty($property)
+    {
+        $this->setAttribute('property', $property);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getProperty()
+    {
+        return $this->getAttribute('property');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function setValue($value)
     {
@@ -61,9 +87,9 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Value getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getValue()
     {
@@ -71,9 +97,9 @@ class Property extends Node implements PropertyInterface
     }
 
     /**
-     * Identifier getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getIdentifier()
     {
@@ -83,6 +109,10 @@ class Property extends Node implements PropertyInterface
     /**
      * Render the property's opening tag (and the entity wrapper if we're in
      * standalone mode)
+     *
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function renderStart($tag_name = false)
     {
@@ -94,6 +124,15 @@ class Property extends Node implements PropertyInterface
         return $output . parent::renderStart($tag_name);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * Render the content of the property, that is its value
+     *
+     * @return string the value of this property
+     *
+     * @api
+     */
     public function renderContent()
     {
         return $this->getValue();
@@ -102,6 +141,10 @@ class Property extends Node implements PropertyInterface
     /**
      * Render the property's closing tag (and the entity wrapper's if we're in
      * standalone mode)
+     *
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function renderEnd()
     {
@@ -113,6 +156,11 @@ class Property extends Node implements PropertyInterface
         return $output;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function createWithValue($value)
     {
         $property = clone $this;

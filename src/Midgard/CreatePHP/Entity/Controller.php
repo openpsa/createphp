@@ -12,6 +12,7 @@ namespace Midgard\CreatePHP\Entity;
 
 use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\Type\RdfElementDefinitionInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
@@ -51,25 +52,30 @@ class Controller extends Node implements EntityInterface
     /**
      * The constructor
      *
-     * @param RdfMapperInterface $mapper
+     * @param RdfMapperInterface $mapper the mapper to use
+     * @param array $config optional configuration values
      */
     public function __construct(RdfMapperInterface $mapper, array $config = array())
     {
+        parent::__construct($config);
         $this->_mapper = $mapper;
-        $this->_config = $config;
     }
 
     /**
-     * Get all children definitions of this type
+     * {@inheritDoc}
      *
-     * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
-     *      with the child definitions of this type
+     * @api
      */
     public function getChildDefinitions()
     {
         return $this->getChildren();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function createWithObject($object)
     {
         $entity = clone $this;
@@ -80,6 +86,8 @@ class Controller extends Node implements EntityInterface
     /**
      * Internal method to map the object. Never call this method
      * but use createWithObject on the type object.
+     *
+     * @param mixed $object the application value to set
      *
      * @private
      */
@@ -107,30 +115,51 @@ class Controller extends Node implements EntityInterface
         $this->setAttribute('about', $this->_mapper->createSubject($object));
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function setVocabulary($prefix, $uri)
     {
         $this->_vocabularies[$prefix] = $uri;
         $this->setAttribute('xmlns:' . $prefix, $uri);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function getVocabularies()
     {
         return $this->_vocabularies;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function setRdfType($type)
     {
         $this->setAttribute('typeof', $type);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function getRdfType()
     {
         return $this->getAttribute('typeof');
     }
 
     /**
-     * Object getter
+     * {@inheritDoc}
      *
-     * @return mixed
+     * @api
      */
     public function getObject()
     {
@@ -138,10 +167,9 @@ class Controller extends Node implements EntityInterface
     }
 
     /**
-     * Magic getter
+     * {@inheritDoc}
      *
-     * @param string $key
-     * @return Node
+     * @api
      */
     public function __get($key)
     {
@@ -152,47 +180,60 @@ class Controller extends Node implements EntityInterface
     }
 
     /**
-     * Magic setter
+     * {@inheritDoc}
      *
-     * @param string $key
-     * @param Node $node
+     * @api
      */
-    public function __set($key, Node $node)
+    public function __set($key, RdfElementDefinitionInterface $node)
     {
         $node->setParent($this);
         $this->_children[$key] = $node;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function __isset($key)
     {
         return isset($this->_children[$key]);
     }
 
     /**
-     * Mapper getter
+     * {@inheritDoc}
      *
-     * @return RdfMapperInterface
+     * @api
      */
     public function getMapper()
     {
         return $this->_mapper;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function setEditable($value)
     {
         $this->_editable = (bool) $value;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function isEditable()
     {
         return $this->_editable;
     }
 
     /**
-     * Renders the start tag
+     * {@inheritDoc}
      *
-     * @param string $tag_name
-     * @return string
+     * @api
      */
     public function renderStart($tag_name = false)
     {
@@ -205,6 +246,11 @@ class Controller extends Node implements EntityInterface
         return parent::renderStart($tag_name);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function renderContent()
     {
         $output = '';

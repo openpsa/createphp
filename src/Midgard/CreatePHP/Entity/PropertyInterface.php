@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Entity;
 
-use Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 
 /**
@@ -22,7 +21,7 @@ use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
  *
  * @package Midgard.CreatePHP
  */
-interface PropertyInterface extends NodeInterface, PropertyDefinitionInterface
+interface PropertyInterface extends PropertyDefinitionInterface
 {
     /**
      * Get the value of this property
