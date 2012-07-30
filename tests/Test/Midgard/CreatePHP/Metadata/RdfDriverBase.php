@@ -52,6 +52,6 @@ abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
         $this->assertEquals('skos:related', $children['tags']->getAttribute('rel'));
         $this->assertEquals('ul', $children['tags']->getTagName());
         $this->assertEquals(array('table' => 'tags'), $children['tags']->getConfig());
-        $this->assertEquals(array('rel' => 'skos:related', 'class' => 'tags'), $children['tags']->getAttributes());
+        $this->assertEquals(array('rel' => 'skos:related', 'class' => 'tags', 'rev' => 'dcterms:partOf'), $children['tags']->getAttributes());
     }
 }

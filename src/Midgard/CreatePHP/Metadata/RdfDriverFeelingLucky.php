@@ -24,7 +24,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *
  * @package Midgard.CreatePHP
  */
-class RdfDriverFeelingLucky implements RdfDriverInterface
+class RdfDriverFeelingLucky extends AbstractRdfDriver
 {
     private $classNames = array();
 
@@ -41,10 +41,13 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
             return null;
         }
 
-        $type = new Type($mapper);
+        $typenode = $this->createType($mapper, array());
+        /** @var $type TypeInterface */
+        $type = $typenode->getRdfElement();
+
         $type->setVocabulary('lucky', 'http://localhost/lucky');
         $typeof = strtr($className, '\\', '_');
-        $type->setAttribute('typeof', "lucky:$typeof");
+        $type->setRdfType('typeof', "lucky:$typeof");
 
         $class = new \ReflectionClass($className);
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -60,7 +63,7 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
                     && $class->getMethod('get'.$candidate)->getNumberOfParameters() == 0
                 ) {
                     // TODO: introspect if method is using array value => collection instead of property
-                    $this->addProperty($type, lcfirst($candidate));
+                    $this->addProperty($typeFactory, $type, lcfirst($candidate));
                 }
             }
         }
@@ -71,18 +74,23 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
                 // there was a getter and setter method for this
                 continue;
             }
-            $this->addProperty($type, $field->getName());
+            $this->addProperty($typeFactory, $type, $field->getName());
         }
 
         $this->classNames[$className] = $className;
 
-        return $type;
+        return $typenode;
     }
 
-    private function addProperty(TypeInterface $type, $propName)
+    protected function getConfig($x)
     {
-        $prop = new \Midgard\CreatePHP\Entity\Property(array(), $propName);
-        $prop->setAttributes(array('property' => "lucky:$propName"));
+        return array();
+    }
+
+    private function addProperty(RdfTypeFactory $typeFactory, TypeInterface $type, $propName)
+    {
+        $prop = $this->createChild('property', $propName, null, $typeFactory);
+        $prop->setProperty("lucky:$propName");
         $type->$propName = $prop;
     }
 

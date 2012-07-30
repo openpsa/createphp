@@ -8,6 +8,8 @@
 
 namespace Midgard\CreatePHP\Entity;
 
+use Midgard\CreatePHP\Node;
+
 /**
  * Encapsulates a property node in the DOM tree.
  *
@@ -52,6 +54,26 @@ class Property extends Node implements PropertyInterface
     {
         parent::__construct($config);
         $this->_identifier = $identifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function setProperty($property)
+    {
+        $this->setAttribute('property', $property);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getProperty()
+    {
+        return $this->getAttribute('property');
     }
 
     /**

@@ -9,6 +9,7 @@
 namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\NodeInterface;
 use Midgard\CreatePHP\Entity\Controller as Type;
 use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
@@ -51,12 +52,12 @@ class RdfDriverXml extends AbstractRdfDriver
     }
 
     /**
-     * Return the type for the specified class
+     * Return the NodeInterface wrapping a type for the specified class
      *
      * @param string $className
      * @param RdfMapperInterface $mapper
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
+     * @return \Midgard\CreatePHP\NodeInterface|null the type if found, otherwise null
      */
     function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
@@ -65,7 +66,20 @@ class RdfDriverXml extends AbstractRdfDriver
             return null;
         }
 
-        $type = new Type($mapper, $this->getConfig($xml));
+        $typenode = $this->createType($mapper, $this->getConfig($xml));
+        if (isset($xml->attribute)) {
+            $attributes = array();
+            foreach ($xml->attribute as $attribute) {
+                $attributes[(string)$attribute['key']] = (string)$attribute['value'];
+            }
+            $typenode->setAttributes($attributes);
+        }
+        if (isset($xml['tag-name'])) {
+            $typenode->setTagName($xml['tag-name']);
+        }
+
+        /** @var $type TypeInterface */
+        $type = $typenode->getRdfElement();
 
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
@@ -76,8 +90,8 @@ class RdfDriverXml extends AbstractRdfDriver
         $add_default_vocabulary = false;
         foreach($xml->children->children() as $child) {
             $c = $this->createChild($child->getName(), $child['identifier'], $child, $typeFactory);
-            $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
-            $type->$child['identifier'] = $c;
+            $this->parseChild($c->getNode(), $child, $child['identifier'], $add_default_vocabulary);
+            $type->{$child['identifier']} = $c;
             if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
                 $c->setType($child['controller']);
             }
@@ -87,12 +101,13 @@ class RdfDriverXml extends AbstractRdfDriver
             $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
 
-        return $type;
+        return $typenode;
     }
 
     /**
      * Build the attributes from the property|rel field and any custom attributes
      *
+     * @param NodeInterface $propNode the node containing the property element
      * @param \ArrayAccess $child the child to read field from
      * @param string $field the field to be read, property for properties, rel for collections
      * @param string $identifier to be used in case there is no property field in $child
@@ -101,20 +116,27 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return array properties
      */
-    protected function parseChild($prop, $child, $identifier, &$add_default_vocabulary)
+    protected function parseChild(NodeInterface $propNode, $child, $identifier, &$add_default_vocabulary)
     {
-        $type = $prop instanceof PropertyDefinitionInterface ? 'property' : 'rel';
-        $attributes = array(
-            $type => $this->buildInformation($child, $identifier, $type, $add_default_vocabulary)
-        );
+        if ($propNode->getRdfElement() instanceof PropertyDefinitionInterface) {
+            /** @var $prop PropertyDefinitionInterface */
+            $prop = $propNode->getRdfElement();
+            $prop->setProperty($this->buildInformation($child, $identifier, 'property', $add_default_vocabulary));
+        } else {
+            /** @var $col CollectionDefinitionInterface */
+            $col = $propNode->getRdfElement();
+            $col->setRel($this->buildInformation($child, $identifier, 'rel', $add_default_vocabulary));
+            $col->setRev($this->buildInformation($child, $identifier, 'rev', $add_default_vocabulary));'rel';
+        }
         if (isset($child->attribute)) {
+            $attributes = array();
             foreach ($child->attribute as $attribute) {
                 $attributes[(string)$attribute['key']] = (string)$attribute['value'];
             }
+            $propNode->setAttributes($attributes);
         }
-        $prop->setAttributes($attributes);
         if (isset($child['tag-name'])) {
-            $prop->setTagName($child['tag-name']);
+            $propNode->setTagName($child['tag-name']);
         }
     }
 

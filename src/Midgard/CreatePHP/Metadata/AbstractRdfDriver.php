@@ -48,13 +48,18 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
      */
     protected function buildInformation($child, $identifier, $field, &$add_default_vocabulary)
     {
-        if (!isset($child[$field])) {
-            $property = self::DEFAULT_VOCABULARY_PREFIX . ':' . $identifier;
-            $add_default_vocabulary = true;
-        } else {
-            $property = (string) $child[$field];
+        if (isset($child[$field])) {
+            return (string) $child[$field];
         }
-        return $property;
+        switch($field) {
+            case 'rel':
+                return 'dcterms:hasPart';
+            case 'rev':
+                return 'dcterms:partOf';
+            default:
+                $add_default_vocabulary = true;
+                return self::DEFAULT_VOCABULARY_PREFIX . ':' . $identifier;
+        }
     }
 
     /**
@@ -67,12 +72,28 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     protected abstract function getConfig($element);
 
     /**
+     * Create a NodeInterface wrapping a type instance.
+     *
+     * @param RdfMapperInterface $mapper
+     * @param array $config
+     * @return \Midgard\CreatePHP\NodeInterface
+     */
+    protected function createType(RdfMapperInterface $mapper, $config)
+    {
+        return new Type($mapper, $config);
+    }
+
+    /**
      * Instantiate a type model for this kind of child element
      *
      * @param string $type the type information from the configuration
+     * @param string $identifier the field name of this child
      * @param mixed $element the configuration element
+     * @param RdfTypeFactory $typeFactory
      *
-     * @return \Midgard\CreatePHP\Type\NodeDefinitionInterface
+     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
+     *
+     * @throws \Exception if $type is unknown
      */
     protected function createChild($type, $identifier, $element, RdfTypeFactory $typeFactory)
     {

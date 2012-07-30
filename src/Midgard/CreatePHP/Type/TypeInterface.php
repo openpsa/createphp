@@ -13,7 +13,7 @@ namespace Midgard\CreatePHP\Type;
  *
  * An entity is the actual instance of a type for a data entry.
  */
-interface TypeInterface extends NodeDefinitionInterface
+interface TypeInterface extends RdfElementDefinitionInterface
 {
     /**
      * Create an entity from this type and the application domain object.
@@ -55,7 +55,7 @@ interface TypeInterface extends NodeDefinitionInterface
      * Get the child node at this key
      *
      * @param string $key
-     * @return NodeDefinitionInterface|null
+     * @return RdfElementDefinitionInterface|null
      */
     function __get($key);
 
@@ -63,9 +63,9 @@ interface TypeInterface extends NodeDefinitionInterface
      * Set child node with this key
      *
      * @param string $key
-     * @param NodeDefinitionInterface $node
+     * @param RdfElementDefinitionInterface $node
      */
-    function __set($key, NodeDefinitionInterface $node);
+    function __set($key, RdfElementDefinitionInterface $node);
 
     /**
      * Check if child with this key exists

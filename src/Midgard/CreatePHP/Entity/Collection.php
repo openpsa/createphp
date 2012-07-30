@@ -8,6 +8,7 @@
 
 namespace Midgard\CreatePHP\Entity;
 
+use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
@@ -43,6 +44,46 @@ class Collection extends Node implements CollectionInterface
         parent::__construct($config);
         $this->_identifier = $identifier;
         $this->_typeFactory = $typeFactory;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function setRel($rel)
+    {
+        $this->setAttribute('rel', $rel);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getRel()
+    {
+        return $this->getAttribute('rel');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function setRev($rev)
+    {
+        $this->setAttribute('rev', $rev);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getRev()
+    {
+        return $this->getAttribute('rev');
     }
 
     /**
@@ -100,25 +141,31 @@ class Collection extends Node implements CollectionInterface
         $this->_children = array();
         $object = $parent->getObject();
         $parentMapper = $parent->getMapper();
-        // TODO: get type from child instance
-        $type = $this->_typeFactory->getType($this->_typename);
-        foreach ($type->getVocabularies() as $prefix => $uri) {
-            $this->setAttribute('xmlns:' . $prefix, $uri);
-        }
 
-        $children = $parentMapper->getChildren($object, $type->getConfig());
+        $children = $parentMapper->getChildren($object, $this->getConfig());
 
         // create entities for children
         foreach ($children as $child) {
+            if (empty($this->_typename)) {
+                $type = $this->_typeFactory->getType(get_class($child));
+            } else {
+                $type = $this->_typeFactory->getType($this->_typename);
+            }
+
+            foreach ($type->getVocabularies() as $prefix => $uri) {
+                $this->setAttribute('xmlns:' . $prefix, $uri);
+            }
+
             $this->_children[] = $type->createWithObject($child);
         }
 
-        if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0) {
+        if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0 && !empty($this->_typename)) {
             // create an empty element to allow adding new elements to an empty editable collection
+            $type = $this->_typeFactory->getType($this->_typename);
             $mapper = $type->getMapper();
             $object = $mapper->prepareObject($type, $object);
             $entity = $type->createWithObject($object);
-            $entity->setAttribute('style', 'display:none');
+            $entity->getNode()->setAttribute('style', 'display:none');
             $this->_children[] = $entity;
         }
     }

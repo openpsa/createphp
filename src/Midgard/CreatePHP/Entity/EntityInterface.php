@@ -17,7 +17,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  *
  * @package Midgard.CreatePHP
  */
-interface EntityInterface extends TypeInterface, NodeInterface
+interface EntityInterface extends TypeInterface
 {
     /**
      * Get the data object of this entity

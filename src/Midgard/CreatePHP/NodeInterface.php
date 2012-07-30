@@ -6,47 +6,43 @@
  * @package Midgard.CreatePHP
  */
 
-namespace Midgard\CreatePHP\Type;
+namespace Midgard\CreatePHP;
 
 /**
- * Common base interface for all type definitions
+ * This is a dom-node like class to handle rendering rdf elements
  *
  * @package Midgard.CreatePHP
  */
 
-interface NodeDefinitionInterface
+interface NodeInterface
 {
+    /**
+     * Get the rdf element represented by this node
+     *
+     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
+     */
+    function getRdfElement();
+
     /**
      * Parent node setter
      *
-     * @param TypeInterface $parent The parent node
+     * @param NodeInterface $parent The parent node
      */
-    function setParent(TypeInterface $parent);
+    function setParent(NodeInterface $parent);
 
     /**
      * Parent node getter
      *
-     * @return NodeDefinitionInterface The parent object (if any)
+     * @return NodeInterface The parent object (if any)
      */
     function getParent();
 
     /**
      * Children getter
      *
-     * @return array of NodeDefinitionInterface (if any)
+     * @return array of NodeInterface (if any)
      */
     function getChildren();
-
-    /**
-     * Get client configuration array.
-     *
-     * This can be used to transport application specific information (table
-     * names, mappings etc) with the type information. It is typically set
-     * in the constructor of type classes.
-     *
-     * @return array with client configuration
-     */
-    function getConfig();
 
     /**
      * Set the tag name to use when rendering properties of this type
@@ -114,4 +110,53 @@ interface NodeDefinitionInterface
      */
     function unsetAttribute($key);
 
+    /**
+     * Renders everything including wrapper html tag and properties
+     *
+     * If you want more control over the generated HTML, call renderStart,
+     * renderContent and renderEnd separately
+     *
+     * @param string $tag_name
+     *
+     * @return string the rendered html
+     */
+    public function render($tag_name = false);
+
+    /**
+     * Renders introduction part for this node
+     *
+     * @param string $tag_name set to a string to overwrite what html tag should be written
+     *
+     * @return string the rendered html
+     */
+    function renderStart($tag_name = false);
+
+    /**
+     * Render the content of this node, including its children if applicable
+     *
+     * @return string the rendered html
+     */
+    function renderContent();
+
+    /**
+     * Render tail part for this node
+     *
+     * @return string the rendered html
+     */
+    public function renderEnd();
+
+    /**
+     * Render just the attributes. This is not needed if you use
+     * renderStart()
+     *
+     * @return string the rendered attributes
+     */
+    function renderAttributes();
+
+    /**
+     * Has to return the same as self::render()
+     *
+     * @return string
+     */
+    public function __toString();
 }

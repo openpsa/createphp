@@ -10,8 +10,9 @@
 
 namespace Midgard\CreatePHP\Entity;
 
+use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\RdfMapperInterface;
-use Midgard\CreatePHP\Type\NodeDefinitionInterface;
+use Midgard\CreatePHP\Type\RdfElementDefinitionInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
@@ -183,7 +184,7 @@ class Controller extends Node implements EntityInterface
      *
      * @api
      */
-    public function __set($key, NodeDefinitionInterface $node)
+    public function __set($key, RdfElementDefinitionInterface $node)
     {
         $node->setParent($this);
         $this->_children[$key] = $node;

@@ -6,7 +6,7 @@
  * @package Midgard.CreatePHP
  */
 
-namespace Midgard\CreatePHP\Entity;
+namespace Midgard\CreatePHP;
 
 use Midgard\CreatePHP\Type\TypeInterface;
 
@@ -47,7 +47,7 @@ abstract class Node implements NodeInterface
     /**
      * The parent node
      *
-     * @var EntityInterface
+     * @var \Midgard\CreatePHP\Entity\EntityInterface
      */
     protected $_parent;
 
@@ -78,13 +78,40 @@ abstract class Node implements NodeInterface
     }
 
     /**
+     * We are node and an rdf type at the same time
+     *
+     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
+     *
+     * @api
+     */
+    public function getRdfElement()
+    {
+        return $this;
+    }
+
+    /**
+     * We are node and an rdf type at the same time
+     *
+     * @return NodeInterface
+     */
+    public function getNode()
+    {
+        return $this;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @api
      */
-    public function setParent(TypeInterface $parent)
+    public function setParent(NodeInterface $parent)
     {
         $this->_parent = $parent;
+    }
+
+    public function setParentType(TypeInterface $type)
+    {
+        $this->setParent($type);
     }
 
     /**
@@ -95,6 +122,11 @@ abstract class Node implements NodeInterface
     public function getParent()
     {
         return $this->_parent;
+    }
+
+    public function getParentType()
+    {
+        return $this->getParent();
     }
 
     /**
