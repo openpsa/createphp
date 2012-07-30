@@ -119,7 +119,9 @@ class RdfDriverXml extends AbstractRdfDriver
     }
 
     /**
-     * Get the configuration from <config key="x" value="y"/> elements.
+     * {@inheritDoc}
+     *
+     * For XML, we get the configuration from <config key="x" value="y"/> elements.
      *
      * @param \SimpleXMLElement $xml the element maybe having config children
      *

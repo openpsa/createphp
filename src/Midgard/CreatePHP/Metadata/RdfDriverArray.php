@@ -141,11 +141,14 @@ class RdfDriverArray extends AbstractRdfDriver
     }
 
     /**
-     * Get the configuration from <config key="x" value="y"/> elements.
+     * {@inheritDoc}
      *
-     * @param \SimpleXMLElement $xml the element maybe having config children
+     * For arrays, the node definition may have a 'config' child containing an
+     * array. If it exists, we return that array.
      *
-     * @return array built from the config children of the element
+     * @param array $xml the element maybe having config children
+     *
+     * @return array the 'config' child of this node
      */
     protected function getConfig($node)
     {
