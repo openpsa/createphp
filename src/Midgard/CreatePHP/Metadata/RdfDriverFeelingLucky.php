@@ -42,8 +42,9 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
         }
 
         $type = new Type($mapper);
-        $type->setVocabulary('local', 'http://localhost/');
-        $type->setAttribute('typeof', 'local:lucky');
+        $type->setVocabulary('lucky', 'http://localhost/lucky');
+        $typeof = strtr($className, '\\', '_');
+        $type->setAttribute('typeof', "lucky:$typeof");
 
         $class = new \ReflectionClass($className);
         $methods = $class->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -66,6 +67,10 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
 
         $fields = $class->getProperties(\ReflectionProperty::IS_PUBLIC);
         foreach ($fields as $field) {
+            if (isset($type->{$field->getName()})) {
+                // there was a getter and setter method for this
+                continue;
+            }
             $this->addProperty($type, $field->getName());
         }
 
@@ -76,10 +81,8 @@ class RdfDriverFeelingLucky implements RdfDriverInterface
 
     private function addProperty(TypeInterface $type, $propName)
     {
-// TODO: no cheating!
-if ($propName != 'title' && $propName != 'content') return;
         $prop = new \Midgard\CreatePHP\Entity\Property(array(), $propName);
-        $prop->setAttributes(array('property' => "local:$propName"));
+        $prop->setAttributes(array('property' => "lucky:$propName"));
         $type->$propName = $prop;
     }
 
