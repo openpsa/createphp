@@ -22,16 +22,6 @@ use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
  */
 abstract class AbstractRdfDriver implements RdfDriverInterface
 {
-    private $definitions = array();
-
-    /**
-     * @param array $definitions array of type definitions
-     */
-    public function __construct($definitions)
-    {
-        $this->definitions = $definitions;
-    }
-
     /**
      * Build the property attribute from this child definition. The identifier is
      * used in case there is no property defined on the child - in which case the
