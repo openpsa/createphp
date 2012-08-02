@@ -5,6 +5,8 @@ This is a small standalone library designed to make it easier to integrate [Crea
 into existing PHP applications/frameworks. You can see a live demonstration of an integration
 with the MidCOM framework under http://demo.contentcontrol-berlin.de
 
+[![Build Status](https://secure.travis-ci.org/flack/createphp.png?branch=master)](http://travis-ci.org/flack/createphp)
+
 Usage
 -----
 
