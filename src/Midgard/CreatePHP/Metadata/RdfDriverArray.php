@@ -72,7 +72,7 @@ class RdfDriverArray extends AbstractRdfDriver
      * @param string $className
      * @param RdfMapperInterface $mapper
      *
-     * @return \Midgard\CreatePHP\NodeInterface|null the type if found, otherwise null
+     * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
      */
     function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
@@ -82,16 +82,15 @@ class RdfDriverArray extends AbstractRdfDriver
 
         $definition = $this->definitions[$className];
 
-        $typenode = $this->createType($mapper, $this->getConfig($definition));
-        if (isset($definition['attributes'])) {
-            $typenode->setAttributes($definition['attributes']);
+        $type = $this->createType($mapper, $this->getConfig($definition));
+        if ($type instanceof NodeInterface) {
+            if (isset($definition['attributes'])) {
+                $type->setAttributes($definition['attributes']);
+            }
+            if (isset($definition['tag-name'])) {
+                $type->setTagName($definition['tag-name']);
+            }
         }
-        if (isset($definition['tag-name'])) {
-            $typenode->setTagName($definition['tag-name']);
-        }
-
-        /** @var $type TypeInterface */
-        $type = $typenode->getRdfElement();
 
         if (isset($definition['vocabularies'])) {
             foreach ($definition['vocabularies'] as $prefix => $uri) {
@@ -107,7 +106,7 @@ class RdfDriverArray extends AbstractRdfDriver
                 throw new \Exception("Child $identifier is missing the type key");
             }
             $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
-            $this->parseChild($c->getNode(), $child, $identifier, $add_default_vocabulary);
+            $this->parseChild($c, $child, $identifier, $add_default_vocabulary);
             if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
                 $c->setType($child['controller']);
             }
@@ -119,14 +118,14 @@ class RdfDriverArray extends AbstractRdfDriver
         }
 
 
-        return $typenode;
+        return $type;
     }
 
     /**
      * Build the attributes from the property|rel field and any custom attributes
      *
-     * @param NodeInterface $propNode the node containing the property element
-     * @param \ArrayAccess $child the child to read field from
+     * @param mixed $child the child element to parse
+     * @param \ArrayAccess $childData the child to read field from
      * @param string $field the field to be read, property for properties, rel for collections
      * @param string $identifier to be used in case there is no property field in $child
      * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
@@ -134,24 +133,25 @@ class RdfDriverArray extends AbstractRdfDriver
      *
      * @return array properties
      */
-    protected function parseChild(NodeInterface $propNode, $child, $identifier, &$add_default_vocabulary)
+    protected function parseChild($child, $childData, $identifier, &$add_default_vocabulary)
     {
-        if ($propNode->getRdfElement() instanceof PropertyDefinitionInterface) {
-            /** @var $prop PropertyDefinitionInterface */
-            $prop = $propNode->getRdfElement();
-            $prop->setProperty($this->buildInformation($child, $identifier, 'property', $add_default_vocabulary));
-        } else {
-            /** @var $col CollectionDefinitionInterface */
-            $col = $propNode->getRdfElement();
-            $col->setRel($this->buildInformation($child, $identifier, 'rel', $add_default_vocabulary));
-            $col->setRev($this->buildInformation($child, $identifier, 'rev', $add_default_vocabulary));'rel';
+        if ($child instanceof PropertyDefinitionInterface) {
+            /** @var $child PropertyDefinitionInterface */
+            $child->setProperty($this->buildInformation($childData, $identifier, 'property', $add_default_vocabulary));
+        } elseif ($child instanceof CollectionDefinitionInterface) {
+            /** @var $child CollectionDefinitionInterface */
+            $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
+            $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));'rel';
         }
 
-        if (isset($child['attributes'])) {
-            $propNode->setAttributes($child['attributes']);
-        }
-        if (isset($child['tag-name'])) {
-            $propNode->setTagName($child['tag-name']);
+        if ($child instanceof NodeInterface) {
+            /** @var $child NodeInterface */
+            if (isset($childData['attributes'])) {
+                $child->setAttributes($childData['attributes']);
+            }
+            if (isset($childData['tag-name'])) {
+                $child->setTagName($childData['tag-name']);
+            }
         }
     }
 

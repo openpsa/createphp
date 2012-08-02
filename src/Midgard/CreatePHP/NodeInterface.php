@@ -17,13 +17,6 @@ namespace Midgard\CreatePHP;
 interface NodeInterface
 {
     /**
-     * Get the rdf element represented by this node
-     *
-     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
-     */
-    function getRdfElement();
-
-    /**
      * Parent node setter
      *
      * @param NodeInterface $parent The parent node

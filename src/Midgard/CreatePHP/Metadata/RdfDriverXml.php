@@ -66,20 +66,20 @@ class RdfDriverXml extends AbstractRdfDriver
             return null;
         }
 
-        $typenode = $this->createType($mapper, $this->getConfig($xml));
-        if (isset($xml->attribute)) {
-            $attributes = array();
-            foreach ($xml->attribute as $attribute) {
-                $attributes[(string)$attribute['key']] = (string)$attribute['value'];
-            }
-            $typenode->setAttributes($attributes);
-        }
-        if (isset($xml['tag-name'])) {
-            $typenode->setTagName($xml['tag-name']);
-        }
+        $type = $this->createType($mapper, $this->getConfig($xml));
 
-        /** @var $type TypeInterface */
-        $type = $typenode->getRdfElement();
+        if ($type instanceof NodeInterface) {
+            if (isset($xml->attribute)) {
+                $attributes = array();
+                foreach ($xml->attribute as $attribute) {
+                    $attributes[(string)$attribute['key']] = (string)$attribute['value'];
+                }
+                $type->setAttributes($attributes);
+            }
+            if (isset($xml['tag-name'])) {
+                $type->setTagName($xml['tag-name']);
+            }
+        }
 
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
             $type->setVocabulary($prefix, $uri);
@@ -90,7 +90,7 @@ class RdfDriverXml extends AbstractRdfDriver
         $add_default_vocabulary = false;
         foreach($xml->children->children() as $child) {
             $c = $this->createChild($child->getName(), $child['identifier'], $child, $typeFactory);
-            $this->parseChild($c->getNode(), $child, $child['identifier'], $add_default_vocabulary);
+            $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
             $type->{$child['identifier']} = $c;
             if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
                 $c->setType($child['controller']);
@@ -101,14 +101,14 @@ class RdfDriverXml extends AbstractRdfDriver
             $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
 
-        return $typenode;
+        return $type;
     }
 
     /**
      * Build the attributes from the property|rel field and any custom attributes
      *
-     * @param NodeInterface $propNode the node containing the property element
-     * @param \ArrayAccess $child the child to read field from
+     * @param mixed $child a property definition, collection definition or node
+     * @param \ArrayAccess $childData the child to read field from
      * @param string $field the field to be read, property for properties, rel for collections
      * @param string $identifier to be used in case there is no property field in $child
      * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
@@ -116,27 +116,28 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return array properties
      */
-    protected function parseChild(NodeInterface $propNode, $child, $identifier, &$add_default_vocabulary)
+    protected function parseChild($child, $childData, $identifier, &$add_default_vocabulary)
     {
-        if ($propNode->getRdfElement() instanceof PropertyDefinitionInterface) {
-            /** @var $prop PropertyDefinitionInterface */
-            $prop = $propNode->getRdfElement();
-            $prop->setProperty($this->buildInformation($child, $identifier, 'property', $add_default_vocabulary));
+        if ($child instanceof PropertyDefinitionInterface) {
+            /** @var $child PropertyDefinitionInterface */
+            $child->setProperty($this->buildInformation($childData, $identifier, 'property', $add_default_vocabulary));
         } else {
-            /** @var $col CollectionDefinitionInterface */
-            $col = $propNode->getRdfElement();
-            $col->setRel($this->buildInformation($child, $identifier, 'rel', $add_default_vocabulary));
-            $col->setRev($this->buildInformation($child, $identifier, 'rev', $add_default_vocabulary));'rel';
+            /** @var $child CollectionDefinitionInterface */
+            $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
+            $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
         }
-        if (isset($child->attribute)) {
-            $attributes = array();
-            foreach ($child->attribute as $attribute) {
-                $attributes[(string)$attribute['key']] = (string)$attribute['value'];
+        if ($child instanceof NodeInterface) {
+            /** @var $child NodeInterface */
+            if (isset($childData->attribute)) {
+                $attributes = array();
+                foreach ($childData->attribute as $attribute) {
+                    $attributes[(string)$attribute['key']] = (string)$attribute['value'];
+                }
+                $child->setAttributes($attributes);
             }
-            $propNode->setAttributes($attributes);
-        }
-        if (isset($child['tag-name'])) {
-            $propNode->setTagName($child['tag-name']);
+            if (isset($childData['tag-name'])) {
+                $child->setTagName($childData['tag-name']);
+            }
         }
     }
 
@@ -196,6 +197,6 @@ class RdfDriverXml extends AbstractRdfDriver
      */
     function getAllClassNames()
     {
-        //TODO
+        //TODO loop through all provided paths and convert filenames back to class names
     }
 }

@@ -72,11 +72,12 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     protected abstract function getConfig($element);
 
     /**
-     * Create a NodeInterface wrapping a type instance.
+     * Create a type instance.
      *
      * @param RdfMapperInterface $mapper
-     * @param array $config
-     * @return \Midgard\CreatePHP\NodeInterface
+     * @param array $config the configuration array to put into that type
+     *
+     * @return \Midgard\CreatePHP\Type\TypeInterface
      */
     protected function createType(RdfMapperInterface $mapper, $config)
     {
@@ -86,7 +87,7 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     /**
      * Instantiate a type model for this kind of child element
      *
-     * @param string $type the type information from the configuration
+     * @param string $kind the type information from the configuration
      * @param string $identifier the field name of this child
      * @param mixed $element the configuration element
      * @param RdfTypeFactory $typeFactory
@@ -95,18 +96,18 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
      *
      * @throws \Exception if $type is unknown
      */
-    protected function createChild($type, $identifier, $element, RdfTypeFactory $typeFactory)
+    protected function createChild($kind, $identifier, $element, RdfTypeFactory $typeFactory)
     {
-        switch($type) {
+        switch($kind) {
             case 'property':
-                $child = new PropertyDefinition($identifier, $this->getConfig($element));
+                $kind = new PropertyDefinition($identifier, $this->getConfig($element));
                 break;
             case 'collection':
-                $child = new CollectionDefinition($identifier, $typeFactory, $this->getConfig($element));
+                $kind = new CollectionDefinition($identifier, $typeFactory, $this->getConfig($element));
                 break;
             default:
-                throw new \Exception('unknown child type '.$type.' with identifier '.$identifier);
+                throw new \Exception('unknown kind of child '.$kind.' with identifier '.$identifier);
         }
-        return $child;
+        return $kind;
     }
 }
