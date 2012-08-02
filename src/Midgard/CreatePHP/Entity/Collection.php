@@ -142,7 +142,7 @@ class Collection extends Node implements CollectionInterface
         $object = $parent->getObject();
         $parentMapper = $parent->getMapper();
 
-        $children = $parentMapper->getChildren($object, $this->getConfig());
+        $children = $parentMapper->getChildren($object, $this);
 
         // create entities for children
         foreach ($children as $child) {
