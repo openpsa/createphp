@@ -8,7 +8,7 @@
 
 namespace Midgard\CreatePHP;
 
-use Midgard\CreatePHP\Entity\EntityInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Baseclass for (DOM) nodes.
@@ -47,7 +47,7 @@ abstract class Node implements NodeInterface
     /**
      * The parent node
      *
-     * @var EntityInterface
+     * @var \Midgard\CreatePHP\Entity\EntityInterface
      */
     protected $_parent;
 
@@ -72,30 +72,67 @@ abstract class Node implements NodeInterface
      */
     protected $_is_rendering = false;
 
+    public function __construct($config)
+    {
+        $this->_config = $config;
+    }
+
     /**
-     * Parent node setter
+     * We are node and an rdf type at the same time
      *
-     * @var node $parent The parent object
+     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
+     *
+     * @api
      */
-    public function setParent(EntityInterface $parent)
+    public function getRdfElement()
+    {
+        return $this;
+    }
+
+    /**
+     * We are node and an rdf type at the same time
+     *
+     * @return NodeInterface
+     */
+    public function getNode()
+    {
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function setParent(NodeInterface $parent)
     {
         $this->_parent = $parent;
     }
 
+    public function setParentType(TypeInterface $type)
+    {
+        $this->setParent($type);
+    }
+
     /**
-     * Parent node getter
+     * {@inheritDoc}
      *
-     * @return node The parent object (if any)
+     * @api
      */
     public function getParent()
     {
         return $this->_parent;
     }
 
+    public function getParentType()
+    {
+        return $this->getParent();
+    }
+
     /**
-     * Children getter
+     * {@inheritDoc}
      *
-     * @return array The child nodes (if any)
+     * @api
      */
     public function getChildren()
     {
@@ -108,9 +145,9 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Config getter
+     * {@inheritDoc}
      *
-     * @return string
+     * @api
      */
     public function getConfig()
     {
@@ -118,10 +155,9 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Adds an additional attribute
+     * {@inheritDoc}
      *
-     * @param string $key
-     * @param string $value
+     * @api
      */
     public function setAttribute($key, $value)
     {
@@ -129,9 +165,9 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Sets multiple attributes at once
+     * {@inheritDoc}
      *
-     * @param array $attributes
+     * @api
      */
     public function setAttributes($attributes)
     {
@@ -141,9 +177,9 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Get an attribute
+     * {@inheritDoc}
      *
-     * @param string $key
+     * @api
      */
     public function getAttribute($key)
     {
@@ -154,9 +190,19 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Remove an attribute
+     * {@inheritDoc}
      *
-     * @param string $key
+     * @api
+     */
+    public function getAttributes()
+    {
+        return $this->_attributes;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
      */
     public function unsetAttribute($key)
     {
@@ -166,29 +212,39 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Sets the template
+     * {@inheritDoc}
      *
-     * @param string $template
+     * @api
      */
     public function setTemplate($template)
     {
         $this->_template = $template;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function setTagName($tag)
     {
         $this->_tag_name = $tag;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function getTagName()
     {
         return $this->_tag_name;
     }
 
     /**
-     * Renders the element
+     * {@inheritDoc}
      *
-     * @param string $tag_name
+     * @api
      */
     public function renderStart($tag_name = false)
     {
@@ -209,10 +265,9 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * Renders everything including wrapper html tag and properties
+     * {@inheritDoc}
      *
-     * @param string $tag_name
-     * @return string
+     * @api
      */
     public function render($tag_name = false)
     {
@@ -224,6 +279,11 @@ abstract class Node implements NodeInterface
         return $output;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function renderAttributes()
     {
         // add additional attributes
@@ -237,6 +297,11 @@ abstract class Node implements NodeInterface
         return $attributes;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function renderEnd()
     {
         $template = explode('__CONTENT__', $this->_template);
@@ -250,6 +315,11 @@ abstract class Node implements NodeInterface
         return strtr($template, $replace);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
     public function __toString()
     {
         return $this->render();

@@ -11,14 +11,15 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
     {
         $config = array
         (
-            'controllers' => array
+            'types' => array
             (
                 'test1' => array
                 (
-                    'properties' => array
+                    'children' => array
                     (
                         'test1' => array
                         (
+                            'type' => 'property',
                             'attributes' => array
                             (
                                 'class' => 'test_prop'
@@ -32,28 +33,28 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new ArrayLoader($config);
         $manager = $loader->getManager($mapper);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Manager', $manager);
-        $controller = $manager->getType('test1');
-        $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Controller', $controller);
-        $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Property', $controller->test1);
-        $this->assertEquals($mapper, $controller->getMapper());
-        $this->assertEquals(array('createphp' => 'http://openpsa2.org/createphp/'), $controller->getVocabularies());
-        $this->assertEquals('test_prop', $controller->test1->getAttribute('class'));
-        $this->assertEquals('createphp:test1', $controller->test1->getAttribute('property'));
+        $type = $manager->getType('test1');
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $type);
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $type->test1);
+        $this->assertEquals($mapper, $type->getMapper());
+        $this->assertEquals(array('createphp' => 'http://openpsa2.org/createphp/'), $type->getVocabularies());
+        $this->assertEquals('test_prop', $type->test1->getAttribute('class'));
+        $this->assertEquals('createphp:test1', $type->test1->getAttribute('property'));
     }
 
     public function test_collection_property()
     {
         $config = array
         (
-            'controllers' => array
+            'types' => array
             (
                 'test1' => array
                 (
-                    'properties' => array
+                    'children' => array
                     (
                         'test1' => array
                         (
-                            'nodeType' => 'Midgard\\CreatePHP\\Entity\\Collection',
+                            'type' => 'collection',
                             'controller' => 'test2',
                             'attributes' => array
                             (
@@ -64,10 +65,11 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
                 ),
                 'test2' => array
                 (
-                    'properties' => array
+                    'children' => array
                     (
                         'test1' => array
                         (
+                            'type' => 'property',
                             'attributes' => array
                             (
                                 'class' => 'test_prop'
@@ -81,18 +83,20 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $mapper = new MockMapper;
         $loader = new ArrayLoader($config);
         $manager = $loader->getManager($mapper);
-        $controller = $manager->getType('test1');
-        $child_controller = $manager->getType('test2');
-        $this->assertEquals($child_controller, $controller->test1->getType());
-        $this->assertInstanceOf('Midgard\\CreatePHP\\Entity\\Collection', $controller->test1);
-
+        $type = $manager->getType('test1');
+        $child_type = $manager->getType('test2');
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $type);
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $child_type);
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $child_type->test1);
+        $this->assertEquals('test2', $type->test1->getType());
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $type->test1);
     }
 
     public function test_workflows()
     {
         $config = array
         (
-            'controllers' => array(),
+            'types' => array(),
             'workflows' => array
             (
                 'mock' => 'Midgard\\CreatePHP\\tests\\MockWorkflow'

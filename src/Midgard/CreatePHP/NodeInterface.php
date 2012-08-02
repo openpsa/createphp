@@ -1,34 +1,34 @@
 <?php
 /**
  * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
- * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */
 
 namespace Midgard\CreatePHP;
 
-use Midgard\CreatePHP\Entity\EntityInterface;
-
 /**
- * Base interface for (DOM) nodes.
- *
- * Provides functionality for managing relevant aspects of the node, specifically, managing
- * attributes, parent/children relations and rendering. The latter is split into three
- * different functions for maximum flexibility. So you can call render() to output the
- * complete node HTML, or you can call render_start() for the opening tag, render_content()
- * for the node's content (or children) and render_end() for the closing tag.
+ * This is a dom-node like class to handle rendering rdf elements
  *
  * @package Midgard.CreatePHP
  */
+
 interface NodeInterface
 {
     /**
+     * Get the rdf element represented by this node
+     *
+     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
+     */
+    function getRdfElement();
+
+    /**
      * Parent node setter
      *
-     * @param EntityInterface $parent The parent node
+     * @param NodeInterface $parent The parent node
      */
-    function setParent(EntityInterface $parent);
+    function setParent(NodeInterface $parent);
 
     /**
      * Parent node getter
@@ -43,6 +43,28 @@ interface NodeInterface
      * @return array of NodeInterface (if any)
      */
     function getChildren();
+
+    /**
+     * Set the tag name to use when rendering properties of this type
+     *
+     * @param string $tag the html tag name without brackets
+     */
+    function setTagName($tag);
+
+    /**
+     * Get the current tag name of this type
+     *
+     * @return string the tag name
+     */
+    function getTagName();
+
+    /**
+     * Sets the template used for rendering. The template must have the placeholders
+     * __TAG_NAME__, __ATTRIBUTES__ and __CONTENT__
+     *
+     * @param string $template
+     */
+    function setTemplate($template);
 
     /**
      * Adds or overwrites an html attribute
@@ -61,28 +83,32 @@ interface NodeInterface
     function setAttributes($attributes);
 
     /**
-     * Get a html attribute
+     * Get a html attribute.
+     *
+     * Note that a collection must have rev attribute that names the attribute name that
+     * child types use to point back to the parent. i.e. dcterms:partOf
      *
      * @param string $key
      *
      * @return string the value for this attribute or null if no such attribute
      */
-    public function getAttribute($key);
+    function getAttribute($key);
+
+    /**
+     * Get all html attributes, including the system ones like typeof, rev, property
+     *
+     * To render the attributes, you usually want to use NodeInterface::renderAttributes
+     *
+     * @return array of name => value
+     */
+    function getAttributes();
 
     /**
      * Remove an html attribute
      *
      * @param string $key
      */
-    public function unsetAttribute($key);
-
-    /**
-     * Sets the template used for rendering. The template must have the placeholders
-     * __TAG_NAME__, __ATTRIBUTES__ and __CONTENT__
-     *
-     * @param string $template
-     */
-    public function setTemplate($template);
+    function unsetAttribute($key);
 
     /**
      * Renders everything including wrapper html tag and properties

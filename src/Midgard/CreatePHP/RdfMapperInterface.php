@@ -54,7 +54,7 @@ interface RdfMapperInterface
      * Get object's children
      *
      * @param mixed $object
-     * @param array $config
+     * @param array $config configuration of this collection
      *
      * @return array of children objects
      */

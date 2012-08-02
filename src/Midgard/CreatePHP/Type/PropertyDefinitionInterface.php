@@ -13,7 +13,7 @@ namespace Midgard\CreatePHP\Type;
  *
  * @package Midgard.CreatePHP
  */
-interface PropertyDefinitionInterface
+interface PropertyDefinitionInterface extends RdfElementDefinitionInterface
 {
     /**
      * Create a property from this definition and the concrete value
@@ -31,16 +31,31 @@ interface PropertyDefinitionInterface
     function getIdentifier();
 
     /**
-     * Set the tag name to use when rendering properties of this type
+     * Set the property rdfa name
      *
-     * @param string $tag the html tag name without brackets
+     * @param string $property
      */
-    function setTagName($tag);
+    function setProperty($property);
 
     /**
-     * Get the current tag name of this type
+     * Get the property rdfa name
      *
-     * @return string the tag name
+     * @return string the rdf name of this property
      */
-    function getTagName();
+    function getProperty();
+
+    /**
+     * Containing type setter
+     *
+     * @param TypeInterface $parent The parent node
+     */
+    function setParentType(TypeInterface $parent);
+
+    /**
+     * Containing type getter
+     *
+     * @return TypeInterface The parent type
+     */
+    function getParentType();
+
 }

@@ -1,0 +1,7 @@
+<test>
+    {% createphp mymodel %}
+    <div {{ createphp_attributes(mymodel_rdf) }}>
+        <div {{ createphp_attributes( mymodel_rdf.title ) }}>{{ createphp_content( mymodel_rdf.title ) }}</div>
+    </div>
+    {% endcreatephp %}
+</test>

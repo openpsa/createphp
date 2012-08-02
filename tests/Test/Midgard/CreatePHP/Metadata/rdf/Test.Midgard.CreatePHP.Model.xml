@@ -1,0 +1,15 @@
+<type
+     xmlns:sioc="http://rdfs.org/sioc/ns#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     typeof="sioc:Post"
+>
+    <config key="test" value="testvalue" />
+    <children>
+        <property property="dcterms:title" identifier="title" tag-name="h2"/>
+        <collection rel="skos:related" identifier="tags" tag-name="ul">
+            <config key="table" value="tags"/>
+            <attribute key="class" value="tags"/>
+        </collection>
+        <property property="sioc:content" identifier="content" />
+    </children>
+</type>

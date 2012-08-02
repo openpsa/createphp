@@ -191,12 +191,12 @@ class RestService
     {
         $object = $entity->getObject();
 
-        foreach ($entity->getChildren() as $fieldname => $node) {
+        foreach ($entity->getChildDefinitions() as $fieldname => $node) {
             if (!$node instanceof PropertyInterface) {
                 continue;
             }
             /** @var $node PropertyInterface */
-            $rdf_name = $node->getAttribute('property');
+            $rdf_name = $node->getProperty();
 
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
@@ -219,12 +219,12 @@ class RestService
         $jsonld = $data;
 
         $jsonld['@subject'] = $this->jsonldEncode($this->_mapper->createSubject($object));
-        foreach ($entity->getChildren() as $node) {
+        foreach ($entity->getChildDefinitions() as $node) {
             if (!$node instanceof PropertyInterface) {
                 continue;
             }
             /** @var $node PropertyInterface */
-            $rdf_name = $node->getAttribute('property');
+            $rdf_name = $node->getProperty();
 
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
@@ -253,7 +253,7 @@ class RestService
         $parts = explode(":", $name);
         $vocabularies = $type->getVocabularies();
         if (!isset($vocabularies[$parts[0]])) {
-            throw new \RuntimeException('Undefined namespace prefix '.$parts[0]." in $name");
+            throw new \RuntimeException('Undefined namespace prefix \''.$parts[0]."' in '$name'");
         }
         return $this->jsonldEncode($vocabularies[$parts[0]] . $parts[1]);
     }
