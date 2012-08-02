@@ -107,10 +107,6 @@ class CreatephpExtension extends Twig_Extension
         }
 
         $classname = get_class($model);
-        // TODO: how to handle this doctrine specific problem?
-        if ($model instanceof \Doctrine\Common\Persistence\Proxy) {
-            $classname = \Doctrine\Common\Util\ClassUtils::getRealClass($classname);
-        }
 
         $type = $this->typeFactory->getType($classname);
         if (! $type instanceof TypeInterface) {
