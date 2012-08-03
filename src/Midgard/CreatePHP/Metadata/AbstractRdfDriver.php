@@ -14,6 +14,7 @@ use Midgard\CreatePHP\Entity\Property as PropertyDefinition;
 use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
+use Midgard\CreatePHP\NodeInterface;
 
 /**
  * Base driver class with helper methods for drivers
@@ -72,6 +73,15 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     protected abstract function getConfig($element);
 
     /**
+     * Get the attributes information for this element
+     *
+     * @param mixed $element the configuration element representing any kind of node to read the attributes from
+     *
+     * @return array of key-value mappings for attributes
+     */
+    protected abstract function getAttributes($element);
+
+    /**
      * Create a type instance.
      *
      * @param RdfMapperInterface $mapper
@@ -109,5 +119,15 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
                 throw new \Exception('unknown kind of child '.$kind.' with identifier '.$identifier);
         }
         return $kind;
+    }
+
+    protected function parseNodeInfo(NodeInterface $node, $definition)
+    {
+        if ($attributes = $this->getAttributes($definition)) {
+            $node->setAttributes($attributes);
+        }
+        if (isset($definition['tag-name'])) {
+            $node->setTagName($definition['tag-name']);
+        }
     }
 }

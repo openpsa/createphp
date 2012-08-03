@@ -69,16 +69,7 @@ class RdfDriverXml extends AbstractRdfDriver
         $type = $this->createType($mapper, $this->getConfig($xml));
 
         if ($type instanceof NodeInterface) {
-            if (isset($xml->attribute)) {
-                $attributes = array();
-                foreach ($xml->attribute as $attribute) {
-                    $attributes[(string)$attribute['key']] = (string)$attribute['value'];
-                }
-                $type->setAttributes($attributes);
-            }
-            if (isset($xml['tag-name'])) {
-                $type->setTagName($xml['tag-name']);
-            }
+            $this->parseNodeInfo($type, $xml);
         }
 
         foreach ($xml->getDocNamespaces(true) as $prefix => $uri) {
@@ -127,16 +118,8 @@ class RdfDriverXml extends AbstractRdfDriver
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
         }
         if ($child instanceof NodeInterface) {
-            /** @var $child NodeInterface */
-            if (isset($childData->attribute)) {
-                $attributes = array();
-                foreach ($childData->attribute as $attribute) {
-                    $attributes[(string)$attribute['key']] = (string)$attribute['value'];
-                }
-                $child->setAttributes($attributes);
-            }
-            if (isset($childData['tag-name'])) {
-                $child->setTagName($childData['tag-name']);
+            if ($child instanceof NodeInterface) {
+                $this->parseNodeInfo($child, $childData);
             }
         }
     }
@@ -150,13 +133,18 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return array built from the config children of the element
      */
-    protected function getConfig($xml)
+    protected function getConfig($xml, $field='config')
     {
         $config = array();
-        foreach ($xml->config as $c) {
+        foreach ($xml->$field as $c) {
             $config[(string)$c['key']] = (string)$c['value'];
         }
         return $config;
+    }
+
+    protected function getAttributes($xml)
+    {
+        return $this->getConfig($xml, 'attribute');
     }
 
     /**

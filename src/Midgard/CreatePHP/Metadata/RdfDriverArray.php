@@ -84,12 +84,7 @@ class RdfDriverArray extends AbstractRdfDriver
 
         $type = $this->createType($mapper, $this->getConfig($definition));
         if ($type instanceof NodeInterface) {
-            if (isset($definition['attributes'])) {
-                $type->setAttributes($definition['attributes']);
-            }
-            if (isset($definition['tag-name'])) {
-                $type->setTagName($definition['tag-name']);
-            }
+            $this->parseNodeInfo($type, $definition);
         }
 
         if (isset($definition['vocabularies'])) {
@@ -141,17 +136,11 @@ class RdfDriverArray extends AbstractRdfDriver
         } elseif ($child instanceof CollectionDefinitionInterface) {
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
-            $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));'rel';
+            $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
         }
 
         if ($child instanceof NodeInterface) {
-            /** @var $child NodeInterface */
-            if (isset($childData['attributes'])) {
-                $child->setAttributes($childData['attributes']);
-            }
-            if (isset($childData['tag-name'])) {
-                $child->setTagName($childData['tag-name']);
-            }
+            $this->parseNodeInfo($child, $childData);
         }
     }
 
@@ -171,6 +160,13 @@ class RdfDriverArray extends AbstractRdfDriver
             return array();
         }
         return $node['config'];
+    }
+    protected function getAttributes($node)
+    {
+        if (! isset($node['attributes'])) {
+            return array();
+        }
+        return $node['attributes'];
     }
 
     /**
