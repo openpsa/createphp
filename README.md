@@ -29,7 +29,7 @@ $config = array
     'workflows' => array(
         'delete' => 'my_delete_workflow_class'
     ),
-    'controllers' => array(
+    'types' => array(
         'My\\Blog\\Model\\Article' => array(
             'config' => array(
                 'storage' => 'some_db_table',
@@ -116,12 +116,12 @@ To actually save the data, you will have to provide an access point for the REST
 <?php
 $loader = new Midgard\CreatePHP\ArrayLoader(load_my_configuration_from_somewhere());
 $manager = $loader->getManager(new my_mapper_class);
-$type = $manager->getController('My\\Blog\\Model\\Article');
+$type = $manager->getType('My\\Blog\\Model\\Article');
 
 $received_data = json_decode(file_get_contents("php://input"), true);
 $service = $manager->getRestHandler($received_data);
 
-$jsonld = $service->run($controller);
+$jsonld = $service->run($type);
 send_as_json($jsonld);
 ?>
 ```
