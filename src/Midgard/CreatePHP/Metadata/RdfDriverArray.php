@@ -104,7 +104,7 @@ class RdfDriverArray extends AbstractRdfDriver
         $add_default_vocabulary = false;
         foreach($definition['children'] as $identifier => $child) {
             if (! isset($child['type'])) {
-                throw new \Exception("Child $identifier is missing the type key");
+                $child['type'] = 'property';
             }
             $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
             $this->parseChild($c->getNode(), $child, $identifier, $add_default_vocabulary);
