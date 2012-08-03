@@ -76,7 +76,8 @@ class RdfTypeFactory
      */
     protected function cleanClassName($className)
     {
-        if (class_exists('Doctrine\\Common\\Persistence\\Proxy')) {
+
+        if (interface_exists('Doctrine\\Common\\Persistence\\Proxy')) {
             $refl = new \ReflectionClass($className);
             if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {
                 $className = \Doctrine\Common\Util\ClassUtils::getRealClass($className);
