@@ -78,28 +78,6 @@ abstract class Node implements NodeInterface
     }
 
     /**
-     * We are node and an rdf type at the same time
-     *
-     * @return \Midgard\CreatePHP\Type\RdfElementDefinitionInterface
-     *
-     * @api
-     */
-    public function getRdfElement()
-    {
-        return $this;
-    }
-
-    /**
-     * We are node and an rdf type at the same time
-     *
-     * @return NodeInterface
-     */
-    public function getNode()
-    {
-        return $this;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @api

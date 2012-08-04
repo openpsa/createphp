@@ -15,7 +15,7 @@ use Midgard\CreatePHP\Metadata\RdfDriverArray;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
- * Setup controllers based on a configuration array
+ * Setup the manager based on a configuration array
  *
  * @package Midgard.CreatePHP
  */
