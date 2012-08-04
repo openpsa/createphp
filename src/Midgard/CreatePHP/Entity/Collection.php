@@ -22,9 +22,19 @@ use Midgard\CreatePHP\Type\TypeInterface;
  */
 class Collection extends Node implements CollectionInterface
 {
+    /**
+     * @var string
+     */
     protected $_identifier;
+
+    /**
+     * @var RdfTypeFactory
+     */
     protected $_typeFactory;
 
+    /**
+     * @var int
+     */
     protected $_position = 0;
 
     /**
