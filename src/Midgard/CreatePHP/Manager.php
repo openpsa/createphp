@@ -14,6 +14,9 @@ use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
+ * A sort of micro service container to instantiate rdf type and entity as well
+ * as the rest handler and workflows.
+ *
  * @package Midgard.CreatePHP
  */
 class Manager
