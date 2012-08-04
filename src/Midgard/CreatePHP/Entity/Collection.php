@@ -102,7 +102,7 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function setType($type)
+    public function setTypeName($type)
     {
         $this->_typename = $type;
     }
@@ -114,7 +114,7 @@ class Collection extends Node implements CollectionInterface
      */
     public function getType()
     {
-        return $this->_typename;
+        return $this->_typeFactory->getType($this->_typename);
     }
 
     /**

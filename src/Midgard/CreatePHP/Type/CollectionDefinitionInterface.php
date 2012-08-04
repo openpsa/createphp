@@ -27,7 +27,7 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator, RdfElemen
      *
      * @param string $typename the argument to be used with RdfTypeFactory::getType
      */
-    function setType($typename);
+    function setTypeName($typename);
 
     /**
      * Get the overriding RDFa type for the items of this collection

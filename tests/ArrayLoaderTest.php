@@ -88,7 +88,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $type);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $child_type);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $child_type->test1);
-        $this->assertEquals('test2', $type->test1->getType());
+        $this->assertEquals($child_type, $type->test1->getType());
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $type->test1);
     }
 

@@ -103,7 +103,7 @@ class RdfDriverArray extends AbstractRdfDriver
             $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
             $this->parseChild($c, $child, $identifier, $add_default_vocabulary);
             if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
-                $c->setType($child['controller']);
+                $c->setTypeName($child['controller']);
             }
             $type->$identifier = $c;
         }

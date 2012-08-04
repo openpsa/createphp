@@ -84,7 +84,7 @@ class RdfDriverXml extends AbstractRdfDriver
             $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
             $type->{$child['identifier']} = $c;
             if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
-                $c->setType($child['controller']);
+                $c->setTypeName($child['controller']);
             }
         }
 
