@@ -49,6 +49,7 @@ class RdfTypeFactory
      */
     public function getType($className)
     {
+        $className = $this->cleanClassName($className);
         if (isset($this->loadedTypes[$className])) {
             return $this->loadedTypes[$className];
         }
@@ -63,5 +64,26 @@ class RdfTypeFactory
         }
 
         throw new \Exception("No type found for $className");
+    }
+
+    /**
+     * Clean up the class name, for example if this is a doctrine proxy
+     * class, get the real class. Overwrite this to get custom behaviour
+     *
+     * @param string $className the user supplied class name
+     *
+     * @return string the real classname to use
+     */
+    protected function cleanClassName($className)
+    {
+
+        if (interface_exists('Doctrine\\Common\\Persistence\\Proxy')) {
+            $refl = new \ReflectionClass($className);
+            if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {
+                $className = \Doctrine\Common\Util\ClassUtils::getRealClass($className);
+            }
+        }
+
+        return $className;
     }
 }

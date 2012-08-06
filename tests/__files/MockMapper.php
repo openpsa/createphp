@@ -4,6 +4,7 @@ namespace Midgard\CreatePHP\tests;
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
+use Midgard\CreatePHP\Entity\CollectionInterface;
 
 /**
  * Mock RdfMapper implementation for unittests
@@ -29,8 +30,9 @@ class MockMapper implements RdfMapperInterface
         return true;
     }
 
-    public function getChildren($object, array $config)
+    public function getChildren($object, CollectionInterface $collection)
     {
+        $config = $collection->getConfig();
         if (empty($config['is_child']))
         {
             throw new \Exception('wrong config');
