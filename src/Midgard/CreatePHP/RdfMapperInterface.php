@@ -61,6 +61,19 @@ interface RdfMapperInterface
     function getChildren($object, array $config);
 
     /**
+     * Ensure this classname is in its canonical form so it can be used for
+     * lookups. This may include fixing uppercase, removing doctrine proxy
+     * and so on.
+     *
+     * If you do not know what to do, just return the string as passed in.
+     *
+     * @param string $className a class name as passed to the RDF type factory
+     *
+     * @return string the canonical name for this class
+     */
+    function canonicalClassName($className);
+
+    /**
      * Instantiate a new object for the specified RDFa type
      *
      * Used as empty template for collections, and to instantiate an empty

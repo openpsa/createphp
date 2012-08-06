@@ -8,8 +8,13 @@
 
 namespace Midgard\CreatePHP\Extension\Twig;
 
-use Midgard\CreatePHP\Entity\NodeInterface;
-use Midgard\CreatePHP\Entity\EntityInterface;
+use Twig_Extension;
+use Twig_Environment;
+use Twig_Function_Method;
+use Twig_Error_Runtime;
+
+use Midgard\CreatePHP\NodeInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
@@ -19,7 +24,7 @@ use Midgard\CreatePHP\Metadata\RdfTypeFactory;
  *
  * @package Midgard.CreatePHP
  */
-class CreatephpExtension extends \Twig_Extension
+class CreatephpExtension extends Twig_Extension
 {
     protected $typeFactory;
     protected $environment;
@@ -32,7 +37,7 @@ class CreatephpExtension extends \Twig_Extension
     /**
      * {@inheritdoc}
      */
-    public function initRuntime(\Twig_Environment $environment)
+    public function initRuntime(Twig_Environment $environment)
     {
         $this->environment = $environment;
     }
@@ -53,8 +58,8 @@ class CreatephpExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'createphp_attributes'  => new \Twig_Function_Method($this, 'renderAttributes', array('is_safe' => array('html'))),
-            'createphp_content'     => new \Twig_Function_Method($this, 'renderContent', array('is_safe' => array('html'))),
+            'createphp_attributes'  => new Twig_Function_Method($this, 'renderAttributes', array('is_safe' => array('html'))),
+            'createphp_content'     => new Twig_Function_Method($this, 'renderContent', array('is_safe' => array('html'))),
 
         );
     }
@@ -98,18 +103,14 @@ class CreatephpExtension extends \Twig_Extension
     public function createEntity($model)
     {
         if (! is_object($model)) {
-            throw new \Twig_Error_Runtime('The model to create the entity from must be a class');
+            throw new Twig_Error_Runtime('The model to create the entity from must be a class');
         }
 
         $classname = get_class($model);
-        // TODO: how to handle this doctrine specific problem?
-        if ($model instanceof \Doctrine\Common\Persistence\Proxy) {
-            $classname = \Doctrine\Common\Util\ClassUtils::getRealClass($classname);
-        }
 
         $type = $this->typeFactory->getType($classname);
-        if (! $type instanceof \Midgard\CreatePHP\Type\TypeInterface) {
-            throw new \Twig_Error_Runtime('Could not find metadata for '.get_class($model));
+        if (! $type instanceof TypeInterface) {
+            throw new Twig_Error_Runtime('Could not find metadata for '.get_class($model));
         }
 
         return $type->createWithObject($model);

@@ -49,6 +49,7 @@ class RdfTypeFactory
      */
     public function getType($className)
     {
+        $className = $this->mapper->canonicalClassName($className);
         if (isset($this->loadedTypes[$className])) {
             return $this->loadedTypes[$className];
         }
@@ -64,4 +65,5 @@ class RdfTypeFactory
 
         throw new \Exception("No type found for $className");
     }
+
 }

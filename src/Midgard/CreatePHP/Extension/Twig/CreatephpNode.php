@@ -9,13 +9,15 @@
 namespace Midgard\CreatePHP\Extension\Twig;
 
 use Twig_NodeInterface;
+use Twig_Node;
+use Twig_Compiler;
 
 /**
  * A twig node to render the createphp tag
  *
  * @package Midgard.CreatePHP
  */
-class CreatephpNode extends \Twig_Node
+class CreatephpNode extends Twig_Node
 {
     /**
      * Constructor.
@@ -30,7 +32,7 @@ class CreatephpNode extends \Twig_Node
      * @param integer            $lineno     The line number
      * @param string             $tag        The tag name
      */
-    public function __construct(\Twig_NodeInterface $body, $modelname, $varname, $lineno = 0, $tag = null)
+    public function __construct(Twig_NodeInterface $body, $modelname, $varname, $lineno = 0, $tag = null)
     {
         $nodes = array('body' => $body);
         if (empty($varname)) {
@@ -42,7 +44,7 @@ class CreatephpNode extends \Twig_Node
         parent::__construct($nodes, $attributes, $lineno, $tag);
     }
 
-    public function compile(\Twig_Compiler $compiler)
+    public function compile(Twig_Compiler $compiler)
     {
         $compiler->addDebugInfo($this);
 
@@ -67,7 +69,7 @@ class CreatephpNode extends \Twig_Node
         ;
     }
 
-    protected function compileTypeLoad(\Twig_Compiler $compiler, $modelname)
+    protected function compileTypeLoad(Twig_Compiler $compiler, $modelname)
     {
         $compiler
             ->write('$this->env->getExtension(\'createphp\')->createEntity(')

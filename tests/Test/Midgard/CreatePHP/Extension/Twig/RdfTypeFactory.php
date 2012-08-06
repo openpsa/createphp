@@ -32,7 +32,7 @@ class RdfTypeFactory extends \Midgard\CreatePHP\Metadata\RdfTypeFactory
         if ('Test\\Midgard\\CreatePHP\\Model' == $classname) {
             $type = new Type($this->mapper);
             $type->setVocabulary('dcterms', 'http://purl.org/dc/terms/');
-            $prop = new \Midgard\CreatePHP\Entity\Property(array(), 'title');
+            $prop = new \Midgard\CreatePHP\Entity\Property('title', array());
             $prop->setAttributes(array('property' => 'dcterms:title'));
             $type->title = $prop;
             return $type;
