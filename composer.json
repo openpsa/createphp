@@ -12,6 +12,9 @@
             "homepage": "http://www.contentcontrol-berlin.de/"
         }
     ],
+    "require-dev": {
+        "twig/twig": ">=1.8,<2.0-dev"
+    },
     "autoload": {
         "psr-0": {
             "Midgard\\CreatePHP": "src"
