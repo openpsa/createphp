@@ -13,7 +13,7 @@
     </testsuites>
 
     <filter>
-      <whitelist>
+      <whitelist addUncoveredFilesFromWhitelist="false">
         <directory suffix=".php">src/Midgard/CreatePHP</directory>
       </whitelist>
     </filter>

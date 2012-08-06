@@ -12,6 +12,7 @@ use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\NodeInterface;
 
 /**
  * Collection holder. Acts at the same time as a property to a parent entity and
@@ -22,9 +23,19 @@ use Midgard\CreatePHP\Type\TypeInterface;
  */
 class Collection extends Node implements CollectionInterface
 {
+    /**
+     * @var string
+     */
     protected $_identifier;
+
+    /**
+     * @var RdfTypeFactory
+     */
     protected $_typeFactory;
 
+    /**
+     * @var int
+     */
     protected $_position = 0;
 
     /**
@@ -91,7 +102,7 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function setType($type)
+    public function setTypeName($type)
     {
         $this->_typename = $type;
     }
@@ -103,7 +114,7 @@ class Collection extends Node implements CollectionInterface
      */
     public function getType()
     {
-        return $this->_typename;
+        return $this->_typeFactory->getType($this->_typename);
     }
 
     /**
@@ -165,7 +176,10 @@ class Collection extends Node implements CollectionInterface
             $mapper = $type->getMapper();
             $object = $mapper->prepareObject($type, $object);
             $entity = $type->createWithObject($object);
-            $entity->getNode()->setAttribute('style', 'display:none');
+            if ($entity instanceof NodeInterface) {
+                /** @var $entity NodeInterface */
+                $entity->setAttribute('style', 'display:none');
+            }
             $this->_children[] = $entity;
         }
     }

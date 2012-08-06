@@ -10,12 +10,16 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
      * @var \Midgard\CreatePHP\Type\TypeInterface
      */
     private $parentController;
+
     /**
      * @var \Midgard\CreatePHP\Type\TypeInterface
      */
     private $childController;
     private $mockTypeFactory;
-    /** @var \Midgard\CreatePHP\RdfMapperInterface */
+
+    /**
+     * @var \Midgard\CreatePHP\RdfMapperInterface
+     */
     private $mockMapper;
 
     public function setUp()
@@ -36,17 +40,17 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         ;
     }
 
-    public function test_get_setType()
+    public function test_get_setTypeName()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array());
-        $collection->setType('test');
-        $this->assertEquals('test', $collection->getType());
+        $collection->setTypeName('test');
+        $this->assertEquals($this->childController, $collection->getType());
     }
 
     public function test_loadFromParent()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setType('test');
+        $collection->setTypeName('test');
 
         $parent = array
         (
@@ -68,7 +72,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_loadFromParent_no_children()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setType('test');
+        $collection->setTypeName('test');
 
         $parent = array
         (
@@ -86,7 +90,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_Iterator()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setType('test');
+        $collection->setTypeName('test');
 
         $parent = array
         (
@@ -111,7 +115,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_ArrayAccess()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setType('test');
+        $collection->setTypeName('test');
 
         $parent = array
         (

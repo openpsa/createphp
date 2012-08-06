@@ -90,18 +90,4 @@ interface TypeInterface extends RdfElementDefinitionInterface
      *      with the child definitions of this type
      */
     function getChildDefinitions();
-
-    /**
-     * Set the tag name to use when rendering entities of this type
-     *
-     * @param string $tag the html tag name without brackets
-     */
-    function setTagName($tag);
-
-    /**
-     * Get the current tag name of this type
-     *
-     * @return string the tag name
-     */
-    function getTagName();
 }

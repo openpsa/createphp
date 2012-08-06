@@ -26,11 +26,4 @@ interface RdfElementDefinitionInterface
      * @return array with client configuration
      */
     function getConfig();
-
-    /**
-     * Get the dom node containing this definition
-     *
-     * @return \Midgard\CreatePHP\NodeInterface
-     */
-    function getNode();
 }
