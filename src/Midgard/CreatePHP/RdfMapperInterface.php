@@ -9,6 +9,7 @@
 namespace Midgard\CreatePHP;
 
 use Midgard\CreatePHP\Entity\PropertyInterface;
+use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
@@ -29,17 +30,17 @@ interface RdfMapperInterface
      *
      * @return mixed the updated object
      */
-    function setPropertyValue($object, PropertyInterface $node, $value);
+    function setPropertyValue($object, PropertyInterface $property, $value);
 
     /**
      * Get property from this object
      *
      * @param mixed $object
-     * @param PropertyInterface $node
+     * @param PropertyInterface $property
      *
      * @return mixed
      */
-    function getPropertyValue($object, PropertyInterface $node);
+    function getPropertyValue($object, PropertyInterface $property);
 
     /**
      * Tell if the object is editable
@@ -58,7 +59,7 @@ interface RdfMapperInterface
      *
      * @return array of children objects
      */
-    function getChildren($object, array $config);
+    function getChildren($object, CollectionInterface $collection);
 
     /**
      * Ensure this classname is in its canonical form so it can be used for
