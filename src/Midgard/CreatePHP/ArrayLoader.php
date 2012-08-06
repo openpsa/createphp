@@ -15,7 +15,7 @@ use Midgard\CreatePHP\Metadata\RdfDriverArray;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 /**
- * Setup controllers based on a configuration array
+ * Setup the manager based on a configuration array
  *
  * @package Midgard.CreatePHP
  */
@@ -36,31 +36,6 @@ class ArrayLoader
         $metadata = new RdfTypeFactory($mapper, $driver);
 
         $manager = new Manager($mapper, $metadata);
-
-        /*
-         * TODO: collections should no longer need "the" type but the metadata
-         * so they can fetch whatever types they need.
-         *
-        foreach ($this->_references as $ref_config) {
-            $property_name = $ref_config['property_name'];
-            $parent_id = $ref_config['identifier'];
-            $ref_id = $ref_config['ref_id'];
-
-            $controllers[$parent_id]->$property_name->setType($controllers[$ref_id]);
-        }
-
-
-                if (!empty($field_config['controller'])) {
-                    $ref_id = $field_config['controller'];
-                    $this->_references[] = array
-                    (
-                        'identifier' => $identifier,
-                        'ref_id' => $ref_id,
-                        'property_name' => $property_name,
-                    );
-                }
-
-        */
 
         if (!empty($this->_config['workflows'])) {
             foreach ($this->_config['workflows'] as $identifier => $classname) {

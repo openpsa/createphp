@@ -160,7 +160,7 @@ class RestService
             }
             /** @var $node CollectionDefinitionInterface */
             $child_type = $node->getType();
-            $parentfield = $this->_expandPropertyName($node->getAttribute('rev'), $child_type);
+            $parentfield = $this->_expandPropertyName($node->getRev(), $child_type);
             if (!empty($received_data[$parentfield])) {
                 $parent_identifier = $this->jsonldDecode($received_data[$parentfield][0]);
                 $parent = $this->_mapper->getBySubject($parent_identifier);
