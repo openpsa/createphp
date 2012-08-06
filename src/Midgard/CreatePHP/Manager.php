@@ -56,22 +56,40 @@ class Manager
     }
 
     /**
-     * Returns the type with that identifier
+     * Returns the type having this identifier
      *
      * @param string $identifier
-     * @param mixed $object
-     * @return TypeInterface
+     *
+     * @return TypeInterface|null the type or null if not found
      */
-    public function getType($identifier, $object = null)
+    public function getType($identifier)
     {
+        return $this->_metadata->getType($identifier);
+    }
+
+    /**
+     * Get the bound entity for this object. The type is determined with
+     * get_class(), unless you explicitly overwrite it by specifying the
+     * identifier parameter.
+     *
+     * @param mixed $object your domain object to wrap into the rdf type
+     * @param string $identifier optional identifier name to override the
+     *      class name of your object.
+     *
+     * @return \Midgard\CreatePHP\Entity\EntityInterface|null the bound type of
+     *      null if no type is found
+     */
+    public function getEntity($object, $identifier = null)
+    {
+        if (null == $identifier) {
+            $identifier = get_class($object);
+        }
         $type = $this->_metadata->getType($identifier);
         if (null == $type) {
             return null;
         }
-        if (null !== $object) {
-            $type = $type->createWithObject($object);
-        }
-        return $type;
+        return $type->createWithObject($object);
+
     }
 
     /**
