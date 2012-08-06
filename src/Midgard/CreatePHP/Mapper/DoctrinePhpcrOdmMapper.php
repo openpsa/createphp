@@ -1,12 +1,16 @@
 <?php
+/**
+ * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @author David Buchmann <david@liip.ch>
+ * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
+ * @package Midgard.CreatePHP
+ */
 
-namespace Liip\VieBundle\Mapper;
+namespace Midgard\CreatePHP\Mapper;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Midgard\CreatePHP\BaseDoctrineRdfMapper;
 use Midgard\CreatePHP\Type\TypeInterface;
-
 
 /**
  * Mapper to handle PHPCR-ODM.

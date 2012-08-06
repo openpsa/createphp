@@ -6,7 +6,7 @@
  * @package Midgard.CreatePHP
  */
 
-namespace Midgard\CreatePHP;
+namespace Midgard\CreatePHP\Mapper;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;

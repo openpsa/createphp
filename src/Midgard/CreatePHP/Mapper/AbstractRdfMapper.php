@@ -6,8 +6,9 @@
  * @package Midgard.CreatePHP
  */
 
-namespace Midgard\CreatePHP;
+namespace Midgard\CreatePHP\Mapper;
 
+use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 use Midgard\CreatePHP\Entity\CollectionInterface;
