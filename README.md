@@ -11,7 +11,8 @@ Usage
 -----
 
 To use CreatePHP, you need to implement the RdfMapperInterface and provide metadata to map between
-your domain models and RDF.
+your domain models and RDF. See the Mapper subfolder for a couple of abstract classes that might
+be useful to write your own mapper.
 
 
 Tutorial
