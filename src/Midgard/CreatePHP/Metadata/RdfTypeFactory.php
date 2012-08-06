@@ -65,5 +65,4 @@ class RdfTypeFactory
 
         throw new \Exception("No type found for $className");
     }
-
 }
