@@ -27,13 +27,29 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      */
     protected $typeMap;
 
-    public function __construct($typeMap)
+    /**
+     * Create this mapper with a map of rdf type to className to be used in
+     * prepareObject. If you do not want to use the map, just overwrite
+     * prepareObject.
+     *
+     * @param array $typeMap of rdf type => className
+     */
+    public function __construct($typeMap = array())
     {
         $this->typeMap = $typeMap;
     }
 
     /**
      * {@inheritDoc}
+     *
+     * Create the object if a class is defined in the typeMap. This class
+     * can not know how to set the parent, so if you ever create collection
+     * entries, your extending class should handle the parent - it can still
+     * call this method to create the basic object, just omit the parent
+     * parameter and then set the parent on the returned value. For an example,
+     * see DoctrinePhpcrOdmMapper.
+     *
+     * Just overwrite if you use a different concept.
      */
     function prepareObject(TypeInterface $type, $parent = null)
     {
