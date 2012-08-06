@@ -33,7 +33,8 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      * prepareObject. If you do not want to use the map, just overwrite
      * prepareObject.
      *
-     * @param array $typeMap of rdf type => className
+     * @param array $typeMap of rdf type => className. The rdf types using
+     *      full namespaces, i.e. http://rdfs.org/sioc/ns#Post
      */
     public function __construct($typeMap = array())
     {
@@ -57,11 +58,15 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
         if ($parent !== null) {
             throw new \Exception('Parent is not null, please extend this method to configure the parent');
         }
-        if (isset($this->typeMap[$type->getRdfType()])) {
-            $class = $this->typeMap[$type->getRdfType()];
+        list($prefix, $shortname) = explode(':', $type->getRdfType());
+        $ns = $type->getVocabularies();
+        $ns = $ns[$prefix];
+        $name = $ns.$shortname;
+        if (isset($this->typeMap[$name])) {
+            $class = $this->typeMap[$name];
             return new $class;
         }
-        throw new \Exception('No information on '.$type->getRdfType());
+        throw new \Exception('No information on ' . $name);
     }
 
     /**
