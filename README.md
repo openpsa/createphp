@@ -55,7 +55,7 @@ $object = new \My\Blog\Model\Article('Some title', 'Article content');
 $mapper = new my_mapper_class;
 $loader = new Midgard\CreatePHP\ArrayLoader($config);
 $manager = $loader->getManager($mapper);
-$entity = $manager->getType(get_class($object), $object);
+$entity = $manager->getEntity($object);
 ```
 
 ### Rendering HTML
