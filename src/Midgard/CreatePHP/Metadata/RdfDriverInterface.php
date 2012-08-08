@@ -27,7 +27,8 @@ interface RdfDriverInterface
      * @param RdfMapperInterface $mapper
      * @param RdfTypeFactory $typeFactory used to pass into collections
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface | null the type if found, otherwise null
+     * @return \Midgard\CreatePHP\Type\TypeInterfacethe type if found
+     * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
     function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
 

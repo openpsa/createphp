@@ -50,19 +50,12 @@ class RdfTypeFactory
     public function getType($className)
     {
         $className = $this->mapper->canonicalClassName($className);
-        if (isset($this->loadedTypes[$className])) {
-            return $this->loadedTypes[$className];
+        if (!isset($this->loadedTypes[$className])) {
+            $this->loadedTypes[$className] = $this->driver->loadTypeForClass($className, $this->mapper, $this);
         }
 
         // TODO: combine types from parent models...
 
-        $type = $this->driver->loadTypeForClass($className, $this->mapper, $this);
-
-        if (! is_null($type)) {
-            $this->loadedTypes[$className] = $type;
-            return $type;
-        }
-
-        throw new \Exception("No type found for $className");
+        return $this->loadedTypes[$className];
     }
 }

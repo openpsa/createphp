@@ -57,13 +57,14 @@ class RdfDriverXml extends AbstractRdfDriver
      * @param string $className
      * @param RdfMapperInterface $mapper
      *
-     * @return \Midgard\CreatePHP\NodeInterface|null the type if found, otherwise null
+     * @return \Midgard\CreatePHP\NodeInterface the type if found
+     * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
     function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         $xml = $this->getXmlDefinition($className);
         if (null == $xml) {
-            return null;
+            throw new TypeNotFoundException('No definition found for ' . $className);
         }
 
         $type = $this->createType($mapper, $this->getConfig($xml));

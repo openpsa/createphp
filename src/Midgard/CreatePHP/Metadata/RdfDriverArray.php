@@ -72,12 +72,13 @@ class RdfDriverArray extends AbstractRdfDriver
      * @param string $className
      * @param RdfMapperInterface $mapper
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface|null the type if found, otherwise null
+     * @return \Midgard\CreatePHP\Type\TypeInterface the type if found
+     * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
     function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! isset($this->definitions[$className])) {
-            return null;
+            throw new TypeNotFoundException('No definition found for ' . $className);
         }
 
         $definition = $this->definitions[$className];

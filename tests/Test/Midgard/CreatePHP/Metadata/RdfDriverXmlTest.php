@@ -26,12 +26,14 @@ class RdfDriverXmlTest extends RdfDriverBase
         $this->assertTestNodetype($type);
     }
 
+    /**
+     * @expectedException Midgard\CreatePHP\Metadata\TypeNotFoundException
+     */
     public function testLoadTypeForClassNodefinition()
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
         $type = $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
-        $this->assertNull($type);
     }
 
     /**

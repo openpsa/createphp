@@ -60,7 +60,7 @@ class Manager
      *
      * @param string $identifier
      *
-     * @return TypeInterface|null the type or null if not found
+     * @return TypeInterface the type if found
      */
     public function getType($identifier)
     {
@@ -85,11 +85,8 @@ class Manager
             $identifier = get_class($object);
         }
         $type = $this->_metadata->getType($identifier);
-        if (null == $type) {
-            return null;
-        }
-        return $type->createWithObject($object);
 
+        return $type->createWithObject($object);
     }
 
     /**

@@ -38,7 +38,7 @@ class RdfDriverFeelingLucky extends AbstractRdfDriver
     public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! class_exists($className)) {
-            return null;
+            throw new TypeNotFoundException('Class ' . $className . ' not found');
         }
 
         $typenode = $this->createType($mapper, array());
