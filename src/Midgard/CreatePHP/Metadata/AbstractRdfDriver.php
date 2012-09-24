@@ -119,5 +119,8 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
         if (isset($definition['tag-name'])) {
             $node->setTagName($definition['tag-name']);
         }
+        if (isset($definition['editor'])) {
+            $node->setEditor($definition['editor']);
+        }
     }
 }

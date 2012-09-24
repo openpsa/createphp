@@ -9,6 +9,7 @@
 namespace Midgard\CreatePHP;
 use Midgard\CreatePHP\Entity\Property;
 use Midgard\CreatePHP\Entity\Controller;
+use Midgard\CreatePHP\Manager;
 
 /**
  * Wrapper for CreateJS's constructor & config
@@ -22,6 +23,18 @@ class Widget
     private $_options = array();
 
     private $_editors = array();
+
+    /**
+     * The manager instance
+     *
+     * @var Midgard\CreatePHP\Manager
+     */
+    private $_manager;
+
+    public function __construct(Manager $manager)
+    {
+        $this->_manager = $manager;
+    }
 
     public function registerUrl($type, $url)
     {
@@ -69,23 +82,31 @@ class Widget
             $js .= '},' . "\n";
         }
 
+        $js = trim($js, "\n,");
+
+        $js .= '});' . "\n";
+
         if (!empty($this->_editors))
         {
-            $js .= 'editorOptions: {' . "\n";
             foreach ($this->_editors as $name => $config) {
                 if (isset($this->_urls['upload'])) {
                     $config = str_replace('__UPLOAD_URL__', $this->_urls['upload'], $config);
                 }
-                $js .= '"' . $name . '": {' . "\n";
-                $js .= $config . "\n";
-                $js .= "},\n";
+                $js .= "\n\$('body').midgardCreate('configureEditor', '" . $name . "', 'halloWidget', {" . $config . "});\n";
             }
-            $js = trim($js, "\n,");
-            $js .= '},' . "\n";
         }
-        $js = trim($js, "\n,");
 
-        $js .= '});' . "\n";
+        foreach ($this->_manager->getLoadedTypes() as $identifier => $type)
+        {
+            foreach ($type->getChildDefinitions() as $key => $child)
+            {
+                if ($child instanceof Property)
+                {
+                    $js .= "\n\$('body').midgardCreate('setEditorForProperty', '" . $child->getProperty() . "', '" . $child->getEditor() . "');\n";
+                }
+            }
+        }
+
         $js .= '});' . "\n";
 
         return $js;

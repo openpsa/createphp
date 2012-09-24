@@ -68,6 +68,16 @@ class Manager
     }
 
     /**
+     * Returns all loaded types
+     *
+     * @return array All loaded types
+     */
+    public function getLoadedTypes()
+    {
+        return $this->_metadata->getLoadedTypes();
+    }
+
+    /**
      * Get the bound entity for this object. The type is determined with
      * get_class(), unless you explicitly overwrite it by specifying the
      * identifier parameter.

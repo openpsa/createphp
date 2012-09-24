@@ -44,14 +44,14 @@ class ArrayLoader
         }
 
         if (!empty($this->_config['widget'])) {
-            $manager->setWidget($this->_prepareWidget($this->_config['widget']));
+            $manager->setWidget($this->_prepareWidget($this->_config['widget'], $manager));
         }
         return $manager;
     }
 
-    private function _prepareWidget(array $config)
+    private function _prepareWidget(array $config, Manager $manager)
     {
-        $widget = new Widget;
+        $widget = new Widget($manager);
         if (!empty($config['urls'])) {
             foreach ($config['urls'] as $type => $url) {
                 $widget->registerUrl($type, $url);

@@ -46,6 +46,13 @@ class Property extends Node implements PropertyInterface
     protected $_render_standalone = false;
 
     /**
+     * The element's editor
+     *
+     * @var string
+     */
+    private $_editor = 'default';
+
+    /**
      * @param string $identifier the php property name used for this property
      * @param array $config application specific configuration to carry in this
      *      property
@@ -54,6 +61,26 @@ class Property extends Node implements PropertyInterface
     {
         parent::__construct($config);
         $this->_identifier = $identifier;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function setEditor($editor)
+    {
+        $this->_editor = $editor;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getEditor()
+    {
+        return $this->_editor;
     }
 
     /**

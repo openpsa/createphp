@@ -58,4 +58,14 @@ class RdfTypeFactory
 
         return $this->loadedTypes[$className];
     }
+
+    /**
+     * Return all loaded types
+     *
+     * @return array:
+     */
+    public function getLoadedTypes()
+    {
+        return $this->loadedTypes;
+    }
 }

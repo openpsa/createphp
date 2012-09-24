@@ -35,6 +35,7 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
  *                  "type" => "property",
  *                  "property" => "dcterms:title",
  *                  "tag-name" => "h2",
+ *                  "editor" => "someConfiguredEditor"
  *              ),
  *              "tags" => array(
  *                  "type" => "collection",
@@ -97,7 +98,7 @@ class RdfDriverArray extends AbstractRdfDriver
             $type->setRdfType($definition['typeof']);
         }
         $add_default_vocabulary = false;
-        foreach($definition['children'] as $identifier => $child) {
+        foreach ($definition['children'] as $identifier => $child) {
             if (! isset($child['type'])) {
                 $child['type'] = 'property';
             }
