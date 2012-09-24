@@ -12,10 +12,12 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
      * @var Manager
      */
     private $manager;
+
     /**
      * @var \Midgard\CreatePHP\Metadata\RdfTypeFactory
      */
     private $factoryMock;
+
     public function setUp()
     {
         $this->factoryMock = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
@@ -23,7 +25,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
     }
     public function test_get_setWidget()
     {
-        $widget = new Widget;
+        $widget = new Widget($this->manager);
         $this->manager->setWidget($widget);
         $this->assertEquals($widget, $this->manager->getWidget());
     }
