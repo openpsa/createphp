@@ -64,7 +64,7 @@ class RdfDriverXml extends AbstractRdfDriver
     {
         $xml = $this->getXmlDefinition($className);
         if (null == $xml) {
-            throw new TypeNotFoundException('No definition found for ' . $className);
+            throw new TypeNotFoundException('No RDFa mapping found for ' . $className . ' (looked for '.$this->buildFileName($className).')');
         }
 
         $type = $this->createType($mapper, $this->getConfig($xml));
