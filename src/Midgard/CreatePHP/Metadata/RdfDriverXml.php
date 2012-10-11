@@ -17,6 +17,8 @@ use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
+use Symfony\Component\Process\Exception\RuntimeException;
+
 /**
  * This driver loads rdf mappings from xml files
  *
@@ -84,8 +86,12 @@ class RdfDriverXml extends AbstractRdfDriver
             $c = $this->createChild($child->getName(), $child['identifier'], $child, $typeFactory);
             $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
             $type->{$child['identifier']} = $c;
-            if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
-                $c->setTypeName($child['controller']);
+            if ($c instanceof CollectionDefinitionInterface && isset($child['type'])) {
+                $c->setTypeName((string) $child['type']);
+            }
+
+            if ($c instanceof CollectionDefinitionInterface && !isset($child['type'])) {
+                throw new RuntimeException('Type attribute must be set in the definition type XML file');
             }
         }
 

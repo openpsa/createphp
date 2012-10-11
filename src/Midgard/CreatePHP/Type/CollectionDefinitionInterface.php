@@ -32,9 +32,10 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator, RdfElemen
     /**
      * Get the overriding RDFa type for the items of this collection
      *
+     * @param array $vocabularies vocabulary of the collection
      * @return TypeInterface
      */
-    function getType();
+    function getType($vocabularies);
 
     /**
      * Set the reverse link of this collection (typically dcterms:partOf)

@@ -10,6 +10,7 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 /**
  * Base mapper for doctrine, removing the proxy class names in canonicalClassName
@@ -42,8 +43,9 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * TODO: ensure that this has the right id resp. parent+name
      */
-    function store($object)
+    function store(EntityInterface $entity)
     {
+        $object = $entity->getObject();
         $this->om->persist($object);
         $this->om->flush();
         return true;

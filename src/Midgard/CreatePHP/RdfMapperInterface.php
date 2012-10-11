@@ -11,6 +11,7 @@ namespace Midgard\CreatePHP;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 /**
  * Map from CreatePHP to your domain objects
@@ -91,11 +92,11 @@ interface RdfMapperInterface
     /**
      * Save object
      *
-     * @param mixed $object
+     * @param EntityInterface $entity
      *
      * @return boolean whether storing was successful
      */
-    function store($object);
+    function store(EntityInterface $entity);
 
     /**
      * Load object by json-ld subject (this is the RDFa about field)

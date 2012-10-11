@@ -112,9 +112,10 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function getType()
+    public function getType($vocabularies)
     {
-        return $this->_typeFactory->getType($this->_typename);
+        $expandedTypeName = $this->_expandPropertyName($this->_typename, $vocabularies);
+        return $this->_typeFactory->getTypeByRdf($expandedTypeName);
     }
 
     /**
@@ -264,4 +265,28 @@ class Collection extends Node implements CollectionInterface
     {
         return isset($this->_children[$offset]) ? $this->_children[$offset] : null;
     }
+
+    /**
+     * Expand a property name to use full namespace instead of short name,
+     * as used in reference fields.
+     *
+     * TODO: should this method go in a Helper class?
+     *
+     * @param string $name the name to expand, including namespace (e.g. sioc:Post)
+     * @param array $vocabularies vocabulary to use for the expanding
+     *
+     * @return string the expanded name
+     *
+     * @throws \RuntimeException if the prefix is not in the vocabulary of
+     *      $type
+     */
+    private function _expandPropertyName($name, $vocabularies)
+    {
+        $parts = explode(":", $name);
+        if (!isset($vocabularies[$parts[0]])) {
+            throw new \RuntimeException('Undefined namespace prefix \''.$parts[0]."' in '$name'");
+        }
+        return $vocabularies[$parts[0]] . $parts[1];
+    }
+
 }
