@@ -161,7 +161,8 @@ class Collection extends Node implements CollectionInterface
             if (empty($this->_typename)) {
                 $type = $this->_typeFactory->getType(get_class($child));
             } else {
-                $type = $this->_typeFactory->getType($this->_typename);
+                $expandedTypeName = $this->_expandPropertyName($this->_typename, $parent->getVocabularies());
+                $type = $this->_typeFactory->getTypeByRdf($expandedTypeName);
             }
 
             foreach ($type->getVocabularies() as $prefix => $uri) {
