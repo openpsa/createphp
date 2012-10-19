@@ -145,7 +145,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mapper->expects($this->once())
             ->method('prepareObject')
-            ->with($this->equalTo($this->type))
+            ->with($this->equalTo($this->child_type))
             ->will($this->returnValue('testmodel'))
         ;
 
