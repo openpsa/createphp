@@ -26,7 +26,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     {
         $this->mockMapper = new MockMapper;
         $this->parentController = new Controller($this->mockMapper);
-        $this->parentController->setVocabulary('test', 'http:://test.org/');
+        $this->parentController->setVocabulary('test', 'http://test.org/');
         $this->childController = new Controller($this->mockMapper);
 
         $this->mockTypeFactory = $this
@@ -84,7 +84,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, sizeof($children));
         $this->assertInstanceOf('Midgard\CreatePHP\Entity\Controller', $children[0]);
         $this->assertEquals('', $this->mockMapper->createSubject($children[0]->getObject()));
-       $this->assertEquals('display:none', $children[0]->getAttribute('style'));
+        $this->assertEquals('display:none', $children[0]->getAttribute('style'));
     }
 
     public function test_Iterator()
@@ -134,5 +134,25 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
         $entity->test[1] = new Collection('test2', $this->mockTypeFactory, array());
         $entity->test[] = new Collection('test3', $this->mockTypeFactory, array());
         $this->assertTrue(isset($entity->test[2]));
+    }
+
+    public function test_render()
+    {
+        $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
+        $collection->setTypeName('test');
+        $collection->setRev('test:rev');
+
+        $parent = array
+        (
+            'id' => 'parent_id',
+            'children' => array
+            (
+                array('id' => 'child1')
+            )
+        );
+        $this->parentController->test = $collection;
+        $entity = $this->parentController->createWithObject($parent);
+
+        $this->assertEquals("<div xmlns:test=\"http://test.org/\" about=\"parent_id\"><div rev=\"test:rev\"><div about=\"child1\"></div>\n</div>\n</div>\n", $entity->render());
     }
 }

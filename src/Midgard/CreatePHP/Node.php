@@ -230,6 +230,14 @@ abstract class Node implements NodeInterface
             $this->_tag_name = $tag_name;
         }
 
+        if (   $this->_parent
+            && $this->_parent->isRendering())
+        {
+            //remove about to work around a VIE bug with nested identical about attributes
+            $about_backup = $this->getAttribute('about');
+            $this->unsetAttribute('about');
+        }
+
         $template = explode('__CONTENT__', $this->_template);
         $template = $template[0];
 
@@ -238,6 +246,12 @@ abstract class Node implements NodeInterface
             "__TAG_NAME__" => $this->_tag_name,
             " __ATTRIBUTES__" => $this->renderAttributes(),
         );
+
+        if (!empty($about_backup))
+        {
+            $this->setAttribute('about', $about_backup);
+        }
+
         $this->_is_rendering = true;
         return strtr($template, $replace);
     }
