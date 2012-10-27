@@ -42,7 +42,7 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * TODO: ensure that this has the right id resp. parent+name
      */
-    function store($object)
+    public function store($object)
     {
         $this->om->persist($object);
         $this->om->flush();

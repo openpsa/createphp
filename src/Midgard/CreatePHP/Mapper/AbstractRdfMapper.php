@@ -53,7 +53,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      *
      * Just overwrite if you use a different concept.
      */
-    function prepareObject(TypeInterface $type, $parent = null)
+    public function prepareObject(TypeInterface $type, $parent = null)
     {
         if ($parent !== null) {
             throw new \Exception('Parent is not null, please extend this method to configure the parent');
