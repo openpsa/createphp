@@ -21,41 +21,41 @@ interface PropertyDefinitionInterface extends RdfElementDefinitionInterface
      * @param string $value
      * @return \Midgard\CreatePHP\Entity\PropertyInterface
      */
-    function createWithValue($value);
+    public function createWithValue($value);
 
     /**
      * Get the identifier value of this property (RDFa attribute)
      *
      * @return string
      */
-    function getIdentifier();
+    public function getIdentifier();
 
     /**
      * Set the property rdfa name
      *
      * @param string $property
      */
-    function setProperty($property);
+    public function setProperty($property);
 
     /**
      * Get the property rdfa name
      *
      * @return string the rdf name of this property
      */
-    function getProperty();
+    public function getProperty();
 
     /**
      * Containing type setter
      *
      * @param TypeInterface $parent The parent node
      */
-    function setParentType(TypeInterface $parent);
+    public function setParentType(TypeInterface $parent);
 
     /**
      * Containing type getter
      *
      * @return TypeInterface The parent type
      */
-    function getParentType();
+    public function getParentType();
 
 }

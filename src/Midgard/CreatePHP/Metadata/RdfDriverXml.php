@@ -60,7 +60,7 @@ class RdfDriverXml extends AbstractRdfDriver
      * @return \Midgard\CreatePHP\NodeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         $xml = $this->getXmlDefinition($className);
         if (null == $xml) {
@@ -156,7 +156,7 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return \SimpleXMLElement|null the definition or null if none found
      */
-    protected  function getXmlDefinition($className)
+    protected function getXmlDefinition($className)
     {
         $filename = $this->buildFileName($className);
         foreach ($this->directories as $dir) {
@@ -184,7 +184,7 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return array The names of all classes known to this driver.
      */
-    function getAllClassNames()
+    public function getAllClassNames()
     {
         //TODO loop through all provided paths and convert filenames back to class names
     }
