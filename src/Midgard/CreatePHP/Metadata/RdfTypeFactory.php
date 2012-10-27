@@ -40,8 +40,6 @@ class RdfTypeFactory
     /**
      * @param RdfMapperInterface $mapper the mapper to use in this project
      */
-
-
     public function __construct(RdfMapperInterface $mapper, RdfDriverInterface $driver, $typMap)
     {
         $this->mapper = $mapper;

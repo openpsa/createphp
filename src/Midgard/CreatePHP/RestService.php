@@ -168,15 +168,13 @@ class RestService
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
-
         foreach ($type->getChildDefinitions() as $node) {
             if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }
+
             /** @var $node CollectionDefinitionInterface */
-
             $child_type = $node->getType($type->getVocabularies());
-
 
             $parentfield = $this->_expandPropertyName($node->getRev(), $child_type);
             if (!empty($received_data[$parentfield])) {
