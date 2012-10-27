@@ -75,7 +75,7 @@ class RdfDriverArrayTest extends RdfDriverBase
      *
      * @return array The names of all classes known to this driver.
      */
-    function testGetAllClassNames()
+    public function testGetAllClassNames()
     {
         // TODO
     }

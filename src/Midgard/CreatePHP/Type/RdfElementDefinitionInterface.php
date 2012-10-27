@@ -25,5 +25,5 @@ interface RdfElementDefinitionInterface
      *
      * @return array with client configuration
      */
-    function getConfig();
+    public function getConfig();
 }

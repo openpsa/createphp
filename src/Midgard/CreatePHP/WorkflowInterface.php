@@ -24,7 +24,7 @@ interface WorkflowInterface
      * @param mixed $object
      * @return array|null array to return for this workflow, or null if workflow is not allowed
      */
-    function getToolbarConfig($object);
+    public function getToolbarConfig($object);
 
     /**
      * Execute this workflow
@@ -36,5 +36,5 @@ interface WorkflowInterface
      *
      * @return array TODO what?
      */
-    function run($object);
+    public function run($object);
 }

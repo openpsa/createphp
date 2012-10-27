@@ -24,7 +24,7 @@ interface EntityInterface extends TypeInterface
      *
      * @return mixed
      */
-    function getObject();
+    public function getObject();
 
     /**
      * Whether this node is editable. This is initialized from what
@@ -33,14 +33,14 @@ interface EntityInterface extends TypeInterface
      *
      * @return boolean
      */
-    function isEditable();
+    public function isEditable();
 
     /**
      * Overwrite whether this node is editable.
      *
      * @param boolean $value
      */
-    function setEditable($value);
+    public function setEditable($value);
 
     /**
      * Whether this entity is currently in process of being rendered.
@@ -50,5 +50,5 @@ interface EntityInterface extends TypeInterface
      *
      * @return boolean
      */
-    function isRendering();
+    public function isRendering();
 }

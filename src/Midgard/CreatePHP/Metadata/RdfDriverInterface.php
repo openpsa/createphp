@@ -30,12 +30,12 @@ interface RdfDriverInterface
      * @return \Midgard\CreatePHP\Type\TypeInterfacethe type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
+    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
 
     /**
      * Gets the names of all classes known to this driver.
      *
      * @return array The names of all classes known to this driver.
      */
-    function getAllClassNames();
+    public function getAllClassNames();
 }
