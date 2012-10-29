@@ -4,6 +4,7 @@ namespace Test\Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Metadata\RdfDriverArray;
+use Midgard\CreatePHP\Entity\Controller;
 
 class RdfDriverArrayTest extends RdfDriverBase
 {
@@ -41,6 +42,13 @@ class RdfDriverArrayTest extends RdfDriverBase
                            "class" => "tags",
                        )
                    ),
+                   "children" => array(
+                       "type" => "collection",
+                       "rel" => "dcterms:hasPart",
+                       "types" => array(
+                           'sioc:Item',
+                       ),
+                   ),
                    "content" => array(
                        "type" => "property",
                        "property" => "sioc:content",
@@ -55,6 +63,14 @@ class RdfDriverArrayTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
+        $itemType = new Controller($mapper);
+        $itemType->addRev('my:customRev');
+        $typeFactory->expects($this->once())
+            ->method('getType')
+            ->with('http://rdfs.org/sioc/ns#Item')
+            ->will($this->returnValue($itemType))
+        ;
+
         $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
         $this->assertTestNodetype($type);
@@ -77,6 +93,11 @@ class RdfDriverArrayTest extends RdfDriverBase
      */
     public function testGetAllClassNames()
     {
-        // TODO
+        $map = $this->driver->getAllClassNames();
+        $this->assertCount(1, $map);
+        $types = array(
+            'http://rdfs.org/sioc/ns#Post' => 'Test\\Midgard\\CreatePHP\\Model',
+        );
+        $this->assertEquals($types, $map);
     }
 }

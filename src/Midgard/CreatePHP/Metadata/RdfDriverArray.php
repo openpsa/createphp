@@ -16,6 +16,7 @@ use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
+use Midgard\CreatePHP\Helper\NamespaceHelper;
 
 /**
  * This driver is injected an array of rdf mapping definitions
@@ -103,10 +104,7 @@ class RdfDriverArray extends AbstractRdfDriver
                 $child['type'] = 'property';
             }
             $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
-            $this->parseChild($c, $child, $identifier, $add_default_vocabulary);
-            if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
-                $c->setTypeName($child['controller']);
-            }
+            $this->parseChild($c, $child, $identifier, $type, $add_default_vocabulary);
             $type->$identifier = $c;
         }
 
@@ -125,12 +123,13 @@ class RdfDriverArray extends AbstractRdfDriver
      * @param \ArrayAccess $childData the child to read field from
      * @param string $field the field to be read, property for properties, rel for collections
      * @param string $identifier to be used in case there is no property field in $child
+     * @param TypeInterface $parentType the parent object, i.e. for namespaces
      * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
      *      the default namespace.
      *
      * @return array properties
      */
-    protected function parseChild($child, $childData, $identifier, &$add_default_vocabulary)
+    protected function parseChild($child, $childData, $identifier, TypeInterface $parentType, &$add_default_vocabulary)
     {
         if ($child instanceof PropertyDefinitionInterface) {
             /** @var $child PropertyDefinitionInterface */
@@ -139,6 +138,12 @@ class RdfDriverArray extends AbstractRdfDriver
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
+            if (isset($childData['types'])) {
+                foreach ($childData['types'] as $type) {
+                    $expanded = NamespaceHelper::expandNamespace($type, $parentType->getVocabularies());
+                    $child->addTypeName($expanded);
+                }
+            }
         }
 
         if ($child instanceof NodeInterface) {
@@ -178,6 +183,12 @@ class RdfDriverArray extends AbstractRdfDriver
      */
     public function getAllClassNames()
     {
-        return array_keys($this->definitions);
+        $map = array();
+        foreach ($this->definitions as $class => $definition) {
+            $type = NamespaceHelper::expandNamespace($definition['typeof'], $definition['vocabularies']);
+            $map[$type] = $class;
+        }
+
+        return $map;
     }
 }

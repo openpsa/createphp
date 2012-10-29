@@ -4,6 +4,7 @@ namespace Test\Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
+use Midgard\CreatePHP\Entity\Controller;
 
 class RdfDriverXmlTest extends RdfDriverBase
 {
@@ -21,6 +22,14 @@ class RdfDriverXmlTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
+        $itemType = new Controller($mapper);
+        $itemType->addRev('my:customRev');
+        $typeFactory->expects($this->once())
+            ->method('getType')
+            ->with('http://rdfs.org/sioc/ns#Item')
+            ->will($this->returnValue($itemType))
+        ;
+
         $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
         $this->assertTestNodetype($type);
@@ -33,7 +42,7 @@ class RdfDriverXmlTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
-        $type = $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
+        $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
     }
 
     /**

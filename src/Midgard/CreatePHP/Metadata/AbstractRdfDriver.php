@@ -46,7 +46,7 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
             case 'rel':
                 return 'dcterms:hasPart';
             case 'rev':
-                return 'dcterms:partOf';
+                return null;
             default:
                 $add_default_vocabulary = true;
                 return self::DEFAULT_VOCABULARY_PREFIX . ':' . $identifier;

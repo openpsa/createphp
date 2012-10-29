@@ -9,6 +9,7 @@
 namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Factory for createphp types based on class names.
@@ -45,7 +46,7 @@ class RdfTypeFactory
      *
      * @param string $classname name of the model class to get type for
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface
+     * @return TypeInterface
      */
     public function getType($className)
     {
@@ -57,6 +58,21 @@ class RdfTypeFactory
         // TODO: combine types from parent models...
 
         return $this->loadedTypes[$className];
+    }
+
+    /**
+     * Get the type information by (full) RDF name
+     *
+     * @param string $rdf
+     *
+     * @return TypeInterface
+     */
+    public function getTypeByRdf($rdf)
+    {
+        $map = $this->driver->getAllClassNames();
+        if (isset($map[$rdf])) {
+            return $this->getType($map[$rdf]);
+        }
     }
 
     /**

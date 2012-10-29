@@ -55,7 +55,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
                         'test1' => array
                         (
                             'type' => 'collection',
-                            'controller' => 'test2',
+                            'types' => array('test2'),
                             'attributes' => array
                             (
                                 'controller' => 'test2',
@@ -88,7 +88,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $type);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\TypeInterface', $child_type);
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $child_type->test1);
-        $this->assertEquals($child_type, $type->test1->getType());
+        $this->assertEquals(array('test2' => $child_type), $type->test1->getTypes());
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $type->test1);
     }
 
