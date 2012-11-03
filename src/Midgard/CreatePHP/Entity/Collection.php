@@ -104,6 +104,7 @@ class Collection extends Node implements CollectionInterface
                 }
                 if (null == $rev) {
                     $rev = reset($revs);
+                    break;
                 } elseif ($rev !== reset($revs)) {
                     $type = $child->getRdfType();
                     throw new \Exception("Type $type in this collection does not have the same rev attribute as the previous types, please fix your configuration.");
@@ -184,7 +185,7 @@ class Collection extends Node implements CollectionInterface
         // create entities for children
         foreach ($children as $child) {
             if (count($this->_typenames) === 1) {
-                $type = $this->_typeFactory->getType(reset($this->_typenames));
+                $type = $this->_typeFactory->getTypeByRdf(reset($this->_typenames));
             } else {
                 $type = $this->_typeFactory->getType(get_class($child));
             }

@@ -47,7 +47,7 @@ class Controller extends Node implements EntityInterface
      *
      * @var array
      */
-    protected $rev;
+    protected $rev = array();
 
     /**
      * The current storage object, if any
