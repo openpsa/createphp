@@ -136,7 +136,7 @@ class Collection extends Node implements CollectionInterface
     {
         $types = array();
         foreach ($this->_typenames as $typename) {
-            $types[$typename] = $this->_typeFactory->getType($typename);
+            $types[$typename] = $this->_typeFactory->getTypeByRdf($typename);
             if (null == $types[$typename]) {
                 throw new TypeNotFoundException($typename);
             }
@@ -199,7 +199,7 @@ class Collection extends Node implements CollectionInterface
 
         if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0 && count($this->_typenames) == 1) {
             // create an empty element to allow adding new elements to an empty editable collection
-            $type = $this->_typeFactory->getType(reset($this->_typenames));
+            $type = $this->_typeFactory->getTypeByRdf(reset($this->_typenames));
             $mapper = $type->getMapper();
             $object = $mapper->prepareObject($type, $object);
             $entity = $type->createWithObject($object);
