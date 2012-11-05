@@ -14,6 +14,25 @@ To use CreatePHP, you need to implement the RdfMapperInterface and provide metad
 your domain models and RDF. See the Mapper subfolder for a couple of abstract classes that might
 be useful to write your own mapper.
 
+Installation
+-----
+
+CreatePHP is available on [Packagist](https://packagist.org/packages/midgard/createphp), so you can 
+simply include it in your `composer.json`.
+
+*Warning:* Until a solution for [Issue 200](https://github.com/composer/packagist/issues/200)
+is found, the version you get from Packagist might be slightly out out date. If you want to make sure
+that you use the most recent version, it is advisable to explicitly specify the repo in your project's
+`composer.json` like this:
+
+```
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/flack/createphp"
+        }
+    ]
+```
 
 Tutorial
 --------
