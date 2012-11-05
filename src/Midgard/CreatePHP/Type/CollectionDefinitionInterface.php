@@ -27,42 +27,42 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator, RdfElemen
      *
      * @param string $typename the argument to be used with RdfTypeFactory::getType
      */
-    function setTypeName($typename);
+    public function setTypeName($typename);
 
     /**
      * Get the overriding RDFa type for the items of this collection
      *
      * @return TypeInterface
      */
-    function getType();
+    public function getType();
 
     /**
      * Set the reverse link of this collection (typically dcterms:partOf)
      *
      * @param string $rev
      */
-    function setRev($rev);
+    public function setRev($rev);
 
     /**
      * Get the reverse link of this collection (typically dcterms:partOf)
      *
      * @return string reverse link
      */
-    function getRev();
+    public function getRev();
 
     /**
      * Set the related link of this collection (typically dcterms:hasPart)
      *
      * @param string $rel
      */
-    function setRel($rel);
+    public function setRel($rel);
 
     /**
      * Get the related link of this collection (typically dcterms:hasPart)
      *
      * @return string the related name
      */
-    function getRel();
+    public function getRel();
 
     /**
      * Create a concrete collection from this definition with the children of the specified parent
@@ -71,27 +71,27 @@ interface CollectionDefinitionInterface extends ArrayAccess, Iterator, RdfElemen
      *
      * @return \Midgard\CreatePHP\Entity\CollectionInterface
      */
-    function createWithParent(EntityInterface $parent);
+    public function createWithParent(EntityInterface $parent);
 
     /**
      * Get the identifier value of this property (RDFa attribute)
      *
      * @return string
      */
-    function getIdentifier();
+    public function getIdentifier();
 
     /**
      * Containing type setter
      *
      * @param TypeInterface $parent The parent node
      */
-    function setParentType(TypeInterface $parent);
+    public function setParentType(TypeInterface $parent);
 
     /**
      * Containing type getter
      *
      * @return TypeInterface The parent type
      */
-    function getParentType();
+    public function getParentType();
 
 }

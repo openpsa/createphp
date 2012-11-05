@@ -53,7 +53,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      *
      * Just overwrite if you use a different concept.
      */
-    function prepareObject(TypeInterface $type, $parent = null)
+    public function prepareObject(TypeInterface $type, $parent = null)
     {
         if ($parent !== null) {
             throw new \Exception('Parent is not null, please extend this method to configure the parent');
@@ -139,7 +139,8 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
             return $object[$name];
         }
 
-        throw new \Exception('Unknown field ' . $child->getIdentifier());
+        $typename = is_object($object) ? get_class($object) : gettype($object);
+        throw new \Exception('Can not find anything called ' . $child->getIdentifier() . ' on ' . $typename);
     }
 
     /**

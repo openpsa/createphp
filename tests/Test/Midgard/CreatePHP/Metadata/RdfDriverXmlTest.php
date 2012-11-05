@@ -41,8 +41,13 @@ class RdfDriverXmlTest extends RdfDriverBase
      *
      * @return array The names of all classes known to this driver.
      */
-    function testGetAllClassNames()
+    public function testGetAllClassNames()
     {
-        // TODO
+        $map = $this->driver->getAllClassNames();
+        $this->assertCount(1, $map);
+        $types = array(
+            'http://rdfs.org/sioc/ns#Post' => 'Test\\Midgard\\CreatePHP\\Model',
+        );
+        $this->assertEquals($types, $map);
     }
 }

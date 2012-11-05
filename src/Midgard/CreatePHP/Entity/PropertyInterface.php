@@ -28,26 +28,26 @@ interface PropertyInterface extends PropertyDefinitionInterface
      *
      * @return string
      */
-    function getValue();
+    public function getValue();
 
     /**
      * Change the value of this property
      *
      * @param string $value
      */
-    function setValue($value);
+    public function setValue($value);
 
     /**
      * Get the editor of this property
      *
      * @return string
      */
-    function getEditor();
+    public function getEditor();
 
     /**
      * Change the editor of this property
      *
      * @param string $editor
      */
-    function setEditor($editor);
+    public function setEditor($editor);
 }

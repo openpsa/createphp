@@ -60,7 +60,7 @@ class RdfDriverXml extends AbstractRdfDriver
      * @return \Midgard\CreatePHP\NodeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         $xml = $this->getXmlDefinition($className);
         if (null == $xml) {
@@ -156,7 +156,7 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return \SimpleXMLElement|null the definition or null if none found
      */
-    protected  function getXmlDefinition($className)
+    protected function getXmlDefinition($className)
     {
         $filename = $this->buildFileName($className);
         foreach ($this->directories as $dir) {
@@ -178,14 +178,30 @@ class RdfDriverXml extends AbstractRdfDriver
     {
         return str_replace('\\', '.', $className) . '.xml';
     }
+    protected function buildClassName($filename)
+    {
+        return str_replace('.', '\\', substr($filename, 0, -4));
+    }
 
     /**
-     * Gets the names of all classes known to this driver.
+     * {@inheritDoc}
      *
-     * @return array The names of all classes known to this driver.
+     * @return array The names of all classes known to this driver, indexed by
+     *      the RDF types.
      */
-    function getAllClassNames()
+    public function getAllClassNames()
     {
-        //TODO loop through all provided paths and convert filenames back to class names
+        $classes = array();
+        foreach ($this->directories as $dir) {
+            foreach (glob($dir . DIRECTORY_SEPARATOR . '*.xml') as $file) {
+                $xml = simplexml_load_file($file);
+                $namespaces = $xml->getDocNamespaces();
+
+                list($prefix, $localname) = preg_split('/:/', $xml['typeof']);
+                $type = $namespaces[$prefix] . $localname;
+                $classes[$type] = $this->buildClassName(basename($file));
+            }
+        }
+        return $classes;
     }
 }
