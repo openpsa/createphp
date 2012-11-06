@@ -87,6 +87,11 @@ abstract class Node implements NodeInterface
         $this->_parent = $parent;
     }
 
+    /**
+     * Set the parent type
+     *
+     * @param TypeInterface $type
+     */
     public function setParentType(TypeInterface $type)
     {
         $this->setParent($type);
@@ -102,6 +107,11 @@ abstract class Node implements NodeInterface
         return $this->_parent;
     }
 
+    /**
+     * Get the parent type
+     *
+     * @return TypeInterface
+     */
     public function getParentType()
     {
         return $this->getParent();
@@ -117,6 +127,11 @@ abstract class Node implements NodeInterface
         return $this->_children;
     }
 
+    /**
+     * Check if the node is currently in its output phase
+     *
+     * @return boolean
+     */
     public function isRendering()
     {
         return $this->_is_rendering;
