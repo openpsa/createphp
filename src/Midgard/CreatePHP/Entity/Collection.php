@@ -185,9 +185,9 @@ class Collection extends Node implements CollectionInterface
         // create entities for children
         foreach ($children as $child) {
             if (count($this->_typenames) === 1) {
-                $type = $this->_typeFactory->getTypeByRdf(reset($this->_typenames));
+                $type = $this->_typeFactory->getTypeByRdf(current($this->_typenames));
             } else {
-                $type = $this->_typeFactory->getType(get_class($child));
+                $type = $this->_typeFactory->getTypeByObject($child);
             }
 
             foreach ($type->getVocabularies() as $prefix => $uri) {

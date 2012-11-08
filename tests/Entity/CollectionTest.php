@@ -34,7 +34,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockTypeFactory->expects($this->any())
-            ->method('getType')
+            ->method('getTypeByRdf')
             ->with('test')
             ->will($this->returnValue($this->childController))
         ;

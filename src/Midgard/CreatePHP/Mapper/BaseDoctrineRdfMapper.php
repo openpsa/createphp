@@ -54,7 +54,7 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * use getRealClass if className names a doctrine proxy class.
      */
-    public function canonicalClassName($className)
+    public function canonicalName($className)
     {
         $refl = new \ReflectionClass($className);
         if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {

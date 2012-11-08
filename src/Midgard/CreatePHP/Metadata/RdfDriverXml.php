@@ -38,7 +38,7 @@ use Midgard\CreatePHP\Helper\NamespaceHelper;
  *          <!-- the rev attribute for a collection is only needed if children
  *               support more than one possible rev attribute -->
  *          <collection rel="dcterms:hasPart" rev="dcterms:partOf" identifier="posts" tag-name="ul">
- *              <type>sioc:Post</type>
+ *              <childtype>sioc:Post</childtype>
  *          </collection>
  *      </children>
  * </type>
@@ -60,17 +60,17 @@ class RdfDriverXml extends AbstractRdfDriver
     /**
      * Return the NodeInterface wrapping a type for the specified class
      *
-     * @param string $className
+     * @param string $name
      * @param RdfMapperInterface $mapper
      *
      * @return \Midgard\CreatePHP\NodeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadType($name, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
-        $xml = $this->getXmlDefinition($className);
+        $xml = $this->getXmlDefinition($name);
         if (null == $xml) {
-            throw new TypeNotFoundException('No RDFa mapping found for ' . $className . ' (looked for '.$this->buildFileName($className).')');
+            throw new TypeNotFoundException('No RDFa mapping found for ' . $name . ' (looked for '.$this->buildFileName($name).')');
         }
 
         $type = $this->createType($mapper, $this->getConfig($xml));
@@ -123,8 +123,8 @@ class RdfDriverXml extends AbstractRdfDriver
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
-            foreach ($childData->type as $type) {
-                $expanded = NamespaceHelper::expandNamespace((string) $type, $childData->getDocNamespaces(true));
+            foreach ($childData->childtype as $childtype) {
+                $expanded = NamespaceHelper::expandNamespace((string) $childtype, $childData->getDocNamespaces(true));
                 $child->addTypeName($expanded);
             }
         }
@@ -193,11 +193,8 @@ class RdfDriverXml extends AbstractRdfDriver
 
     /**
      * {@inheritDoc}
-     *
-     * @return array The names of all classes known to this driver, indexed by
-     *      the RDF types.
      */
-    public function getAllClassNames()
+    public function getAllNames()
     {
         $classes = array();
         foreach ($this->directories as $dir) {

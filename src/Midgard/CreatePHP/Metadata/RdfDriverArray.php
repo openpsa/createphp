@@ -28,18 +28,19 @@ use Midgard\CreatePHP\Helper\NamespaceHelper;
  *              "dcterms" => "http://purl.org/dc/terms/",
  *          ),
  *          "typeof" => "sioc:Post",
+ *          "rev" => array("dcterms:partOf"),
  *          "config" => array(
  *              "key" => "value",
  *          ),
  *          "children" => array(
  *              "title" => array(
- *                  "type" => "property",
+ *                  "nodeType" => "property",
  *                  "property" => "dcterms:title",
  *                  "tag-name" => "h2",
  *                  "editor" => "someConfiguredEditor"
  *              ),
  *              "tags" => array(
- *                  "type" => "collection",
+ *                  "nodeType" => "collection",
  *                  "rel" => "skos:related",
  *                  "tag-name" => "ul",
  *                  "config" => array(
@@ -47,8 +48,14 @@ use Midgard\CreatePHP\Helper\NamespaceHelper;
  *                  ),
  *              ),
  *              "content" => array(
- *                  "type" => "property",
+ *                  "nodeType" => "property",
  *                  "property" => "sioc:content",
+ *              ),
+ *              "children" => array(
+ *                  "nodeType" => "collection",
+ *                  "rel" => "skos:related",
+ *                  "tag-name" => "ul",
+ *                  "childtypes" => array("sioc:Post"),
  *              ),
  *          ),
  *      ),
@@ -77,7 +84,7 @@ class RdfDriverArray extends AbstractRdfDriver
      * @return \Midgard\CreatePHP\Type\TypeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadType($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! isset($this->definitions[$className])) {
             throw new TypeNotFoundException('No definition found for ' . $className);
@@ -100,10 +107,10 @@ class RdfDriverArray extends AbstractRdfDriver
         }
         $add_default_vocabulary = false;
         foreach ($definition['children'] as $identifier => $child) {
-            if (! isset($child['type'])) {
-                $child['type'] = 'property';
+            if (! isset($child['nodeType'])) {
+                $child['nodeType'] = 'property';
             }
-            $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
+            $c = $this->createChild($child['nodeType'], $identifier, $child, $typeFactory);
             $this->parseChild($c, $child, $identifier, $type, $add_default_vocabulary);
             $type->$identifier = $c;
         }
@@ -111,7 +118,6 @@ class RdfDriverArray extends AbstractRdfDriver
         if ($add_default_vocabulary) {
             $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
-
 
         return $type;
     }
@@ -138,8 +144,8 @@ class RdfDriverArray extends AbstractRdfDriver
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
-            if (isset($childData['types'])) {
-                foreach ($childData['types'] as $type) {
+            if (isset($childData['childtypes'])) {
+                foreach ($childData['childtypes'] as $type) {
                     $expanded = NamespaceHelper::expandNamespace($type, $parentType->getVocabularies());
                     $child->addTypeName($expanded);
                 }
@@ -177,16 +183,21 @@ class RdfDriverArray extends AbstractRdfDriver
     }
 
     /**
-     * Gets the names of all classes known to this driver.
-     *
-     * @return array The names of all classes known to this driver.
+     * {@inheritDoc}
      */
-    public function getAllClassNames()
+    public function getAllNames()
     {
         $map = array();
-        foreach ($this->definitions as $class => $definition) {
-            $type = NamespaceHelper::expandNamespace($definition['typeof'], $definition['vocabularies']);
-            $map[$type] = $class;
+        foreach ($this->definitions as $name => $definition) {
+            $type = $name;
+            if (isset($definition['typeof'])) {
+                $type = $definition['typeof'];
+                if (isset($definition['vocabularies'])) {
+                    $type = NamespaceHelper::expandNamespace($definition['typeof'], $definition['vocabularies']);
+                }
+            }
+
+            $map[$type] = $name;
         }
 
         return $map;

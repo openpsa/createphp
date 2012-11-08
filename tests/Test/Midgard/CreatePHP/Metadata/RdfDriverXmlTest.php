@@ -25,12 +25,12 @@ class RdfDriverXmlTest extends RdfDriverBase
         $itemType = new Controller($mapper);
         $itemType->addRev('my:customRev');
         $typeFactory->expects($this->once())
-            ->method('getType')
+            ->method('getTypeByRdf')
             ->with('http://rdfs.org/sioc/ns#Item')
             ->will($this->returnValue($itemType))
         ;
 
-        $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
+        $type = $this->driver->loadType('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
         $this->assertTestNodetype($type);
     }
@@ -42,7 +42,7 @@ class RdfDriverXmlTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
-        $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
+        $this->driver->loadType('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
     }
 
     /**
@@ -50,9 +50,9 @@ class RdfDriverXmlTest extends RdfDriverBase
      *
      * @return array The names of all classes known to this driver.
      */
-    public function testGetAllClassNames()
+    public function testGetAllNames()
     {
-        $map = $this->driver->getAllClassNames();
+        $map = $this->driver->getAllNames();
         $this->assertCount(1, $map);
         $types = array(
             'http://rdfs.org/sioc/ns#Post' => 'Test\\Midgard\\CreatePHP\\Model',

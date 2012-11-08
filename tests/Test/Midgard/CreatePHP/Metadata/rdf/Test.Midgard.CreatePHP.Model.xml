@@ -11,7 +11,7 @@
             <attribute key="class" value="tags"/>
         </collection>
         <collection rel="dcterms:hasPart" identifier="children">
-            <type>sioc:Item</type>
+            <childtype>sioc:Item</childtype>
         </collection>
         <property property="sioc:content" identifier="content" />
     </children>
