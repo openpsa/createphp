@@ -17,7 +17,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 
-use Symfony\Component\Process\Exception\RuntimeException;
+use \RuntimeException;
 
 /**
  * This driver loads rdf mappings from xml files

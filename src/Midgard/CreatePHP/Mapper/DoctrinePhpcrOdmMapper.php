@@ -13,7 +13,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 
-use Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use \RuntimeException;
 
 /**
  * Mapper to handle PHPCR-ODM.
@@ -28,7 +28,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     {
         $object = parent::prepareObject($type);
         if (null == $parent) {
-            throw new \RuntimeException('You need a parent to create new objects');
+            throw new RuntimeException('You need a parent to create new objects');
         }
 
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
@@ -68,10 +68,10 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     public function getBySubject($subject)
     {
         if (empty($subject)) {
-            throw new \RuntimeException('Subject may not be empty');
+            throw new RuntimeException('Subject may not be empty');
         }
         $ret = $this->om->find(null, $subject);
-        if (empty($ret)) throw new \RuntimeException("Not found: $subject");
+        if (empty($ret)) throw new RuntimeException("Not found: $subject");
         return $ret;
     }
 
