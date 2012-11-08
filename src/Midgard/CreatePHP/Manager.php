@@ -64,7 +64,7 @@ class Manager
      */
     public function getType($identifier)
     {
-        return $this->_metadata->getType($identifier);
+        return $this->_metadata->getTypeByName($identifier);
     }
 
     /**
@@ -94,7 +94,7 @@ class Manager
         if (null == $identifier) {
             $identifier = get_class($object);
         }
-        $type = $this->_metadata->getType($identifier);
+        $type = $this->_metadata->getTypeByName($identifier);
 
         return $type->createWithObject($object);
     }

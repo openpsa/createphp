@@ -35,7 +35,7 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $controller = new Controller(new MockMapper);
         $this->factoryMock
             ->expects($this->once())
-            ->method('getType')
+            ->method('getTypeByName')
             ->with('test')
             ->will($this->returnValue($controller))
         ;

@@ -34,23 +34,23 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->mockTypeFactory->expects($this->any())
-            ->method('getType')
+            ->method('getTypeByRdf')
             ->with('test')
             ->will($this->returnValue($this->childController))
         ;
     }
 
-    public function test_get_setTypeName()
+    public function test_get_setTypeNames()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array());
-        $collection->setTypeName('test');
-        $this->assertEquals($this->childController, $collection->getType());
+        $collection->addTypeName('test');
+        $this->assertEquals(array('test' => $this->childController), $collection->getTypes());
     }
 
     public function test_loadFromParent()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setTypeName('test');
+        $collection->addTypeName('test');
 
         $parent = array
         (
@@ -72,7 +72,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_loadFromParent_no_children()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setTypeName('test');
+        $collection->addTypeName('test');
 
         $parent = array
         (
@@ -90,7 +90,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_Iterator()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setTypeName('test');
+        $collection->addTypeName('test');
 
         $parent = array
         (
@@ -115,7 +115,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_ArrayAccess()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setTypeName('test');
+        $collection->addTypeName('test');
 
         $parent = array
         (
@@ -139,7 +139,7 @@ class CollectionTest extends \PHPUnit_Framework_TestCase
     public function test_render()
     {
         $collection = new Collection('test', $this->mockTypeFactory, array('is_child' => true));
-        $collection->setTypeName('test');
+        $collection->addTypeName('test');
         $collection->setRev('test:rev');
 
         $parent = array

@@ -151,6 +151,9 @@ class RestService
 
     /**
      * Handle post request
+     *
+     * @param array $received_data
+     * @param TypeInterface $type parent node of this type (TODO: refactor)
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
@@ -158,8 +161,12 @@ class RestService
             if (!$node instanceof CollectionDefinitionInterface) {
                 continue;
             }
+            $types = $node->getTypes();
+            if (count($types) != 1) {
+                throw new \Exception('TODO: refactor creation');
+            }
             /** @var $node CollectionDefinitionInterface */
-            $child_type = $node->getType();
+            $child_type = reset($types);
             $parentfield = $this->_expandPropertyName($node->getRev(), $child_type);
             if (!empty($received_data[$parentfield])) {
                 $parent_identifier = $this->jsonldDecode($received_data[$parentfield][0]);

@@ -9,6 +9,7 @@
 namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Factory for createphp types based on class names.
@@ -40,23 +41,45 @@ class RdfTypeFactory
         $this->driver = $driver;
     }
 
-    /**
-     * Get the type responsible for this class
-     *
-     * @param string $classname name of the model class to get type for
-     *
-     * @return \Midgard\CreatePHP\Type\TypeInterface
-     */
-    public function getType($className)
+    public function getTypeByObject($object)
     {
-        $className = $this->mapper->canonicalClassName($className);
-        if (!isset($this->loadedTypes[$className])) {
-            $this->loadedTypes[$className] = $this->driver->loadTypeForClass($className, $this->mapper, $this);
+        return $this->getTypeByName(
+            $this->driver->objectToName($object, $this->mapper)
+        );
+    }
+
+    /**
+     * Get the type with this name
+     *
+     * @param string $name of the type to get, i.e. the full class name
+     *
+     * @return TypeInterface
+     */
+    public function getTypeByName($name)
+    {
+        if (!isset($this->loadedTypes[$name])) {
+            $this->loadedTypes[$name] = $this->driver->loadType($name, $this->mapper, $this);
         }
 
         // TODO: combine types from parent models...
 
-        return $this->loadedTypes[$className];
+        return $this->loadedTypes[$name];
+    }
+
+    /**
+     * Get the type information by (full) RDF name
+     *
+     * @param string $rdf
+     *
+     * @return TypeInterface
+     */
+    public function getTypeByRdf($rdf)
+    {
+        $map = $this->driver->getAllNames();
+        if (! isset($map[$rdf])) {
+            throw new TypeNotFoundException("No type for $rdf");
+        }
+        return $this->getTypeByName($map[$rdf]);
     }
 
     /**
