@@ -65,7 +65,7 @@ class RdfDriverArrayTest extends RdfDriverBase
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
         $itemType = new Controller($mapper);
         $itemType->addRev('my:customRev');
-        $typeFactory->expects($this->once())
+        $typeFactory->expects($this->exactly(2))
             ->method('getTypeByRdf')
             ->with('http://rdfs.org/sioc/ns#Item')
             ->will($this->returnValue($itemType))

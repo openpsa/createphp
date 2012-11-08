@@ -56,7 +56,7 @@ abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
 
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $children['children']);
         $this->assertEquals('children', $children['children']->getIdentifier());
-        //$this->assertEquals(array(), $children['children']->getTypes());
+        $this->assertEquals(array('http://rdfs.org/sioc/ns#Item'), array_keys($children['children']->getTypes()));
         $this->assertEquals('dcterms:hasPart', $children['children']->getRel());
         $this->assertEquals('my:customRev', $children['children']->getRev());
         $this->assertEquals(array(), $children['children']->getConfig());
