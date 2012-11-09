@@ -43,6 +43,13 @@ class Controller extends Node implements EntityInterface
     protected $_vocabularies = array();
 
     /**
+     * List of possible reverse mappings for this type
+     *
+     * @var array
+     */
+    protected $rev = array();
+
+    /**
      * The current storage object, if any
      *
      * @var mixed
@@ -154,6 +161,26 @@ class Controller extends Node implements EntityInterface
     public function getRdfType()
     {
         return $this->getAttribute('typeof');
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function addRev($rev)
+    {
+        $this->rev[$rev] = $rev;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @api
+     */
+    public function getRevOptions()
+    {
+        return $this->rev;
     }
 
     /**

@@ -35,7 +35,7 @@ class RdfDriverFeelingLucky extends AbstractRdfDriver
      *
      * @api
      */
-    public function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadType($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! class_exists($className)) {
             throw new TypeNotFoundException('Class ' . $className . ' not found');
@@ -95,12 +95,16 @@ class RdfDriverFeelingLucky extends AbstractRdfDriver
     }
 
     /**
-     * Gets the names of all classes known to this driver.
-     *
-     * @return array The names of all classes known to this driver.
+     * {@inheritDoc}
      */
-    public function getAllClassNames()
+    public function getAllNames()
     {
         return $this->classNames;
     }
+
+    protected function getAttributes($element)
+    {
+        throw new \Exception('this is never called');
+    }
+
 }

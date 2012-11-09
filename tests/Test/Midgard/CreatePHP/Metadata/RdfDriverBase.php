@@ -35,9 +35,9 @@ abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
         $this->assertEquals(array('test' => 'testvalue'), $type->getConfig());
 
         $children = $type->getChildren();
-        $this->assertCount(3, $children);
+        $this->assertCount(4, $children);
 
-        $this->assertEquals(array('title', 'tags', 'content'), array_keys($children));
+        $this->assertEquals(array('title', 'tags', 'children', 'content'), array_keys($children));
         $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\PropertyDefinitionInterface', $children['title']);
         $this->assertEquals('title', $children['title']->getIdentifier());
         $this->assertEquals('dcterms:title', $children['title']->getAttribute('property'));
@@ -52,6 +52,14 @@ abstract class RdfDriverBase extends \PHPUnit_Framework_TestCase
         $this->assertEquals('skos:related', $children['tags']->getAttribute('rel'));
         $this->assertEquals('ul', $children['tags']->getTagName());
         $this->assertEquals(array('table' => 'tags'), $children['tags']->getConfig());
-        $this->assertEquals(array('rel' => 'skos:related', 'class' => 'tags', 'rev' => 'dcterms:partOf'), $children['tags']->getAttributes());
+        $this->assertEquals(array('rel' => 'skos:related', 'class' => 'tags', 'rev' => null), $children['tags']->getAttributes());
+
+        $this->assertInstanceOf('Midgard\\CreatePHP\\Type\\CollectionDefinitionInterface', $children['children']);
+        $this->assertEquals('children', $children['children']->getIdentifier());
+        $this->assertEquals(array('http://rdfs.org/sioc/ns#Item'), array_keys($children['children']->getTypes()));
+        $this->assertEquals('dcterms:hasPart', $children['children']->getRel());
+        $this->assertEquals('my:customRev', $children['children']->getRev());
+        $this->assertEquals(array(), $children['children']->getConfig());
+        $this->assertEquals(array('rel' => 'dcterms:hasPart', 'rev' => 'my:customRev'), $children['children']->getAttributes());
     }
 }

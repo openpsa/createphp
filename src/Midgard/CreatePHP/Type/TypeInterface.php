@@ -84,6 +84,20 @@ interface TypeInterface extends RdfElementDefinitionInterface
     public function getMapper();
 
     /**
+     * Add an entry to the list of possible reverse mappings this type could
+     * have when in a list.
+     */
+    public function addRev($rev);
+
+    /**
+     * Provide a list of possible reverse relation attributes this entity may
+     * have, for use when a new object is created in a hierarchy.
+     *
+     * @return string[]
+     */
+    public function getRevOptions();
+
+    /**
      * Get all children definitions of this type
      *
      * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface

@@ -20,21 +20,22 @@ use Midgard\CreatePHP\Entity\EntityInterface;
 interface CollectionDefinitionInterface extends ArrayAccess, Iterator, RdfElementDefinitionInterface
 {
     /**
-     * Set an overriding RDFa type for the items of this collection
+     * Add an RDF type name to this collection
      *
      * If this is not set, the collection will use the RdfTypeFactory to find
      * types for the bound data based on their classes.
      *
-     * @param string $typename the argument to be used with RdfTypeFactory::getType
+     * @param string $typename the expanded RDF type name to be used with
+     *      RdfTypeFactory::getTypeByRdf
      */
-    public function setTypeName($typename);
+    public function addTypeName($typename);
 
     /**
-     * Get the overriding RDFa type for the items of this collection
+     * Get all RDF types this collection supports
      *
-     * @return TypeInterface
+     * @return TypeInterface[]
      */
-    public function getType();
+    public function getTypes();
 
     /**
      * Set the reverse link of this collection (typically dcterms:partOf)

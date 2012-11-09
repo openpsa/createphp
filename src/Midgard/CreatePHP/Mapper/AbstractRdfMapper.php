@@ -149,7 +149,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      * @param string $className
      * @return string exactly the same as $className
      */
-    public function canonicalClassName($className)
+    public function canonicalName($className)
     {
         return $className;
     }
