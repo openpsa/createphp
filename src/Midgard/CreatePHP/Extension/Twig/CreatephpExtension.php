@@ -106,9 +106,7 @@ class CreatephpExtension extends Twig_Extension
             throw new Twig_Error_Runtime('The model to create the entity from must be a class');
         }
 
-        $classname = get_class($model);
-
-        $type = $this->typeFactory->getType($classname);
+        $type = $this->typeFactory->getTypeByClass($model);
         if (! $type instanceof TypeInterface) {
             throw new Twig_Error_Runtime('Could not find metadata for '.get_class($model));
         }
