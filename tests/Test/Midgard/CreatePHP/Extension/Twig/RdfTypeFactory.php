@@ -3,8 +3,9 @@
 namespace Test\Midgard\CreatePHP\Extension\Twig;
 
 use Midgard\CreatePHP\RdfMapperInterface;
-
 use Midgard\CreatePHP\Entity\Controller as Type;
+
+use Test\Midgard\CreatePHP\Model;
 
 class RdfTypeFactory extends \Midgard\CreatePHP\Metadata\RdfTypeFactory
 {
@@ -22,14 +23,10 @@ class RdfTypeFactory extends \Midgard\CreatePHP\Metadata\RdfTypeFactory
     }
 
     /**
-     * Get the type responsible for this class
-     *
-     * @param string $classname name of the model class to get type for
-     *
-     * @return \Midgard\CreatePHP\Type\TypeInterface
+     * Get the type if this is the expected model class
      */
-    public function getType($classname) {
-        if ('Test\\Midgard\\CreatePHP\\Model' == $classname) {
+    public function getTypeByClass($class) {
+        if ($class instanceof Model) {
             $type = new Type($this->mapper);
             $type->setVocabulary('dcterms', 'http://purl.org/dc/terms/');
             $prop = new \Midgard\CreatePHP\Entity\Property('title', array());
@@ -38,7 +35,7 @@ class RdfTypeFactory extends \Midgard\CreatePHP\Metadata\RdfTypeFactory
             return $type;
         }
 
-        throw new \Exception("No type found for $classname");
+        throw new \Exception('No type found for ' . get_class($class));
     }
 
 }
