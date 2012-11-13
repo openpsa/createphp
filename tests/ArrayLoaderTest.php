@@ -19,7 +19,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
                     (
                         'test1' => array
                         (
-                            'type' => 'property',
+                            'nodeType' => 'property',
                             'attributes' => array
                             (
                                 'class' => 'test_prop'
