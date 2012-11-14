@@ -25,7 +25,7 @@ class RdfTypeFactory extends \Midgard\CreatePHP\Metadata\RdfTypeFactory
     /**
      * Get the type if this is the expected model class
      */
-    public function getTypeByClass($class) {
+    public function getTypeByObject($class) {
         if ($class instanceof Model) {
             $type = new Type($this->mapper);
             $type->setVocabulary('dcterms', 'http://purl.org/dc/terms/');
