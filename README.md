@@ -27,12 +27,10 @@ Tutorial
 This tutorial shows how to use CreatePHP with the ArrayLoader that bootstraps
 Manager, which is a sort of micro service container.
 
-Instantiate ArrayLoader  with a configuration for your data source:
+Instantiate ArrayLoader with a configuration for your data source:
 
 ```php
 <?php
-$object = load_your_data_from_somewhere();
-
 $config = array
 (
     'workflows' => array(
