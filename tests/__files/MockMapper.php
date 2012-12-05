@@ -5,6 +5,7 @@ use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 use Midgard\CreatePHP\Entity\CollectionInterface;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 /**
  * Mock RdfMapper implementation for unittests
@@ -49,7 +50,7 @@ class MockMapper implements RdfMapperInterface
 
     }
 
-    public function store($object)
+    public function store(EntityInterface $entity)
     {
 
     }
