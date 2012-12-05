@@ -212,7 +212,7 @@ class RestService
             }
         }
 
-        if ($this->_mapper->store($object))
+        if ($this->_mapper->store($entity))
         {
             return $this->_convertToJsonld($new_values, $object, $entity);
         }

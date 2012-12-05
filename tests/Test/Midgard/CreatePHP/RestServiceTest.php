@@ -3,6 +3,7 @@
 namespace Test\Midgard\CreatePHP;
 
 use Midgard\CreatePHP\RestService;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 class RestServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,7 +48,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->mapper->expects($this->once())
             ->method('store')
-            ->with('testmodel')
+            ->with($this->entity)
             ->will($this->returnValue(true))
         ;
         $this->mapper->expects($this->once())
