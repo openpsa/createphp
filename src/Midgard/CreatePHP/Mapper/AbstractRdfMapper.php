@@ -139,7 +139,8 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
             return $object[$name];
         }
 
-        throw new \Exception('Unknown field ' . $child->getIdentifier());
+        $typename = is_object($object) ? get_class($object) : gettype($object);
+        throw new \Exception('Can not find anything called ' . $child->getIdentifier() . ' on ' . $typename);
     }
 
     /**
@@ -148,7 +149,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      * @param string $className
      * @return string exactly the same as $className
      */
-    public function canonicalClassName($className)
+    public function canonicalName($className)
     {
         return $className;
     }

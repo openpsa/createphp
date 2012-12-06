@@ -20,7 +20,7 @@ interface TypeInterface extends RdfElementDefinitionInterface
      *
      * @return \Midgard\CreatePHP\Entity\EntityInterface the entity of this type bound to the supplied object
      */
-    function createWithObject($object);
+    public function createWithObject($object);
 
     /**
      * Set a prefix to an uri to build the namespace mapping
@@ -28,28 +28,28 @@ interface TypeInterface extends RdfElementDefinitionInterface
      * @param $prefix
      * @param $uri
      */
-    function setVocabulary($prefix, $uri);
+    public function setVocabulary($prefix, $uri);
 
     /**
      * Get a map of all vocabularies
      *
      * @return array of prefix => uri
      */
-    function getVocabularies();
+    public function getVocabularies();
 
     /**
      * Set the rdf type of this type, i.e. sioc:Post
      *
      * @param string $type the namespaced rdf type
      */
-    function setRdfType($type);
+    public function setRdfType($type);
 
     /**
      * Get the rdf type string of this type
      *
      * @return string
      */
-    function getRdfType();
+    public function getRdfType();
 
     /**
      * Get the child node at this key
@@ -57,7 +57,7 @@ interface TypeInterface extends RdfElementDefinitionInterface
      * @param string $key
      * @return RdfElementDefinitionInterface|null
      */
-    function __get($key);
+    public function __get($key);
 
     /**
      * Set child node with this key
@@ -65,7 +65,7 @@ interface TypeInterface extends RdfElementDefinitionInterface
      * @param string $key
      * @param RdfElementDefinitionInterface $node
      */
-    function __set($key, RdfElementDefinitionInterface $node);
+    public function __set($key, RdfElementDefinitionInterface $node);
 
     /**
      * Check if child with this key exists
@@ -74,14 +74,28 @@ interface TypeInterface extends RdfElementDefinitionInterface
      *
      * @return boolean
      */
-    function __isset($key);
+    public function __isset($key);
 
     /**
      * Mapper getter
      *
      * @return \Midgard\CreatePHP\RdfMapperInterface
      */
-    function getMapper();
+    public function getMapper();
+
+    /**
+     * Add an entry to the list of possible reverse mappings this type could
+     * have when in a list.
+     */
+    public function addRev($rev);
+
+    /**
+     * Provide a list of possible reverse relation attributes this entity may
+     * have, for use when a new object is created in a hierarchy.
+     *
+     * @return string[]
+     */
+    public function getRevOptions();
 
     /**
      * Get all children definitions of this type
@@ -89,5 +103,5 @@ interface TypeInterface extends RdfElementDefinitionInterface
      * @return array of PropertyDefinitionInterface|CollectionDefinitionInterface
      *      with the child definitions of this type
      */
-    function getChildDefinitions();
+    public function getChildDefinitions();
 }

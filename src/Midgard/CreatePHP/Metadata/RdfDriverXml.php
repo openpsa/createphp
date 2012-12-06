@@ -16,8 +16,7 @@ use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
-
-use \RuntimeException;
+use Midgard\CreatePHP\Helper\NamespaceHelper;
 
 /**
  * This driver loads rdf mappings from xml files
@@ -26,16 +25,21 @@ use \RuntimeException;
  *      xmlns:sioc="http://rdfs.org/sioc/ns#"
  *      xmlns:dcterms="http://purl.org/dc/terms/"
  *      xmlns:skos="http://www.w3.org/2004/02/skos/core#"
- *      typeof="sioc:Post"
+ *      typeof="sioc:Thread"
  * >
  *      <config key="my" value="value"/>
+ *      <rev>dcterms:partOf</rev>
  *      <children>
  *          <property property="dcterms:title" identifier="title" tag-name="h2"/>
  *          <collection rel="skos:related" identifier="tags" tag-name="ul">
  *              <config key="my" value="value"/>
  *              <attribute key="class" value="tags"/>
  *          </collection>
- *          <property property="sioc:content" identifier="content" />
+ *          <!-- the rev attribute for a collection is only needed if children
+ *               support more than one possible rev attribute -->
+ *          <collection rel="dcterms:hasPart" rev="dcterms:partOf" identifier="posts" tag-name="ul">
+ *              <childtype>sioc:Post</childtype>
+ *          </collection>
  *      </children>
  * </type>
  *
@@ -56,20 +60,23 @@ class RdfDriverXml extends AbstractRdfDriver
     /**
      * Return the NodeInterface wrapping a type for the specified class
      *
-     * @param string $className
+     * @param string $name
      * @param RdfMapperInterface $mapper
      *
      * @return \Midgard\CreatePHP\NodeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadType($name, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
-        $xml = $this->getXmlDefinition($className);
+        $xml = $this->getXmlDefinition($name);
         if (null == $xml) {
-            throw new TypeNotFoundException('No RDFa mapping found for ' . $className . ' (looked for '.$this->buildFileName($className).')');
+            throw new TypeNotFoundException('No RDFa mapping found for ' . $name . ' (looked for '.$this->buildFileName($name).')');
         }
 
         $type = $this->createType($mapper, $this->getConfig($xml));
+        foreach ($xml->rev as $rev) {
+            $type->addRev((string) $rev);
+        }
 
         if ($type instanceof NodeInterface) {
             $this->parseNodeInfo($type, $xml);
@@ -86,13 +93,6 @@ class RdfDriverXml extends AbstractRdfDriver
             $c = $this->createChild($child->getName(), $child['identifier'], $child, $typeFactory);
             $this->parseChild($c, $child, $child['identifier'], $add_default_vocabulary);
             $type->{$child['identifier']} = $c;
-            if ($c instanceof CollectionDefinitionInterface && isset($child['type'])) {
-                $c->setTypeName((string) $child['type']);
-            }
-
-            if ($c instanceof CollectionDefinitionInterface && !isset($child['type'])) {
-                throw new RuntimeException('Type attribute must be set in the definition type XML file');
-            }
         }
 
         if ($add_default_vocabulary) {
@@ -123,11 +123,13 @@ class RdfDriverXml extends AbstractRdfDriver
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
+            foreach ($childData->childtype as $childtype) {
+                $expanded = NamespaceHelper::expandNamespace((string) $childtype, $childData->getDocNamespaces(true));
+                $child->addTypeName($expanded);
+            }
         }
         if ($child instanceof NodeInterface) {
-            if ($child instanceof NodeInterface) {
-                $this->parseNodeInfo($child, $childData);
-            }
+            $this->parseNodeInfo($child, $childData);
         }
     }
 
@@ -162,7 +164,7 @@ class RdfDriverXml extends AbstractRdfDriver
      *
      * @return \SimpleXMLElement|null the definition or null if none found
      */
-    protected  function getXmlDefinition($className)
+    protected function getXmlDefinition($className)
     {
         $filename = $this->buildFileName($className);
         foreach ($this->directories as $dir) {
@@ -184,14 +186,26 @@ class RdfDriverXml extends AbstractRdfDriver
     {
         return str_replace('\\', '.', $className) . '.xml';
     }
+    protected function buildClassName($filename)
+    {
+        return str_replace('.', '\\', substr($filename, 0, -4));
+    }
 
     /**
-     * Gets the names of all classes known to this driver.
-     *
-     * @return array The names of all classes known to this driver.
+     * {@inheritDoc}
      */
-    function getAllClassNames()
+    public function getAllNames()
     {
-        //TODO loop through all provided paths and convert filenames back to class names
+        $classes = array();
+        foreach ($this->directories as $dir) {
+            foreach (glob($dir . DIRECTORY_SEPARATOR . '*.xml') as $file) {
+                $xml = simplexml_load_file($file);
+                $namespaces = $xml->getDocNamespaces();
+
+                $type = NamespaceHelper::expandNamespace($xml['typeof'], $namespaces);
+                $classes[$type] = $this->buildClassName(basename($file));
+            }
+        }
+        return $classes;
     }
 }

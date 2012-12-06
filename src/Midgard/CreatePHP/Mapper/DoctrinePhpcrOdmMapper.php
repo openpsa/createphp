@@ -24,6 +24,9 @@ use \RuntimeException;
 class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
 {
 
+    /**
+     * {@inheritDoc}
+     */
     public function prepareObject(TypeInterface $type, $parent = null)
     {
         $object = parent::prepareObject($type);
@@ -47,16 +50,13 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     public function store(EntityInterface $entity)
     {
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
+        $meta = $this->om->getClassMetaData(get_class($entity->getObject()));
+        $nodename = $meta->getFieldValue($entity->getObject(), $meta->nodename);
 
-        $object = $entity->getObject();
-
-        $meta = $this->om->getClassMetaData(get_class($object));
-
-        $metaFieldValue = $meta->getFieldValue($object, $meta->node);
-
-        if (empty($metaFieldValue)) {
-            $title = $this->determineUrlTitle($entity);
-            $meta->setFieldValue($object, $meta->nodename, $title);
+        if (empty($nodename)) { //in case of node creation the nodename is empty
+            $name = $this->generateNodeName($entity);
+            //set a guessed nodename
+            $meta->setFieldValue($entity->getObject(), $meta->nodename, $name);
         }
 
         return parent::store($entity);
@@ -76,34 +76,54 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     }
 
     /**
+     * Generate an URL friendly node name from an entity
+     * Find a usable property and remove spaces, accents and special chars
      *
-     * Determine the title of the object about to be stored, following this logic:
+     * @param EntityInterface $entity
+     * @return mixed|string
+     */
+    protected function generateNodeName(EntityInterface $entity)
+    {
+        $title = $this->determineEntityTitle($entity);
+
+        //TODO: find a better way? For example with Doctrine_Inflector or Gedmo\Sluggable\Util\Urlizer
+        setlocale(LC_CTYPE, 'en_US.UTF8');
+        $title = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $title);
+        $title = trim($title, "\x00..\x1F");
+        $title = preg_replace('/[^a-z0-9A-Z_.]/', '-', $title);
+
+        return $title;
+    }
+
+    /**
      *
-     * 1. is there a getTitle method
-     * 2. is there dcterms:title in rdf definition
+     * Determine the title of the entity to be created, following this logic:
+     *
+     * 1. is there a getTitle method with a value set
+     * 2. is there a property containing "title" in rdf definition
      * 3. take the first property defined in rdf and take first 50 characters
      * 4. give up
      *
-     * @param $entity
+     * @param EntityInterface $entity
      */
-    protected function determineTitle(EntityInterface $entity)
+    private function determineEntityTitle(EntityInterface $entity)
     {
         $object = $entity->getObject();
 
-        //is there a getTitle method
-        if (method_exists($object, 'getTitle')) {
+        //is there a getTitle method?
+        if (method_exists($object, 'getTitle') && $object->getTitle() !== '') {
             return $object->getTitle();
         } else {
-            //try to get a dcterms:title in the rdf description
+            //try to get a property containing title in the rdf description
             foreach ($entity->getChildDefinitions() as $node) {
                 if (!($node instanceof \Midgard\CreatePHP\Entity\PropertyInterface) ||
-                    strpos($node->getProperty(), "dcterms:title") === false) {
+                    strpos($node->getProperty(), "title") === false) {
                     continue;
                 }
                 return $entity->getMapper()->getPropertyValue($object, $node);
             }
 
-            //try to get the first property to make a title
+            //try to get the first property to create a guessed title of max 50 characters
             foreach ($entity->getChildDefinitions() as $node) {
                 if (!$node instanceof \Midgard\CreatePHP\Entity\PropertyInterface) {
                     continue;
@@ -114,24 +134,5 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
             //give up
             throw new RuntimeException('No title could be found four your new node.');
         }
-    }
-
-    /**
-     * Prepares an URL friendly title from an entity
-     *
-     * @param \Midgard\CreatePHP\Entity\EntityInterface $entity
-     * @return mixed|string
-     */
-    protected function determineUrlTitle(EntityInterface $entity)
-    {
-        $title = $this->determineTitle($entity);
-
-        //TODO: find a better way? For example with Doctrine_Inflector or Gedmo\Sluggable\Util\Urlizer
-        setlocale(LC_CTYPE, 'en_US.UTF8');
-        $title = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $title);
-        $title = trim($title, "\x00..\x1F");
-        $title = preg_replace('/[^a-z0-9A-Z_.]/', '-', $title);
-
-        return $title;
     }
 }

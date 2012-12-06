@@ -4,6 +4,7 @@ namespace Test\Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
+use Midgard\CreatePHP\Entity\Controller;
 
 class RdfDriverXmlTest extends RdfDriverBase
 {
@@ -21,7 +22,15 @@ class RdfDriverXmlTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
-        $type = $this->driver->loadTypeForClass('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
+        $itemType = new Controller($mapper);
+        $itemType->addRev('my:customRev');
+        $typeFactory->expects($this->exactly(2))
+            ->method('getTypeByRdf')
+            ->with('http://rdfs.org/sioc/ns#Item')
+            ->will($this->returnValue($itemType))
+        ;
+
+        $type = $this->driver->loadType('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
         $this->assertTestNodetype($type);
     }
@@ -33,7 +42,7 @@ class RdfDriverXmlTest extends RdfDriverBase
     {
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
-        $type = $this->driver->loadTypeForClass('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
+        $this->driver->loadType('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
     }
 
     /**
@@ -41,8 +50,13 @@ class RdfDriverXmlTest extends RdfDriverBase
      *
      * @return array The names of all classes known to this driver.
      */
-    function testGetAllClassNames()
+    public function testGetAllNames()
     {
-        // TODO
+        $map = $this->driver->getAllNames();
+        $this->assertCount(1, $map);
+        $types = array(
+            'http://rdfs.org/sioc/ns#Post' => 'Test\\Midgard\\CreatePHP\\Model',
+        );
+        $this->assertEquals($types, $map);
     }
 }

@@ -9,7 +9,7 @@
 namespace Midgard\CreatePHP\Metadata;
 
 use Midgard\CreatePHP\RdfMapperInterface;
-use Symfony\Component\Process\Exception\RuntimeException;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Factory for createphp types based on class names.
@@ -33,55 +33,53 @@ class RdfTypeFactory
     private $loadedTypes = array();
 
     /**
-     * @var array of rdf type => class name
-     */
-    protected $typeMap;
-
-    /**
      * @param RdfMapperInterface $mapper the mapper to use in this project
      */
-    public function __construct(RdfMapperInterface $mapper, RdfDriverInterface $driver, $typMap)
+    public function __construct(RdfMapperInterface $mapper, RdfDriverInterface $driver)
     {
         $this->mapper = $mapper;
         $this->driver = $driver;
-        $this->typeMap = $typMap;
+    }
+
+    public function getTypeByObject($object)
+    {
+        return $this->getTypeByName(
+            $this->driver->objectToName($object, $this->mapper)
+        );
     }
 
     /**
-     * Get the type responsible for this class
+     * Get the type with this name
      *
-     * @param string $classname name of the model class to get type for
+     * @param string $name of the type to get, i.e. the full class name
      *
-     * @return \Midgard\CreatePHP\Type\TypeInterface
+     * @return TypeInterface
      */
-    public function getType($className)
+    public function getTypeByName($name)
     {
-        $className = $this->mapper->canonicalClassName($className);
-        if (!isset($this->loadedTypes[$className])) {
-            $this->loadedTypes[$className] = $this->driver->loadTypeForClass($className, $this->mapper, $this);
+        if (!isset($this->loadedTypes[$name])) {
+            $this->loadedTypes[$name] = $this->driver->loadType($name, $this->mapper, $this);
         }
 
         // TODO: combine types from parent models...
 
-        return $this->loadedTypes[$className];
+        return $this->loadedTypes[$name];
     }
 
     /**
-     * Get the type responsible for this class with the expanded RDF type
+     * Get the type information by (full) RDF name
      *
-     * @param $rdfType  RDF type with full namespace
-     * @return \Midgard\CreatePHP\Type\TypeInterface
-     * @throws \Symfony\Component\Process\Exception\RuntimeException
+     * @param string $rdf
+     *
+     * @return TypeInterface
      */
-    public function getTypeByRdf($rdfType)
+    public function getTypeByRdf($rdf)
     {
-        foreach ($this->typeMap as $type => $className) {
-            if ($type === $rdfType) {
-                return $this->getType($className);
-            }
+        $map = $this->driver->getAllNames();
+        if (! isset($map[$rdf])) {
+            throw new TypeNotFoundException("No type for $rdf");
         }
-
-        throw new RuntimeException('No class mapping found for type ' . $rdfType);
+        return $this->getTypeByName($map[$rdf]);
     }
 
     /**

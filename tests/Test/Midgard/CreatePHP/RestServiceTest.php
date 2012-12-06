@@ -47,7 +47,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->mapper->expects($this->once())
             ->method('store')
-            ->with('testmodel')
+            ->with($this->entity)
             ->will($this->returnValue(true))
         ;
         $this->mapper->expects($this->once())
@@ -108,8 +108,8 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->collection->expects($this->any())
-            ->method('getType')
-            ->will($this->returnValue($this->child_type))
+            ->method('getTypes')
+            ->will($this->returnValue(array($this->child_type)))
         ;
     }
 
@@ -145,13 +145,18 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->mapper->expects($this->once())
             ->method('prepareObject')
-            ->with($this->equalTo($this->type))
+            ->with($this->equalTo($this->child_type))
             ->will($this->returnValue('testmodel'))
         ;
 
         $this->type->expects($this->any())
-            ->method('getChildDefinitions')
-            ->will($this->returnValue(array('title' => $this->property, 'children' => $this->collection)))
+            ->method('getRevOptions')
+            ->will($this->returnValue(array('dcterms:partOf')))
+        ;
+
+        $this->type->expects($this->any())
+            ->method('createWithObject')
+            ->will($this->returnValue($this->entity))
         ;
 
         $rest = new RestService($this->mapper);

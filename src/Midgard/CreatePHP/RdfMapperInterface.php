@@ -31,7 +31,7 @@ interface RdfMapperInterface
      *
      * @return mixed the updated object
      */
-    function setPropertyValue($object, PropertyInterface $property, $value);
+    public function setPropertyValue($object, PropertyInterface $property, $value);
 
     /**
      * Get property from this object
@@ -41,7 +41,7 @@ interface RdfMapperInterface
      *
      * @return mixed
      */
-    function getPropertyValue($object, PropertyInterface $property);
+    public function getPropertyValue($object, PropertyInterface $property);
 
     /**
      * Tell if the object is editable
@@ -50,7 +50,7 @@ interface RdfMapperInterface
      *
      * @return boolean
      */
-    function isEditable($object);
+    public function isEditable($object);
 
     /**
      * Get object's children
@@ -60,20 +60,24 @@ interface RdfMapperInterface
      *
      * @return array of children objects
      */
-    function getChildren($object, CollectionInterface $collection);
+    public function getChildren($object, CollectionInterface $collection);
 
     /**
-     * Ensure this classname is in its canonical form so it can be used for
-     * lookups. This may include fixing uppercase, removing doctrine proxy
-     * and so on.
+     * Ensure the parameter is transformed into the canonical name string for
+     * the passed parameter.
      *
-     * If you do not know what to do, just return the string as passed in.
+     * This may include fixing
+     * uppercase, normalizing doctrine proxy class name to original class
+     * name and so on.
      *
-     * @param string $className a class name as passed to the RDF type factory
+     * If you do not know what to do, just check if its an object and if so
+     * return get_class, otherwise return the string as passed in.
      *
-     * @return string the canonical name for this class
+     * @param string $name a name as passed to the RDF type factory
+     *
+     * @return string the canonical name
      */
-    function canonicalClassName($className);
+    public function canonicalName($className);
 
     /**
      * Instantiate a new object for the specified RDFa type
@@ -87,16 +91,16 @@ interface RdfMapperInterface
      *
      * @return mixed the object
      */
-    function prepareObject(TypeInterface $controller, $parent = null);
+    public function prepareObject(TypeInterface $controller, $parent = null);
 
     /**
-     * Save object
+     * Save an entity
      *
      * @param EntityInterface $entity
      *
      * @return boolean whether storing was successful
      */
-    function store(EntityInterface $entity);
+    public function store(EntityInterface $entity);
 
     /**
      * Load object by json-ld subject (this is the RDFa about field)
@@ -105,7 +109,7 @@ interface RdfMapperInterface
      *
      * @return mixed The storage object or false if nothing is found
      */
-    function getBySubject($subject);
+    public function getBySubject($subject);
 
     /**
      * Create json-ld subject (RDFa about) for this object (could be simply the
@@ -118,5 +122,5 @@ interface RdfMapperInterface
      *
      * @return string
      */
-    function createSubject($object);
+    public function createSubject($object);
 }

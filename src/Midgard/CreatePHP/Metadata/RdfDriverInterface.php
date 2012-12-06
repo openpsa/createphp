@@ -21,21 +21,31 @@ interface RdfDriverInterface
     const DEFAULT_VOCABULARY_PREFIX = 'createphp';
 
     /**
-     * Return the type for the specified class
+     * Return the type for the specified name
      *
-     * @param string $className
+     * @param string $name
      * @param RdfMapperInterface $mapper
      * @param RdfTypeFactory $typeFactory used to pass into collections
      *
      * @return \Midgard\CreatePHP\Type\TypeInterface the type if found
+     *
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
+    public function loadType($name, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
 
     /**
-     * Gets the names of all classes known to this driver.
+     * Get the name of an object
      *
-     * @return array The names of all classes known to this driver.
+     * @param object $object
+     *
+     * @return string the canonical name of this object
      */
-    function getAllClassNames();
+    public function objectToName($object, RdfMapperInterface $mapper);
+
+    /**
+     * Gets a map of rdf types to names with all types known to this driver.
+     *
+     * @return array of RDF type => name of all types known to this driver.
+     */
+    public function getAllNames();
 }

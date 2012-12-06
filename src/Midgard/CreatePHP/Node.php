@@ -87,6 +87,11 @@ abstract class Node implements NodeInterface
         $this->_parent = $parent;
     }
 
+    /**
+     * Set the parent type
+     *
+     * @param TypeInterface $type
+     */
     public function setParentType(TypeInterface $type)
     {
         $this->setParent($type);
@@ -102,6 +107,11 @@ abstract class Node implements NodeInterface
         return $this->_parent;
     }
 
+    /**
+     * Get the parent type
+     *
+     * @return TypeInterface
+     */
     public function getParentType()
     {
         return $this->getParent();
@@ -117,6 +127,11 @@ abstract class Node implements NodeInterface
         return $this->_children;
     }
 
+    /**
+     * Check if the node is currently in its output phase
+     *
+     * @return boolean
+     */
     public function isRendering()
     {
         return $this->_is_rendering;
@@ -230,6 +245,14 @@ abstract class Node implements NodeInterface
             $this->_tag_name = $tag_name;
         }
 
+        if (   $this->_parent
+            && $this->_parent->isRendering())
+        {
+            //remove about to work around a VIE bug with nested identical about attributes
+            $about_backup = $this->getAttribute('about');
+            $this->unsetAttribute('about');
+        }
+
         $template = explode('__CONTENT__', $this->_template);
         $template = $template[0];
 
@@ -238,6 +261,12 @@ abstract class Node implements NodeInterface
             "__TAG_NAME__" => $this->_tag_name,
             " __ATTRIBUTES__" => $this->renderAttributes(),
         );
+
+        if (!empty($about_backup))
+        {
+            $this->setAttribute('about', $about_backup);
+        }
+
         $this->_is_rendering = true;
         return strtr($template, $replace);
     }

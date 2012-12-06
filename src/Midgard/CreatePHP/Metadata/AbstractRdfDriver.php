@@ -46,7 +46,7 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
             case 'rel':
                 return 'dcterms:hasPart';
             case 'rev':
-                return 'dcterms:partOf';
+                return null;
             default:
                 $add_default_vocabulary = true;
                 return self::DEFAULT_VOCABULARY_PREFIX . ':' . $identifier;
@@ -70,6 +70,16 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
      * @return array of key-value mappings for attributes
      */
     protected abstract function getAttributes($element);
+
+    /**
+     * {@inheritDoc}
+     *
+     * The default implementation uses get_class on objects
+     */
+    public function objectToName($object, RdfMapperInterface $mapper)
+    {
+        return $mapper->canonicalName(get_class($object));
+    }
 
     /**
      * Create a type instance.

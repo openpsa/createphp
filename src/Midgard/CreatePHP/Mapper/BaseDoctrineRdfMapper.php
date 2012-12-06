@@ -43,10 +43,9 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * TODO: ensure that this has the right id resp. parent+name
      */
-    function store(EntityInterface $entity)
+    public function store(EntityInterface $entity)
     {
-        $object = $entity->getObject();
-        $this->om->persist($object);
+        $this->om->persist($entity->getObject());
         $this->om->flush();
         return true;
     }
@@ -56,7 +55,7 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * use getRealClass if className names a doctrine proxy class.
      */
-    public function canonicalClassName($className)
+    public function canonicalName($className)
     {
         $refl = new \ReflectionClass($className);
         if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {

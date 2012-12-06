@@ -21,35 +21,35 @@ interface NodeInterface
      *
      * @param NodeInterface $parent The parent node
      */
-    function setParent(NodeInterface $parent);
+    public function setParent(NodeInterface $parent);
 
     /**
      * Parent node getter
      *
      * @return NodeInterface The parent object (if any)
      */
-    function getParent();
+    public function getParent();
 
     /**
      * Children getter
      *
      * @return array of NodeInterface (if any)
      */
-    function getChildren();
+    public function getChildren();
 
     /**
      * Set the tag name to use when rendering properties of this type
      *
      * @param string $tag the html tag name without brackets
      */
-    function setTagName($tag);
+    public function setTagName($tag);
 
     /**
      * Get the current tag name of this type
      *
      * @return string the tag name
      */
-    function getTagName();
+    public function getTagName();
 
     /**
      * Sets the template used for rendering. The template must have the placeholders
@@ -57,7 +57,7 @@ interface NodeInterface
      *
      * @param string $template
      */
-    function setTemplate($template);
+    public function setTemplate($template);
 
     /**
      * Adds or overwrites an html attribute
@@ -65,7 +65,7 @@ interface NodeInterface
      * @param string $key
      * @param string $value
      */
-    function setAttribute($key, $value);
+    public function setAttribute($key, $value);
 
     /**
      * Sets the attributes in the passed array, keeping
@@ -73,7 +73,7 @@ interface NodeInterface
      *
      * @param array $attributes key => value
      */
-    function setAttributes($attributes);
+    public function setAttributes($attributes);
 
     /**
      * Get a html attribute.
@@ -85,7 +85,7 @@ interface NodeInterface
      *
      * @return string the value for this attribute or null if no such attribute
      */
-    function getAttribute($key);
+    public function getAttribute($key);
 
     /**
      * Get all html attributes, including the system ones like typeof, rev, property
@@ -94,14 +94,14 @@ interface NodeInterface
      *
      * @return array of name => value
      */
-    function getAttributes();
+    public function getAttributes();
 
     /**
      * Remove an html attribute
      *
      * @param string $key
      */
-    function unsetAttribute($key);
+    public function unsetAttribute($key);
 
     /**
      * Renders everything including wrapper html tag and properties
@@ -122,14 +122,14 @@ interface NodeInterface
      *
      * @return string the rendered html
      */
-    function renderStart($tag_name = false);
+    public function renderStart($tag_name = false);
 
     /**
      * Render the content of this node, including its children if applicable
      *
      * @return string the rendered html
      */
-    function renderContent();
+    public function renderContent();
 
     /**
      * Render tail part for this node
@@ -144,7 +144,7 @@ interface NodeInterface
      *
      * @return string the rendered attributes
      */
-    function renderAttributes();
+    public function renderAttributes();
 
     /**
      * Has to return the same as self::render()

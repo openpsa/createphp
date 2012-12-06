@@ -16,6 +16,7 @@ use Midgard\CreatePHP\Entity\Collection as CollectionDefinition;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Type\PropertyDefinitionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
+use Midgard\CreatePHP\Helper\NamespaceHelper;
 
 /**
  * This driver is injected an array of rdf mapping definitions
@@ -27,18 +28,19 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
  *              "dcterms" => "http://purl.org/dc/terms/",
  *          ),
  *          "typeof" => "sioc:Post",
+ *          "rev" => array("dcterms:partOf"),
  *          "config" => array(
  *              "key" => "value",
  *          ),
  *          "children" => array(
  *              "title" => array(
- *                  "type" => "property",
+ *                  "nodeType" => "property",
  *                  "property" => "dcterms:title",
  *                  "tag-name" => "h2",
  *                  "editor" => "someConfiguredEditor"
  *              ),
  *              "tags" => array(
- *                  "type" => "collection",
+ *                  "nodeType" => "collection",
  *                  "rel" => "skos:related",
  *                  "tag-name" => "ul",
  *                  "config" => array(
@@ -46,8 +48,14 @@ use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
  *                  ),
  *              ),
  *              "content" => array(
- *                  "type" => "property",
+ *                  "nodeType" => "property",
  *                  "property" => "sioc:content",
+ *              ),
+ *              "children" => array(
+ *                  "nodeType" => "collection",
+ *                  "rel" => "skos:related",
+ *                  "tag-name" => "ul",
+ *                  "childtypes" => array("sioc:Post"),
  *              ),
  *          ),
  *      ),
@@ -76,7 +84,7 @@ class RdfDriverArray extends AbstractRdfDriver
      * @return \Midgard\CreatePHP\Type\TypeInterface the type if found
      * @throws \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
-    function loadTypeForClass($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
+    public function loadType($className, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory)
     {
         if (! isset($this->definitions[$className])) {
             throw new TypeNotFoundException('No definition found for ' . $className);
@@ -99,21 +107,17 @@ class RdfDriverArray extends AbstractRdfDriver
         }
         $add_default_vocabulary = false;
         foreach ($definition['children'] as $identifier => $child) {
-            if (! isset($child['type'])) {
-                $child['type'] = 'property';
+            if (! isset($child['nodeType'])) {
+                $child['nodeType'] = 'property';
             }
-            $c = $this->createChild($child['type'], $identifier, $child, $typeFactory);
-            $this->parseChild($c, $child, $identifier, $add_default_vocabulary);
-            if ($c instanceof CollectionDefinitionInterface && isset($child['controller'])) {
-                $c->setTypeName($child['controller']);
-            }
+            $c = $this->createChild($child['nodeType'], $identifier, $child, $typeFactory);
+            $this->parseChild($c, $child, $identifier, $type, $add_default_vocabulary);
             $type->$identifier = $c;
         }
 
         if ($add_default_vocabulary) {
             $type->setVocabulary(self::DEFAULT_VOCABULARY_PREFIX, self::DEFAULT_VOCABULARY_URI);
         }
-
 
         return $type;
     }
@@ -125,12 +129,13 @@ class RdfDriverArray extends AbstractRdfDriver
      * @param \ArrayAccess $childData the child to read field from
      * @param string $field the field to be read, property for properties, rel for collections
      * @param string $identifier to be used in case there is no property field in $child
+     * @param TypeInterface $parentType the parent object, i.e. for namespaces
      * @param boolean $add_default_vocabulary flag to tell whether to add vocabulary for
      *      the default namespace.
      *
      * @return array properties
      */
-    protected function parseChild($child, $childData, $identifier, &$add_default_vocabulary)
+    protected function parseChild($child, $childData, $identifier, TypeInterface $parentType, &$add_default_vocabulary)
     {
         if ($child instanceof PropertyDefinitionInterface) {
             /** @var $child PropertyDefinitionInterface */
@@ -139,6 +144,12 @@ class RdfDriverArray extends AbstractRdfDriver
             /** @var $child CollectionDefinitionInterface */
             $child->setRel($this->buildInformation($childData, $identifier, 'rel', $add_default_vocabulary));
             $child->setRev($this->buildInformation($childData, $identifier, 'rev', $add_default_vocabulary));
+            if (isset($childData['childtypes'])) {
+                foreach ($childData['childtypes'] as $type) {
+                    $expanded = NamespaceHelper::expandNamespace($type, $parentType->getVocabularies());
+                    $child->addTypeName($expanded);
+                }
+            }
         }
 
         if ($child instanceof NodeInterface) {
@@ -172,12 +183,23 @@ class RdfDriverArray extends AbstractRdfDriver
     }
 
     /**
-     * Gets the names of all classes known to this driver.
-     *
-     * @return array The names of all classes known to this driver.
+     * {@inheritDoc}
      */
-    function getAllClassNames()
+    public function getAllNames()
     {
-        return array_keys($this->definitions);
+        $map = array();
+        foreach ($this->definitions as $name => $definition) {
+            $type = $name;
+            if (isset($definition['typeof'])) {
+                $type = $definition['typeof'];
+                if (isset($definition['vocabularies'])) {
+                    $type = NamespaceHelper::expandNamespace($definition['typeof'], $definition['vocabularies']);
+                }
+            }
+
+            $map[$type] = $name;
+        }
+
+        return $map;
     }
 }

@@ -10,8 +10,7 @@ namespace Midgard\CreatePHP\Entity;
 
 use Midgard\CreatePHP\Node;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
-use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
-use Midgard\CreatePHP\Type\TypeInterface;
+use Midgard\CreatePHP\Metadata\TypeNotFoundException;
 use Midgard\CreatePHP\NodeInterface;
 
 /**
@@ -39,9 +38,10 @@ class Collection extends Node implements CollectionInterface
     protected $_position = 0;
 
     /**
-     * @var string
+     * List of type names this collection may contain
+     * @var array
      */
-    protected $_typename;
+    protected $_typenames = array();
 
     /**
      * @param string $identifier the php property name used for this collection
@@ -94,6 +94,26 @@ class Collection extends Node implements CollectionInterface
      */
     public function getRev()
     {
+        if (empty($this->_attributes['rev']) && count($this->_typenames) > 0) {
+            $rev = null;
+            foreach ($this->getTypes() as $child) {
+                $revs = $child->getRevOptions();
+                if (count($revs) !== 1) {
+                    $type = $child->getRdfType();
+                    throw new \Exception("Type $type in this collection does not specify exactly one possible rev attribute, please specify the rev attribute to use with this collection explicitly.");
+                }
+                if (null == $rev) {
+                    $rev = reset($revs);
+                    break;
+                } elseif ($rev !== reset($revs)) {
+                    $type = $child->getRdfType();
+                    throw new \Exception("Type $type in this collection does not have the same rev attribute as the previous types, please fix your configuration.");
+                }
+            }
+
+            $this->setRev($rev);
+        }
+
         return $this->getAttribute('rev');
     }
 
@@ -102,9 +122,9 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function setTypeName($type)
+    public function addTypeName($type)
     {
-        $this->_typename = $type;
+        $this->_typenames[$type] = $type;
     }
 
     /**
@@ -112,10 +132,16 @@ class Collection extends Node implements CollectionInterface
      *
      * @api
      */
-    public function getType($vocabularies)
+    public function getTypes()
     {
-        $expandedTypeName = $this->_expandPropertyName($this->_typename, $vocabularies);
-        return $this->_typeFactory->getTypeByRdf($expandedTypeName);
+        $types = array();
+        foreach ($this->_typenames as $typename) {
+            $types[$typename] = $this->_typeFactory->getTypeByRdf($typename);
+            if (null == $types[$typename]) {
+                throw new TypeNotFoundException($typename);
+            }
+        }
+        return $types;
     }
 
     /**
@@ -158,11 +184,10 @@ class Collection extends Node implements CollectionInterface
 
         // create entities for children
         foreach ($children as $child) {
-            if (empty($this->_typename)) {
-                $type = $this->_typeFactory->getType(get_class($child));
+            if (count($this->_typenames) === 1) {
+                $type = $this->_typeFactory->getTypeByRdf(current($this->_typenames));
             } else {
-                $expandedTypeName = $this->_expandPropertyName($this->_typename, $parent->getVocabularies());
-                $type = $this->_typeFactory->getTypeByRdf($expandedTypeName);
+                $type = $this->_typeFactory->getTypeByObject($child);
             }
 
             foreach ($type->getVocabularies() as $prefix => $uri) {
@@ -172,9 +197,9 @@ class Collection extends Node implements CollectionInterface
             $this->_children[] = $type->createWithObject($child);
         }
 
-        if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0 && !empty($this->_typename)) {
+        if ($this->_parent->isEditable($object) && sizeof($this->_children) == 0 && count($this->_typenames) == 1) {
             // create an empty element to allow adding new elements to an empty editable collection
-            $type = $this->_typeFactory->getType($this->_typename);
+            $type = $this->_typeFactory->getTypeByRdf(reset($this->_typenames));
             $mapper = $type->getMapper();
             $object = $mapper->prepareObject($type, $object);
             $entity = $type->createWithObject($object);
@@ -198,6 +223,10 @@ class Collection extends Node implements CollectionInterface
             $this->unsetAttribute('about');
         }
 
+        if (empty($this->_attributes['rev'])) {
+            $this->getRev(); // trigger determining the rev attribute
+        }
+
         return parent::renderStart($tag_name);
     }
 
@@ -210,7 +239,7 @@ class Collection extends Node implements CollectionInterface
     {
         $ret = '';
         foreach ($this->_children as $child) {
-            /** @var $child \Midgard\CreatePHP\Entity\NodeInterface */
+            /** @var $child NodeInterface */
             $ret .= $child->render();
         }
         return $ret;
@@ -218,27 +247,27 @@ class Collection extends Node implements CollectionInterface
 
 
     /* ----- arrayaccess and iterator implementation methods ----- */
-    function rewind()
+    public function rewind()
     {
         $this->_position = 0;
     }
 
-    function current()
+    public function current()
     {
         return $this->_children[$this->_position];
     }
 
-    function key()
+    public function key()
     {
         return $this->_position;
     }
 
-    function next()
+    public function next()
     {
         ++$this->_position;
     }
 
-    function valid()
+    public function valid()
     {
         return isset($this->_children[$this->_position]);
     }
@@ -266,28 +295,4 @@ class Collection extends Node implements CollectionInterface
     {
         return isset($this->_children[$offset]) ? $this->_children[$offset] : null;
     }
-
-    /**
-     * Expand a property name to use full namespace instead of short name,
-     * as used in reference fields.
-     *
-     * TODO: should this method go in a Helper class?
-     *
-     * @param string $name the name to expand, including namespace (e.g. sioc:Post)
-     * @param array $vocabularies vocabulary to use for the expanding
-     *
-     * @return string the expanded name
-     *
-     * @throws \RuntimeException if the prefix is not in the vocabulary of
-     *      $type
-     */
-    private function _expandPropertyName($name, $vocabularies)
-    {
-        $parts = explode(":", $name);
-        if (!isset($vocabularies[$parts[0]])) {
-            throw new \RuntimeException('Undefined namespace prefix \''.$parts[0]."' in '$name'");
-        }
-        return $vocabularies[$parts[0]] . $parts[1];
-    }
-
 }
