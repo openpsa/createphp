@@ -3,6 +3,7 @@
 namespace Test\Midgard\CreatePHP;
 
 use Midgard\CreatePHP\RestService;
+use Midgard\CreatePHP\Entity\EntityInterface;
 
 class RestServiceTest extends \PHPUnit_Framework_TestCase
 {
