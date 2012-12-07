@@ -12,6 +12,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Midgard\CreatePHP\Entity\EntityInterface;
 
+use PHPCR\ItemExistsException;
+
 /**
  * Base mapper for doctrine, removing the proxy class names in canonicalClassName
  *
@@ -45,8 +47,14 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      */
     public function store(EntityInterface $entity)
     {
-        $this->om->persist($entity->getObject());
-        $this->om->flush();
+        try {
+            $this->om->persist($entity->getObject());
+            $this->om->flush();
+        } catch (ItemExistsException $iee) {
+            //an item with the same title already exists
+            return false;
+        }
+
         return true;
     }
 
