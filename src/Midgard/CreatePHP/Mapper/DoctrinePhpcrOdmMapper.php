@@ -36,6 +36,12 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
 
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
         $meta = $this->om->getClassMetaData(get_class($object));
+
+        if (!property_exists($object, $meta->parentMapping)) {
+            throw new RuntimeException('parentMapping need to be mapped to '
+                . get_class($object));
+        }
+
         $meta->setFieldValue($object, $meta->parentMapping, $parent);
 
         return $object;
@@ -51,6 +57,12 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     {
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
         $meta = $this->om->getClassMetaData(get_class($entity->getObject()));
+
+        if (!property_exists($entity->getObject(), $meta->nodename)) {
+            throw new RuntimeException('nodename need to be mapped to '
+                . get_class($entity->getObject()));
+        }
+
         $nodename = $meta->getFieldValue($entity->getObject(), $meta->nodename);
 
         if (empty($nodename)) { //in case of node creation the nodename is empty
