@@ -162,6 +162,7 @@ class RestService
      *
      * @param array $received_data
      * @param TypeInterface $type type of the node to create
+     * @return array|null
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
@@ -179,7 +180,7 @@ class RestService
             }
         }
 
-        throw new TypeNotFoundException('No reference to the parent could be found.');
+        return null;
     }
 
     /**
