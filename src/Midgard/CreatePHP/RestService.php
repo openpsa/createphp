@@ -16,6 +16,8 @@ use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 
+use Midgard\CreatePHP\Helper\NamespaceHelper;
+
 /**
  * @package Midgard.CreatePHP
  */
@@ -119,6 +121,7 @@ class RestService
      */
     public function run($data, TypeInterface $type, $subject = null, $method = null)
     {
+
         if (null === $method) {
             $method = strtolower($_SERVER['REQUEST_METHOD']);
         }
@@ -152,32 +155,29 @@ class RestService
     /**
      * Handle post request
      *
+     * Find a reverse mapping to the parent, into received data and type
+     * reverse options. The mapping is used to create the entity to store.
+     *
      * @param array $received_data
-     * @param TypeInterface $type parent node of this type (TODO: refactor)
+     * @param TypeInterface $type type of the node to create
+     * @return array|null
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
-        foreach ($type->getChildDefinitions() as $node) {
-            if (!$node instanceof CollectionDefinitionInterface) {
-                continue;
-            }
-            $types = $node->getTypes();
-            if (count($types) != 1) {
-                throw new \Exception('TODO: refactor creation');
-            }
-            /** @var $node CollectionDefinitionInterface */
-            $child_type = reset($types);
-            $parentfield = $this->_expandPropertyName($node->getRev(), $child_type);
-            if (!empty($received_data[$parentfield])) {
-                $parent_identifier = $this->jsonldDecode($received_data[$parentfield][0]);
-                $parent = $this->_mapper->getBySubject($parent_identifier);
-                $object = $this->_mapper->prepareObject($child_type, $parent);
-                $entity = $child_type->createWithObject($object);
-                return $this->_storeData($received_data, $entity);
+        $parent = null;
+        foreach ($type->getRevOptions() as $option) {
+            $rdf = NamespaceHelper::expandNamespace($option, $type->getVocabularies());
+            $about = $received_data[$this->jsonldEncode($rdf)];
+
+            if (! empty($about)) {
+                $parent = $this->_mapper->getBySubject($this->jsonldDecode(current($about)));
+                break;
             }
         }
-        $object = $this->_mapper->prepareObject($type);
+
+        $object = $this->_mapper->prepareObject($type, $parent);
         $entity = $type->createWithObject($object);
+
         return $this->_storeData($received_data, $entity);
     }
 

@@ -151,8 +151,13 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->type->expects($this->any())
-            ->method('getChildDefinitions')
-            ->will($this->returnValue(array('title' => $this->property, 'children' => $this->collection)))
+            ->method('getRevOptions')
+            ->will($this->returnValue(array('dcterms:partOf')))
+        ;
+
+        $this->type->expects($this->any())
+            ->method('createWithObject')
+            ->will($this->returnValue($this->entity))
         ;
 
         $rest = new RestService($this->mapper);
