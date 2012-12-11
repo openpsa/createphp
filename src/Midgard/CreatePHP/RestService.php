@@ -18,8 +18,6 @@ use Midgard\CreatePHP\Entity\PropertyInterface;
 
 use Midgard\CreatePHP\Helper\NamespaceHelper;
 
-use Midgard\CreatePHP\Metadata\TypeNotFoundException;
-
 /**
  * @package Midgard.CreatePHP
  */
