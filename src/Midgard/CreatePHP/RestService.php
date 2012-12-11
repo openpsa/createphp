@@ -157,8 +157,8 @@ class RestService
     /**
      * Handle post request
      *
-     * Find a reverse mapping to the parent, into received data and
-     * type reverse options. The mapping is used to create the entity to store.
+     * Find a reverse mapping to the parent, into received data and type
+     * reverse options. The mapping is used to create the entity to store.
      *
      * @param array $received_data
      * @param TypeInterface $type type of the node to create
@@ -166,21 +166,21 @@ class RestService
      */
     private function _handleCreate($received_data, TypeInterface $type)
     {
+        $parent = null;
         foreach ($type->getRevOptions() as $option) {
-
             $rdf = NamespaceHelper::expandNamespace($option, $type->getVocabularies());
             $about = $received_data[$this->jsonldEncode($rdf)];
 
             if (! empty($about)) {
                 $parent = $this->_mapper->getBySubject($this->jsonldDecode(current($about)));
-                $object = $this->_mapper->prepareObject($type, $parent);
-                $entity = $type->createWithObject($object);
-
-                return $this->_storeData($received_data, $entity);
+                break;
             }
         }
 
-        return null;
+        $object = $this->_mapper->prepareObject($type, $parent);
+        $entity = $type->createWithObject($object);
+
+        return $this->_storeData($received_data, $entity);
     }
 
     /**
