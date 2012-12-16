@@ -12,4 +12,12 @@ class Model
     {
         return 'the content';
     }
+    public function getTags()
+    {
+        return array('test', 'php');
+    }
+    public function getChildren()
+    {
+        return array(new Child());
+    }
 }
