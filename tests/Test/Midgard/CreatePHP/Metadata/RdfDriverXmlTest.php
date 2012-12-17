@@ -60,4 +60,22 @@ class RdfDriverXmlTest extends RdfDriverBase
         );
         $this->assertEquals($types, $map);
     }
+
+
+    /**
+     * Gets the names of all revs known to this type.
+     *
+     * @return array The names of all revs known to this type.
+     */
+    public function testGetRevOptions()
+    {
+        $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
+        $type = $this->driver->loadType('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
+
+        $revs = array(
+            'dcterms:partOf' => 'dcterms:partOf',
+        );
+        $this->assertEquals($revs, $type->getRevOptions());
+    }
 }

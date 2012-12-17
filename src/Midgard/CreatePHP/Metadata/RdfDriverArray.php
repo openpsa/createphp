@@ -102,6 +102,13 @@ class RdfDriverArray extends AbstractRdfDriver
                 $type->setVocabulary($prefix, $uri);
             }
         }
+
+        if (isset($definition['rev'])) {
+            foreach ($definition['rev'] as $rev) {
+                $type->addRev((string) $rev);
+            }
+        }
+
         if (isset($definition['typeof'])) {
             $type->setRdfType($definition['typeof']);
         }
