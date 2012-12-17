@@ -5,6 +5,7 @@
     "keywords": ["rdfa"],
     "version": "0.0.1",
     "license": "LGPL",
+    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Andreas Flack",
@@ -19,5 +20,8 @@
         "psr-0": {
             "Midgard\\CreatePHP": "src"
         }
+    },
+    "require": {
+        "doctrine/phpcr-odm": "1.0.*"
     }
 }
