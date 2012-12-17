@@ -53,7 +53,7 @@ class Collection extends Node implements CollectionInterface
     public function __construct($identifier, RdfTypeFactory $typeFactory, array $config = array())
     {
         parent::__construct($config);
-        $this->_identifier = $identifier;
+        $this->_identifier = (string) $identifier;
         $this->_typeFactory = $typeFactory;
     }
 
