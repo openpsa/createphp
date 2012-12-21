@@ -128,7 +128,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      * Get a field of the class if it exists.
      *
      * @param mixed $object the model object
-     * @param Type\RdfElementDefinitionInterface $child the property or collection
+     * @param RdfElementDefinitionInterface $child the property or collection
      *
      * @return mixed
      *
