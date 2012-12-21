@@ -78,11 +78,6 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
 
         $name = $property->getIdentifier();
 
-        $config = $property->getConfig();
-        if (isset($config['doctrine:reference'])) {
-            $value = $this->getBySubject($value);
-        }
-
         $method = 'set' . ucfirst($name);
         if ($class->hasMethod($method)) {
             $object->$method($value);
@@ -100,12 +95,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
      */
     public function getPropertyValue($object, PropertyInterface $property)
     {
-        $field = $this->getField($object, $property);
-        if (is_object($field)) {
-            return $field->getPath();
-        }
-
-        return $field;
+        return $this->getField($object, $property);
     }
 
     /**

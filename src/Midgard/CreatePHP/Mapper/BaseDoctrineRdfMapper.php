@@ -11,6 +11,7 @@ namespace Midgard\CreatePHP\Mapper;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Midgard\CreatePHP\Entity\EntityInterface;
+use Midgard\CreatePHP\Entity\PropertyInterface;
 
 use PHPCR\ItemExistsException;
 
@@ -84,5 +85,30 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
         $meta = $this->om->getClassMetaData(get_class($object));
         $ids = $meta->getIdentifierValues($object);
         return implode('-', $ids);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getPropertyValue($object, PropertyInterface $property)
+    {
+        $field = $this->getField($object, $property);
+        if (is_object($field)) {
+            return $field->getPath();
+        }
+
+        return $field;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setPropertyValue($object, PropertyInterface $property, $value)
+    {
+        $config = $property->getConfig();
+        if (isset($config['doctrine:reference'])) {
+            $value = $this->getBySubject($value);
+        }
+        return parent::setPropertyValue($object, $property, $value);
     }
 }
