@@ -93,8 +93,12 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
     public function getPropertyValue($object, PropertyInterface $property)
     {
         $field = $this->getField($object, $property);
-        if (is_object($field)) {
-            return $field->getPath();
+
+        $config = $property->getConfig();
+        if (isset($config['doctrine:reference'])) {
+            $meta = $this->om->getClassMetaData(get_class($object));
+            $method = 'get' . ucfirst($meta->getIdentifier());
+            return $object->$method();
         }
 
         return $field;
