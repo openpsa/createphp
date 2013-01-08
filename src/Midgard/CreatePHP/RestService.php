@@ -2,8 +2,8 @@
 /**
  * REST service backend
  *
- * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
- * @author CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @copyright CONTENT CONTROL GmbH, http://www.contentcontrol-berlin.de
+ * @author CONTENT CONTROL GmbH, http://www.contentcontrol-berlin.de
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */

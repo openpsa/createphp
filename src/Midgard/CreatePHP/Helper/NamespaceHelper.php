@@ -1,6 +1,6 @@
 <?php
 /**
- * @copyright CONTENT CONTROL GbR, http://www.contentcontrol-berlin.de
+ * @copyright CONTENT CONTROL GmbH, http://www.contentcontrol-berlin.de
  * @author Adrien Nicolet <adrien.nicolet@gmail.com>
  * @author David Buchmann <david@liip.ch>
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
