@@ -37,12 +37,12 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
         $meta = $this->om->getClassMetaData(get_class($object));
 
-        if (!property_exists($object, $meta->parentMapping)) {
+        if (!property_exists($object, $meta->parentMapping['fieldName'])) {
             throw new RuntimeException('parentMapping need to be mapped to '
                 . get_class($object));
         }
 
-        $meta->setFieldValue($object, $meta->parentMapping, $parent);
+        $meta->setFieldValue($object, $meta->parentMapping['fieldName'], $parent);
 
         return $object;
     }
