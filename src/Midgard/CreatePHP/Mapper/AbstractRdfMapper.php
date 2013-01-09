@@ -77,6 +77,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
         $class = new \ReflectionClass($object);
 
         $name = $property->getIdentifier();
+
         $method = 'set' . ucfirst($name);
         if ($class->hasMethod($method)) {
             $object->$method($value);
