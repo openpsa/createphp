@@ -233,6 +233,19 @@ class Collection extends Node implements CollectionInterface
     /**
      * {@inheritDoc}
      *
+     * Overwrite to not output about attribute again if parent is rendering
+     */
+    public function renderAttributes($attributesToRemove = array())
+    {
+        if ($this->_parent && $this->_parent->isRendering()) {
+            $attributesToRemove[] = 'about';
+        }
+        return parent::renderAttributes($attributesToRemove);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
      * @api
      */
     public function renderContent()

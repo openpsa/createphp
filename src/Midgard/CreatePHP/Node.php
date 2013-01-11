@@ -17,7 +17,7 @@ use Midgard\CreatePHP\Type\TypeInterface;
  * attributes, parent/children relations and rendering. The latter is split into three
  * different functions for maximum flexibility. So you can call render() to output the
  * complete node HTML, or you can call render_start() for the opening tag, render_content()
- * for the node's content (or children) and render_end() for the colsing tag.
+ * for the node's content (or children) and render_end() for the closing tag.
  *
  * @package Midgard.CreatePHP
  */
@@ -245,12 +245,13 @@ abstract class Node implements NodeInterface
             $this->_tag_name = $tag_name;
         }
 
+        $attributesToRemove = array();
+
         if (   $this->_parent
             && $this->_parent->isRendering())
         {
             //remove about to work around a VIE bug with nested identical about attributes
-            $about_backup = $this->getAttribute('about');
-            $this->unsetAttribute('about');
+            $attributesToRemove[] = 'about';
         }
 
         $template = explode('__CONTENT__', $this->_template);
@@ -259,13 +260,8 @@ abstract class Node implements NodeInterface
         $replace = array
         (
             "__TAG_NAME__" => $this->_tag_name,
-            " __ATTRIBUTES__" => $this->renderAttributes(),
+            " __ATTRIBUTES__" => $this->renderAttributes($attributesToRemove),
         );
-
-        if (!empty($about_backup))
-        {
-            $this->setAttribute('about', $about_backup);
-        }
 
         $this->_is_rendering = true;
         return strtr($template, $replace);
@@ -291,11 +287,14 @@ abstract class Node implements NodeInterface
      *
      * @api
      */
-    public function renderAttributes()
+    public function renderAttributes($attributesToRemove = array())
     {
         // add additional attributes
         $attributes = '';
         foreach ($this->_attributes as $key => $value) {
+            if (in_array($key, $attributesToRemove)) {
+                continue;
+            }
             $attributes .= ' ' . $key . '="' . $value . '"';
         }
         if ($attributes === ' ') {

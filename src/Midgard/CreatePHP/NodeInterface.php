@@ -144,7 +144,7 @@ interface NodeInterface
      *
      * @return string the rendered attributes
      */
-    public function renderAttributes();
+    public function renderAttributes($attributesToRemove = array());
 
     /**
      * Has to return the same as self::render()

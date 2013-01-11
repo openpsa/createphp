@@ -49,15 +49,20 @@ class CreatephpTokenParser extends Twig_TokenParser
             $var = $stream->expect(Twig_Token::STRING_TYPE)->getValue();
         }
 
+        $noautotag = false;
+        if ($stream->test(Twig_Token::NAME_TYPE, 'noautotag')) {
+            $noautotag = true;
+            $stream->next();
+        }
+
         $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
         $endtag = 'end'.$this->getTag();
         $test = function(Twig_Token $token) use($endtag) { return $token->test($endtag); };
         $body = $this->parser->subparse($test, true);
-
         $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-        return new CreatephpNode($body, $modelname, $var, $token->getLine(), $this->getTag());
+        return new CreatephpNode($body, $modelname, $var, !$noautotag, $token->getLine(), $this->getTag());
     }
 
     public function getTag()

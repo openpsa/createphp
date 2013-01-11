@@ -54,7 +54,6 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         $xml = $this->renderXml('node.twig');
 
         $this->assertCompiledCorrectly($xml);
-
     }
 
     public function testNodeAs()
