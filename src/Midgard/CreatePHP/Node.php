@@ -245,13 +245,13 @@ abstract class Node implements NodeInterface
             $this->_tag_name = $tag_name;
         }
 
-        $attributesToRemove = array();
+        $attributesToSkip = array();
 
         if (   $this->_parent
             && $this->_parent->isRendering())
         {
             //remove about to work around a VIE bug with nested identical about attributes
-            $attributesToRemove[] = 'about';
+            $attributesToSkip[] = 'about';
         }
 
         $template = explode('__CONTENT__', $this->_template);
@@ -260,7 +260,7 @@ abstract class Node implements NodeInterface
         $replace = array
         (
             "__TAG_NAME__" => $this->_tag_name,
-            " __ATTRIBUTES__" => $this->renderAttributes($attributesToRemove),
+            " __ATTRIBUTES__" => $this->renderAttributes($attributesToSkip),
         );
 
         $this->_is_rendering = true;
@@ -287,12 +287,13 @@ abstract class Node implements NodeInterface
      *
      * @api
      */
-    public function renderAttributes($attributesToRemove = array())
+    public function renderAttributes($attributesToSkip = array())
     {
         // add additional attributes
         $attributes = '';
+        $swappedAttributes = array_flip($attributesToSkip);
         foreach ($this->_attributes as $key => $value) {
-            if (in_array($key, $attributesToRemove)) {
+            if (isset($swappedAttributes[$key])) {
                 continue;
             }
             $attributes .= ' ' . $key . '="' . $value . '"';
@@ -328,6 +329,9 @@ abstract class Node implements NodeInterface
      */
     public function __toString()
     {
+        if ($this->isRendering()) {
+            return $this->renderContent();
+        }
         return $this->render();
     }
 }

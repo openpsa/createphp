@@ -235,12 +235,12 @@ class Collection extends Node implements CollectionInterface
      *
      * Overwrite to not output about attribute again if parent is rendering
      */
-    public function renderAttributes($attributesToRemove = array())
+    public function renderAttributes($attributesToSkip = array())
     {
         if ($this->_parent && $this->_parent->isRendering()) {
-            $attributesToRemove[] = 'about';
+            $attributesToSkip[] = 'about';
         }
-        return parent::renderAttributes($attributesToRemove);
+        return parent::renderAttributes($attributesToSkip);
     }
 
     /**

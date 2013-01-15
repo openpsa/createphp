@@ -142,9 +142,11 @@ interface NodeInterface
      * Render just the attributes. This is not needed if you use
      * renderStart()
      *
+     * @param array $attributesToSkip attributes names that will not be printed
+     *
      * @return string the rendered attributes
      */
-    public function renderAttributes($attributesToRemove = array());
+    public function renderAttributes($attributesToSkip = array());
 
     /**
      * Has to return the same as self::render()
