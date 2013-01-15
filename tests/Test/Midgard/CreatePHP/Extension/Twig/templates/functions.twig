@@ -1,7 +1,8 @@
 <test>
     {% createphp mymodel noautotag %}
     <div {{ createphp_attributes(mymodel_rdf) }}>
-        <div {{ createphp_attributes( mymodel_rdf.title ) }}>{{ createphp_content( mymodel_rdf.title ) }}</div>
+        <h2 {{ createphp_attributes( mymodel_rdf.title ) }}>{{ createphp_content( mymodel_rdf.title ) }}</h2>
+        <div {{ createphp_attributes( mymodel_rdf.content ) }}>{{ createphp_content( mymodel_rdf.content ) }}</div>
     </div>
     {% endcreatephp %}
 </test>

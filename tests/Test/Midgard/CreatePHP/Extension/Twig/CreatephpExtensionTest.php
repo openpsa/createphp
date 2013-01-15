@@ -6,6 +6,11 @@ use Midgard\CreatePHP\Extension\Twig\CreatephpExtension;
 use Midgard\CreatePHP\Extension\Twig\CreatephpNode;
 
 use Test\Midgard\CreatePHP\Model;
+use Midgard\CreatePHP\Metadata\RdfDriverXml;
+use Midgard\CreatePHP\Metadata\RdfTypeFactory;
+
+use DOMDocument;
+use SimpleXMLElement;
 
 class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,64 +32,59 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->mapper = $this->getMock('Midgard\CreatePHP\RdfMapperInterface');
-        $this->factory = new RdfTypeFactory($this->mapper);
+
+        $xmlDriver = new RdfDriverXml(array(__DIR__.'/../../Metadata/rdf'));
+        $this->factory = new RdfTypeFactory($this->mapper, $xmlDriver);
 
         $this->twig = new \Twig_Environment();
         $this->twig->setLoader(new \Twig_Loader_Filesystem(__DIR__.'/templates'));
         $this->twig->addExtension(new CreatephpExtension($this->factory));
     }
 
-    public function testNode()
+    /**
+     * Test the basic Twig templates of CreatePHP. The following
+     * templates need to render the same html: node.twig, node_as.twig
+     * and functions.twig:
+     *
+     * <test>
+     *     <div xmlns:sioc="http://rdfs.org/sioc/ns#"
+     *          xmlns:dcterms="http://purl.org/dc/terms/"
+     *          typeof="sioc:Post"
+     *          about="/the/subject">
+     *         <h2 property="dcterms:title">content text</h2>
+     *         <div property="sioc:content">content text</div>
+     *     </div>
+     * </test>
+     *
+     * @dataProvider templateNameDataProvider
+     */
+    public function testBasicTemplates($templateName)
     {
-        $this->twig->addGlobal('mymodel', new Model);
-
-        $this->mapper->expects($this->any())
-            ->method('getPropertyValue')
-            ->will($this->returnValue('content text'))
-        ;
-        $this->mapper->expects($this->any())
-            ->method('isEditable')
-            ->will($this->returnValue(true))
-        ;
-        $this->mapper->expects($this->any())
-            ->method('createSubject')
-            ->will($this->returnValue('/the/subject'))
-        ;
-
-        $xml = $this->renderXml('node.twig');
-
+        $this->prepareTest();
+        $xml = $this->renderXml($templateName);
         $this->assertCompiledCorrectly($xml);
     }
 
-    public function testNodeAs()
+    public function templateNameDataProvider()
     {
-        $this->twig->addGlobal('mymodel', new Model);
-        $this->mapper->expects($this->any())
-            ->method('getPropertyValue')
-            ->will($this->returnValue('content text'))
-        ;
-        $this->mapper->expects($this->any())
-            ->method('isEditable')
-            ->will($this->returnValue(true))
-        ;
-        $this->mapper->expects($this->any())
-            ->method('createSubject')
-            ->will($this->returnValue('/the/subject'))
-        ;
-
-        $xml = $this->renderXml('node_as.twig');
-
-        $this->assertCompiledCorrectly($xml);
+        return array(
+            array('node.twig'),
+            array('node_as.twig'),
+            array('functions.twig')
+        );
     }
 
-    public function testFunctions()
-    {
-        $this->twig->addGlobal('mymodel', new Model);
+    private function prepareTest(){
+        $model = new Model;
+        $this->twig->addGlobal('mymodel', $model);
 
-        $this->twig->addGlobal('mymodel', new Model);
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
             ->will($this->returnValue('content text'))
+        ;
+        $this->mapper->expects($this->any())
+            ->method('getChildren')
+            ->will($this->returnValue(array()))
         ;
         $this->mapper->expects($this->any())
             ->method('isEditable')
@@ -94,20 +94,25 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createSubject')
             ->will($this->returnValue('/the/subject'))
         ;
-
-        $xml = $this->renderXml('functions.twig');
-
-        $this->assertCompiledCorrectly($xml);
+        $this->mapper->expects($this->any())
+            ->method('canonicalName')
+            ->with(get_class($model))
+            ->will($this->returnValue(get_class($model)))
+        ;
     }
 
     private function assertCompiledCorrectly(\SimpleXMLElement $xml)
     {
         $this->assertEquals(1, count($xml->div));
         $this->assertEquals('/the/subject', $xml->div['about']);
-        // TODO: how to get to namesapce? $this->assertEquals('http://purl.org/dc/terms/', $xml->div['xmlns:dcterms']);
+        $namespaces = $xml->getDocNamespaces(true);
+        $this->assertEquals('http://purl.org/dc/terms/', $namespaces['dcterms']);
         $this->assertEquals(1, count($xml->div->div));
-        $this->assertEquals('content text', $xml->div->div);
-        $this->assertEquals('dcterms:title', $xml->div->div['property']);
+        $this->assertEquals('dcterms:title', $xml->div->h2['property']);
+        $this->assertEquals('content text', (string) $xml->div->h2);
+        $this->assertEquals('sioc:content', $xml->div->div['property']);
+        $this->assertEquals('content text', (string) $xml->div->div);
+
     }
 
     /**
@@ -130,5 +135,20 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         $source = file_get_contents(__DIR__ . '/templates/' . $template);
         var_dump($this->twig->compileSource($source, $template));
         die;
+    }
+
+    /**
+     * Only for debugging, write an xml object into a file
+     *
+     * @param $filename
+     * @param SimpleXMLElement $xml
+     */
+    private function writeXmlToFile($filename, SimpleXMLElement $xml)
+    {
+        $dom = new DOMDocument;
+        $dom->preserveWhiteSpace = FALSE;
+        $dom->loadXML($xml->asXML());
+        $dom->formatOutput = TRUE;
+        $dom->save($filename);
     }
 }

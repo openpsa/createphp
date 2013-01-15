@@ -7,6 +7,13 @@
     <config key="test" value="testvalue" />
     <children>
         <property property="dcterms:title" identifier="title" tag-name="h2"/>
+        <collection rel="skos:related" identifier="tags" tag-name="ul">
+            <config key="table" value="tags"/>
+            <attribute key="class" value="tags"/>
+        </collection>
+        <collection rel="dcterms:hasPart" identifier="children">
+            <childtype>sioc:Item</childtype>
+        </collection>
         <property property="sioc:content" identifier="content" />
     </children>
 </type>
