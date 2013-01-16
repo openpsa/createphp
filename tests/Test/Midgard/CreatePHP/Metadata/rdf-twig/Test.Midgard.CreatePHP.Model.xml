@@ -4,7 +4,6 @@
      typeof="sioc:Post"
 >
     <rev>dcterms:partOf</rev>
-    <config key="test" value="testvalue" />
     <children>
         <property property="dcterms:title" identifier="title" tag-name="h2"/>
         <property property="sioc:content" identifier="content" />

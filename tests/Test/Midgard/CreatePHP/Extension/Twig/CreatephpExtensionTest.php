@@ -6,8 +6,10 @@ use Midgard\CreatePHP\Extension\Twig\CreatephpExtension;
 use Midgard\CreatePHP\Extension\Twig\CreatephpNode;
 
 use Test\Midgard\CreatePHP\Model;
+use Test\Midgard\CreatePHP\Collection;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
 use Midgard\CreatePHP\Metadata\RdfTypeFactory;
+use Midgard\CreatePHP\Entity\PropertyInterface;
 
 use DOMDocument;
 use SimpleXMLElement;
@@ -33,7 +35,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->mapper = $this->getMock('Midgard\CreatePHP\RdfMapperInterface');
 
-        $xmlDriver = new RdfDriverXml(array(__DIR__.'/../../Metadata/rdf'));
+        $xmlDriver = new RdfDriverXml(array(__DIR__.'/../../Metadata/rdf-twig'));
         $this->factory = new RdfTypeFactory($this->mapper, $xmlDriver);
 
         $this->twig = new \Twig_Environment();
@@ -42,9 +44,9 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test the basic Twig templates of CreatePHP. The following
-     * templates need to render the same html: node.twig, node_as.twig
-     * and functions.twig:
+     * Test the basic Twig templates of CreatePHP (no collections). The
+     * following templates need to render the same html: node.twig,
+     * node_as.twig and functions.twig:
      *
      * <test>
      *     <div xmlns:sioc="http://rdfs.org/sioc/ns#"
@@ -60,7 +62,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
      */
     public function testBasicTemplates($templateName)
     {
-        $this->prepareTest();
+        $this->prepareBasicTest();
         $xml = $this->renderXml($templateName);
         $this->assertCompiledCorrectly($xml);
     }
@@ -74,17 +76,111 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    private function prepareTest(){
+    public function testCollectionsTemplate()
+    {
+        $collection = new Collection;
+        $this->twig->addGlobal('mycollection', $collection);
+
+        $this->mapper->expects($this->any())
+            ->method('getPropertyValue')
+            ->will($this->returnCallback(array($this, 'getPropertyValueCallback')))
+        ;
+        $this->mapper->expects($this->any())
+            ->method('isEditable')
+            ->will($this->returnValue(true))
+        ;
+        $this->mapper->expects($this->any())
+            ->method('createSubject')
+            ->will($this->returnCallback(array($this, 'createSubjectCallback')))
+        ;
+        $this->mapper->expects($this->any())
+            ->method('getChildren')
+            ->will($this->returnValue($collection->getChildren()))
+        ;
+        $this->mapper->expects($this->any())
+            ->method('canonicalName')
+            ->will($this->returnCallback(array($this, 'canonicalNameCallback')))
+        ;
+
+        $xml = $this->renderXml('collection.twig');
+
+        //assert no duplicate enclosing div is present
+        $this->assertEquals(0, count($xml->div));
+
+        //assert the enclosing div is correct
+        $this->assertEquals('/the/subject/collection', $xml['about']);
+        $this->assertEquals('my-class', $xml['class']);
+        $this->assertEquals('sioc:Forum', $xml['typeof']);
+        $namespaces = $xml->getDocNamespaces(true);
+        $this->assertEquals('http://purl.org/dc/terms/', $namespaces['dcterms']);
+        $this->assertEquals('http://rdfs.org/sioc/ns#', $namespaces['sioc']);
+
+        //assert the collection content is correct
+        $this->assertEquals(1, count($xml->h1));
+        $this->assertEquals('the collection title', $xml->h1);
+        $this->assertEquals('dcterms:title', $xml->h1['property']);
+
+        //assert the listing of children is correct
+        $this->assertEquals(1, count($xml->ul));
+        $this->assertEquals(0, count($xml->ul['about']));
+        $this->assertEquals(2, count($xml->ul->li));
+        $this->assertEquals('dcterms:hasPart', $xml->ul['rel']);
+        $this->assertEquals('dcterms:partOf', $xml->ul['rev']);
+
+        //assert the 1st children is correct
+        $this->assertEquals('sioc:Post', $xml->ul->li['typeof']);
+        $this->assertEquals('/the/subject/model/1', $xml->ul->li['about']);
+        $this->assertEquals('title 1', (string) $xml->ul->li->div[0]);
+        $this->assertEquals('dcterms:title', $xml->ul->li->div[0]['property']);
+        $this->assertEquals('content 1', (string) $xml->ul->li->div[1]);
+        $this->assertEquals('sioc:content', $xml->ul->li->div[1]['property']);
+
+        //assert the 2nd children is correct
+        $this->assertEquals('sioc:Post', $xml->ul->li[1]['typeof']);
+        $this->assertEquals('/the/subject/model/2', $xml->ul->li[1]['about']);
+        $this->assertEquals('title 2', (string) $xml->ul->li[1]->div[0]);
+        $this->assertEquals('dcterms:title', $xml->ul->li[1]->div[0]['property']);
+        $this->assertEquals('content 2', (string) $xml->ul->li[1]->div[1]);
+        $this->assertEquals('sioc:content', $xml->ul->li[1]->div[1]['property']);
+    }
+
+    public function canonicalNameCallback($className) {
+
+        if ($className === 'Test\Midgard\CreatePHP\Collection') {
+            return 'Test\Midgard\CreatePHP\Collection';
+        } else {
+            return 'Test\Midgard\CreatePHP\Model';
+        }
+    }
+
+    public function getPropertyValueCallback($object, PropertyInterface $property)
+    {
+        $name = $property->getIdentifier();
+        if (method_exists($object, 'getObject')) {
+            $object = $object->getObject();
+        }
+        $method = 'get' . ucfirst($name);
+        if (method_exists($object, $method)) {
+            return $object->$method();
+        }
+        throw new \Exception('Invalid call to getPropertyValue');
+    }
+
+    public function createSubjectCallback($object)
+    {
+        if (method_exists($object, 'getObject')) {
+            $object = $object->getObject();
+        }
+        return $object->getSubject();
+    }
+
+    private function prepareBasicTest(){
         $model = new Model;
         $this->twig->addGlobal('mymodel', $model);
 
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
-            ->will($this->returnValue('content text'))
-        ;
-        $this->mapper->expects($this->any())
-            ->method('getChildren')
-            ->will($this->returnValue(array()))
+            ->will($this->returnCallback(array($this, 'getPropertyValueCallback')))
         ;
         $this->mapper->expects($this->any())
             ->method('isEditable')
@@ -109,9 +205,9 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('http://purl.org/dc/terms/', $namespaces['dcterms']);
         $this->assertEquals(1, count($xml->div->div));
         $this->assertEquals('dcterms:title', $xml->div->h2['property']);
-        $this->assertEquals('content text', (string) $xml->div->h2);
+        $this->assertEquals('the model title', (string) $xml->div->h2);
         $this->assertEquals('sioc:content', $xml->div->div['property']);
-        $this->assertEquals('content text', (string) $xml->div->div);
+        $this->assertEquals('the model content', (string) $xml->div->div);
 
     }
 
