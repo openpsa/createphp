@@ -329,6 +329,11 @@ abstract class Node implements NodeInterface
      */
     public function __toString()
     {
+        /**
+         * Do not render start and end again if the node is already rendering.
+         * This is helpful in twig to say:
+         * {% createphp model as rdf %} {{ rdf|raw }} {{% endcreatephp %}}
+         */
         if ($this->isRendering()) {
             return $this->renderContent();
         }

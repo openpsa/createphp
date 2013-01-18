@@ -66,11 +66,17 @@ class CreatephpNode extends Twig_Node
             ->raw(";\n")
         ;
 
+        //output opening and closing elements for this node?
         $autotag = $this->getAttribute('autotag');
         if ($autotag) {
             $compiler->write('echo ');
         }
 
+        /**
+         * To set the node into the correct mode, start rendering even if no
+         * output is needed. It is up to the user to be intelligent enough to
+         * understand what he has to do if he is using noautotag.
+         */
         $compiler
             ->write('$context[')
             ->repr($this->getAttribute('varname'))
