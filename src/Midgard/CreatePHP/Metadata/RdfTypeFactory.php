@@ -52,7 +52,7 @@ class RdfTypeFactory
     public function getTypeByObject($object)
     {
         return $this->getTypeByName(
-            $this->driver->objectToName($object, $this->mapper)
+            $this->driver->objectToName($object, $this->defaultMapper)
         );
     }
 
