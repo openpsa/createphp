@@ -29,13 +29,6 @@ class RestService
     const HTTP_DELETE = 'delete';
 
     /**
-     * The mapper object
-     *
-     * @var RdfMapperInterface
-     */
-    protected $_mapper;
-
-    /**
      * Custom workflows for post, put, delete or get
      *
      * @var array
@@ -132,7 +125,7 @@ class RestService
                 $subject = $_GET["subject"];
             }
             // TODO: workflows should expect subject rather than instance
-            $object = $this->_mapper->getBySubject($subject);
+            $object = $type->getMapper()->getBySubject($subject);
             return $this->_workflows[$method]->run($object);
         }
 
@@ -170,12 +163,12 @@ class RestService
             $about = $received_data[$this->jsonldEncode($rdf)];
 
             if (! empty($about)) {
-                $parent = $this->_mapper->getBySubject($this->jsonldDecode(current($about)));
+                $parent = $type->getMapper()->getBySubject($this->jsonldDecode(current($about)));
                 break;
             }
         }
 
-        $object = $this->_mapper->prepareObject($type, $parent);
+        $object = $type->getMapper()->prepareObject($type, $parent);
         $entity = $type->createWithObject($object);
 
         return $this->_storeData($received_data, $entity);
@@ -189,7 +182,7 @@ class RestService
         if (null === $subject) {
             $subject = $this->jsonldDecode($data['@subject']);
         }
-        $object = $this->_mapper->getBySubject($subject);
+        $object = $type->getMapper()->getBySubject($subject);
         $entity = $type->createWithObject($object);
         return $this->_storeData($data, $entity);
     }
@@ -208,11 +201,11 @@ class RestService
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $new_values)) {
-                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
+                $object = $entity->getMapper()->setPropertyValue($object, $node, $new_values[$expanded_name]);
             }
         }
 
-        if ($this->_mapper->store($entity))
+        if ($entity->getMapper()->store($entity))
         {
             return $this->_convertToJsonld($new_values, $object, $entity);
         }
@@ -225,7 +218,7 @@ class RestService
         // lazy: copy stuff from the sent json-ld to not have to rebuild everything.
         $jsonld = $data;
 
-        $jsonld['@subject'] = $this->jsonldEncode($this->_mapper->createSubject($object));
+        $jsonld['@subject'] = $this->jsonldEncode($entity->getMapper()->createSubject($object));
         foreach ($entity->getChildDefinitions() as $node) {
             if (!$node instanceof PropertyInterface) {
                 continue;
@@ -236,7 +229,7 @@ class RestService
             $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
             if (array_key_exists($expanded_name, $jsonld)) {
-                $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
+                $jsonld[$expanded_name] = $entity->getMapper()->getPropertyValue($object, $node);
             }
         }
 
