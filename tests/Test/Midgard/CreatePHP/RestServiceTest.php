@@ -75,6 +75,10 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
             ->method('getChildDefinitions')
             ->will($this->returnValue(array('title' => $this->property, 'children' => $this->collection)))
         ;
+        $this->type->expects($this->any())
+            ->method('getMapper')
+            ->will($this->returnValue($this->mapper))
+        ;
 
         $this->child_type->expects($this->any())
             ->method('getVocabularies')
@@ -97,6 +101,10 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         $this->entity->expects($this->any())
             ->method('getVocabularies')
             ->will($this->returnValue(array('dcterms' => 'http://purl.org/dc/terms/')))
+        ;
+        $this->entity->expects($this->any())
+            ->method('getMapper')
+            ->will($this->returnValue($this->mapper))
         ;
         $this->property->expects($this->any())
             ->method('getProperty')
