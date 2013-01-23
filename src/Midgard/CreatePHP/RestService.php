@@ -205,8 +205,7 @@ class RestService
             }
         }
 
-        if ($entity->getMapper()->store($entity))
-        {
+        if ($entity->getMapper()->store($entity)) {
             return $this->_convertToJsonld($new_values, $object, $entity);
         }
 
