@@ -123,7 +123,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         $object = $entity->getObject();
 
         //is there a getTitle method?
-        if (method_exists($object, 'getTitle') && $object->getTitle() !== '') {
+        if (method_exists($object, 'getTitle') && $object->getTitle()) {
             return $object->getTitle();
         } else {
             //try to get a property containing title in the rdf description
