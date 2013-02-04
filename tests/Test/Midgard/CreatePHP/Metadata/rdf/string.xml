@@ -1,0 +1,10 @@
+<type
+     xmlns:sioc="http://rdfs.org/sioc/ns#"
+     xmlns:dcterms="http://purl.org/dc/terms/"
+     typeof="sioc:Post"
+     tag-name="li"
+>
+    <children>
+        <property property="dcterms:tag" tag-name="span"/>
+    </children>
+</type>

@@ -2,8 +2,13 @@
 
 namespace Test\Midgard\CreatePHP\Extension\Twig;
 
+use Doctrine\Common\Annotations\AnnotationRegistry;
+
 use Midgard\CreatePHP\Extension\Twig\CreatephpExtension;
 use Midgard\CreatePHP\Extension\Twig\CreatephpNode;
+
+use Midgard\CreatePHP\Metadata\RdfDriverXml;
+use Midgard\CreatePHP\Metadata\RdfTypeFactory;
 
 use Test\Midgard\CreatePHP\Model;
 
@@ -14,20 +19,46 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
      */
     private $mapper;
     /**
-     * @var \Midgard\CreatePHP\Metadata\RdfTypeFactory
+     * @var RdfTypeFactory
      */
     private $factory;
     /** @var \Twig_Environment */
     private $twig;
 
+    /**
+     * @var RdfDriverXml
+     */
+    private $driver;
+
     protected function setUp()
     {
+        global $autoload;
         if (!class_exists('Twig_Environment')) {
             $this->markTestSkipped('Twig is not installed.');
         }
 
-        $this->mapper = $this->getMock('Midgard\CreatePHP\RdfMapperInterface');
-        $this->factory = new RdfTypeFactory($this->mapper);
+        AnnotationRegistry::registerLoader(function($class) use ($autoload) {
+            $autoload->loadClass($class);
+            return class_exists($class, false);
+        });
+        AnnotationRegistry::registerFile(__DIR__.'/../../../../../../vendor/doctrine/phpcr-odm/lib/Doctrine/ODM/PHPCR/Mapping/Annotations/DoctrineAnnotations.php');
+
+        $reader = new \Doctrine\Common\Annotations\AnnotationReader();
+        $driver = new \Doctrine\ODM\PHPCR\Mapping\Driver\AnnotationDriver($reader, array('../../'));
+
+
+        $this->driver = new RdfDriverXml(array(__DIR__ . '/../../Metadata/rdf'));
+        $documentManager = \Doctrine\ODM\PHPCR\DocumentManager::create($this->getMock('PHPCR\\SessionInterface'), new \Doctrine\ODM\PHPCR\Configuration());
+        $registry = $this->getMock('Doctrine\\Common\\Persistence\\ManagerRegistry');
+        $registry
+            ->expects($this->any())
+            ->method('getManager')
+            ->will($this->returnValue($documentManager))
+        ;
+
+        $this->mapper = new \Midgard\CreatePHP\Mapper\DoctrinePhpcrOdmMapper($this->driver->getAllNames(), $registry);
+
+        $this->factory = new RdfTypeFactory($this->mapper, $this->driver);
 
         $this->twig = new \Twig_Environment();
         $this->twig->setLoader(new \Twig_Loader_Filesystem(__DIR__.'/templates'));
@@ -38,6 +69,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->twig->addGlobal('mymodel', new Model);
 
+        /*
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
             ->will($this->returnValue('content text'))
@@ -50,7 +82,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createSubject')
             ->will($this->returnValue('/the/subject'))
         ;
-
+        */
         $xml = $this->renderXml('node.twig');
 
         $this->assertCompiledCorrectly($xml);
@@ -60,6 +92,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
     public function testNodeAs()
     {
         $this->twig->addGlobal('mymodel', new Model);
+        /*
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
             ->will($this->returnValue('content text'))
@@ -72,6 +105,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createSubject')
             ->will($this->returnValue('/the/subject'))
         ;
+        */
 
         $xml = $this->renderXml('node_as.twig');
 
@@ -82,7 +116,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $this->twig->addGlobal('mymodel', new Model);
 
-        $this->twig->addGlobal('mymodel', new Model);
+        /*
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
             ->will($this->returnValue('content text'))
@@ -95,6 +129,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createSubject')
             ->will($this->returnValue('/the/subject'))
         ;
+        */
 
         $xml = $this->renderXml('functions.twig');
 
