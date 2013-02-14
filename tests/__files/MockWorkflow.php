@@ -1,6 +1,7 @@
 <?php
 namespace Midgard\CreatePHP\tests;
 
+use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\WorkflowInterface;
 
 /**
@@ -22,7 +23,7 @@ class MockWorkflow implements WorkflowInterface
         );
     }
 
-    public function run($object)
+    public function run($data, TypeInterface $type, $subject = null, $method = null)
     {
         return array();
     }
