@@ -235,7 +235,7 @@ class Collection extends Node implements CollectionInterface
      *
      * Overwrite to not output about attribute again if parent is rendering
      */
-    public function renderAttributes($attributesToSkip = array())
+    public function renderAttributes(array $attributesToSkip = array())
     {
         if ($this->_parent && $this->_parent->isRendering()) {
             $attributesToSkip[] = 'about';

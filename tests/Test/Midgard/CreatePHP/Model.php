@@ -10,7 +10,8 @@ class Model
 
     public function __construct($title = 'the model title',
                                 $content = 'the model content',
-                                $subject = '/the/subject/model') {
+                                $subject = '/the/subject/model')
+    {
         $this->title = $title;
         $this->content = $content;
         $this->subject = $subject;

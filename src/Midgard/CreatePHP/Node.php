@@ -274,11 +274,20 @@ abstract class Node implements NodeInterface
      */
     public function render($tag_name = false)
     {
-        $output = $this->renderStart($tag_name);
+        $output = '';
+        /**
+         * Do not render start and end again if the node is already rendering.
+         */
+        if (! $this->isRendering()) {
+            $output = $this->renderStart($tag_name);
+        }
 
         $output .= $this->renderContent();
 
-        $output .= $this->renderEnd();
+        if (! $this->isRendering()) {
+            $output .= $this->renderEnd();
+        }
+
         return $output;
     }
 
@@ -287,7 +296,7 @@ abstract class Node implements NodeInterface
      *
      * @api
      */
-    public function renderAttributes($attributesToSkip = array())
+    public function renderAttributes(array $attributesToSkip = array())
     {
         // add additional attributes
         $attributes = '';
@@ -329,14 +338,6 @@ abstract class Node implements NodeInterface
      */
     public function __toString()
     {
-        /**
-         * Do not render start and end again if the node is already rendering.
-         * This is helpful in twig to say:
-         * {% createphp model as rdf %} {{ rdf|raw }} {{% endcreatephp %}}
-         */
-        if ($this->isRendering()) {
-            return $this->renderContent();
-        }
         return $this->render();
     }
 }
