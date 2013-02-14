@@ -63,6 +63,7 @@ class RestService
     {
         return "<$value>";
     }
+
     /**
      * @param string $value the value to decode
      *
@@ -127,17 +128,7 @@ class RestService
         }
 
         if (array_key_exists($method, $this->_workflows)) {
-            $object = null;
-            if (null === $subject) {
-                if (isset($_GET["subject"])) {
-                    $subject = $_GET["subject"];
-                } else {
-                    $subject = $this->jsonldDecode($data['@subject']);
-                }
-            }
-            // TODO: workflows should expect subject rather than instance
-            $object = $this->_mapper->getBySubject($subject);
-            return $this->_workflows[$method]->run($object);
+            return $this->_workflows[$method]->run($data, $type, $subject, $method);
         }
 
         switch ($method) {
