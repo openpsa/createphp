@@ -278,13 +278,14 @@ abstract class Node implements NodeInterface
         /**
          * Do not render start and end again if the node is already rendering.
          */
-        if (! $this->isRendering()) {
+        $rendering = $this->isRendering();
+        if (! $rendering) {
             $output = $this->renderStart($tag_name);
         }
 
         $output .= $this->renderContent();
 
-        if (! $this->isRendering()) {
+        if (! $rendering) {
             $output .= $this->renderEnd();
         }
 
