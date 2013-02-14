@@ -15,7 +15,7 @@ class RdfDriverXmlTest extends RdfDriverBase
 
     public function setUp()
     {
-        $this->driver = new RdfDriverXml(array(__DIR__ . DIRECTORY_SEPARATOR . 'rdf'));
+        $this->driver = new RdfDriverXml(array(__DIR__ . DIRECTORY_SEPARATOR . 'rdf-driver'));
     }
 
     public function testLoadTypeForClass()

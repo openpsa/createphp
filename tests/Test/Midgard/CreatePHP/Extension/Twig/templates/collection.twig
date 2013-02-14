@@ -1,0 +1,19 @@
+{% createphp mycollection as="rdf" noautotag %}
+
+<div class="my-class" {{ createphp_attributes(rdf) }}>
+    <h1 {{ createphp_attributes( rdf.title ) }}>{{ createphp_content( rdf.title ) }}</h1>
+
+    <ul {{ createphp_attributes( rdf.children ) }}>
+        {% for model in rdf.children %}
+        {% createphp model noautotag %}
+        <li {{ createphp_attributes(model_rdf) }}>
+            <div {{ createphp_attributes(model_rdf.title) }}>{{ createphp_content(model_rdf.title) }}</div>
+            <div {{ createphp_attributes(model_rdf.content) }}>{{ createphp_content(model_rdf.content) }}</div>
+        </li>
+        {% endcreatephp %}
+        {% endfor %}
+    </ul>
+
+</div>
+
+{% endcreatephp %}
