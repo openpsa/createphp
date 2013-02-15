@@ -5,6 +5,9 @@
 This tutorial shows how to use CreatePHP with the ArrayLoader that bootstraps
 Manager, which is a sort of micro service container.
 
+
+## Setup
+
 Instantiate ArrayLoader with a configuration for your data source:
 
 ```php
@@ -42,6 +45,8 @@ $loader = new Midgard\CreatePHP\ArrayLoader($config);
 $manager = $loader->getManager($mapper);
 $entity = $manager->getEntity($object);
 ```
+
+Alternatively, you can also use an XML-based configuration, rely on auto-hinting, or implement your own RdfDriver.
 
 
 ## Rendering HTML
