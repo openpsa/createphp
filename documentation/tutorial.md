@@ -46,7 +46,7 @@ $manager = $loader->getManager($mapper);
 $entity = $manager->getEntity($object);
 ```
 
-Alternatively, you can also use an XML-based configuration, rely on auto-hinting, or implement your own RdfDriver.
+Alternatively, you can also use an XML-based configuration, rely on auto-hinting, or implement your own [RdfDriver](reference.md#metadata-factory).
 
 
 ## Rendering HTML
