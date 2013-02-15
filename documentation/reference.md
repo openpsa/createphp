@@ -1,4 +1,4 @@
-#[CreatePHP Documentation](index.md)
+[CreatePHP Documentation](index.md)
 
 # Reference
 

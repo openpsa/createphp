@@ -1,6 +1,6 @@
-#[CreatePHP Documentation](index.md)
+[CreatePHP Documentation](index.md)
 
-##Tutorial
+# Tutorial
 
 This tutorial shows how to use CreatePHP with the ArrayLoader that bootstraps
 Manager, which is a sort of micro service container.

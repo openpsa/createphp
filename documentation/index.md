@@ -1,4 +1,4 @@
-#CreatePHP Documentation
+# CreatePHP Documentation
 
--[Tutorial](tutorial.md)
--[Reference](reference.md)
+* [Tutorial](tutorial.md)
+* [Reference](reference.md)
