@@ -44,7 +44,7 @@ $entity = $manager->getEntity($object);
 ```
 
 
-### Rendering HTML
+## Rendering HTML
 
 Using the default markup is as simple as this:
 
@@ -95,7 +95,7 @@ echo $entity->renderEnd();
 If you include the Create.js files into your page, all specified fields will become editable.
 
 
-### Implementing the REST backend
+## Implementing the REST backend
 
 To actually save the data, you will have to provide an access point for the REST service, like so:
 
