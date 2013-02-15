@@ -132,4 +132,4 @@ send_as_json($toolbar_config);
 ?>
 ```
 
-See the Create.js documentation for available configuration options in workflows
+See the [Create.js documentation](http://createjs.org/guide/) for available configuration options in workflows
