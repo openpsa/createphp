@@ -27,7 +27,7 @@ $config = array
                'dcterms' => 'http://purl.org/dc/terms/',
                'sioc' => 'http://rdfs.org/sioc/ns#'
             ),
-            'properties' => array(
+            'children' => array(
                 'title' => array(
                     'property' => 'dcterms:title'
                 ),
