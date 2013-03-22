@@ -104,10 +104,13 @@ interface NodeInterface
     public function unsetAttribute($key);
 
     /**
-     * Renders everything including wrapper html tag and properties
+     * Renders everything needed.
      *
      * If you want more control over the generated HTML, call renderStart,
      * renderContent and renderEnd separately
+     *
+     * If called after renderStart but before renderEnd, it will just do
+     * renderContent to not duplicate the wrapper html tag and properties
      *
      * @param string $tag_name
      *
@@ -142,9 +145,11 @@ interface NodeInterface
      * Render just the attributes. This is not needed if you use
      * renderStart()
      *
+     * @param array $attributesToSkip attributes names that will not be printed
+     *
      * @return string the rendered attributes
      */
-    public function renderAttributes();
+    public function renderAttributes(array $attributesToSkip = array());
 
     /**
      * Has to return the same as self::render()

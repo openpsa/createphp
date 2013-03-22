@@ -37,12 +37,12 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         /** @var $meta \Doctrine\ODM\PHPCR\Mapping\ClassMetadata */
         $meta = $this->om->getClassMetaData(get_class($object));
 
-        if (!property_exists($object, $meta->parentMapping['fieldName'])) {
+        if (!property_exists($object, $meta->parentMapping)) {
             throw new RuntimeException('parentMapping need to be mapped to '
                 . get_class($object));
         }
 
-        $meta->setFieldValue($object, $meta->parentMapping['fieldName'], $parent);
+        $meta->setFieldValue($object, $meta->parentMapping, $parent);
 
         return $object;
     }
@@ -123,7 +123,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         $object = $entity->getObject();
 
         //is there a getTitle method?
-        if (method_exists($object, 'getTitle') && $object->getTitle() !== '') {
+        if (method_exists($object, 'getTitle') && $object->getTitle()) {
             return $object->getTitle();
         } else {
             //try to get a property containing title in the rdf description

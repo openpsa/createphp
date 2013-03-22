@@ -1,0 +1,10 @@
+<type
+        xmlns:sioc="http://rdfs.org/sioc/ns#"
+        xmlns:dcterms="http://purl.org/dc/terms/"
+        typeof="sioc:Forum"
+>
+    <children>
+        <property property="dcterms:title" identifier="title" tag-name="h2"/>
+        <collection rel="dcterms:hasPart" rev="dcterms:partOf" identifier="children"/>
+    </children>
+</type>
