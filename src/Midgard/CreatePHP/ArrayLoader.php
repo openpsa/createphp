@@ -21,8 +21,6 @@ use Midgard\CreatePHP\Metadata\RdfTypeFactory;
  */
 class ArrayLoader
 {
-    protected $_references = array();
-
     protected $_config = array();
 
     public function __construct(array $config)
