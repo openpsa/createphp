@@ -13,8 +13,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 
-use PHPCR\ItemExistsException;
-
 /**
  * Base mapper for doctrine, removing the proxy class names in canonicalClassName
  *
@@ -44,17 +42,13 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      * Persist and flush (persisting an already managed document has no effect
      * and does not hurt).
      *
-     * TODO: ensure that this has the right id resp. parent+name
+     * @throws \Exception will throw some exception if storing fails, type is
+     *      depending on the doctrine implemenation.
      */
     public function store(EntityInterface $entity)
     {
-        try {
-            $this->om->persist($entity->getObject());
-            $this->om->flush();
-        } catch (ItemExistsException $iee) {
-            //an item with the same title already exists
-            return false;
-        }
+        $this->om->persist($entity->getObject());
+        $this->om->flush();
 
         return true;
     }
@@ -72,19 +66,6 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
         }
 
         return $className;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Build the subject from all id's as per the metadata information,
-     * concatenated with '-'.
-     */
-    public function createSubject($object)
-    {
-        $meta = $this->om->getClassMetaData(get_class($object));
-        $ids = $meta->getIdentifierValues($object);
-        return implode('-', $ids);
     }
 
     /**
@@ -110,6 +91,7 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
         if (isset($config['doctrine:reference'])) {
             $value = $this->getBySubject($value);
         }
+
         return parent::setPropertyValue($object, $property, $value);
     }
 }

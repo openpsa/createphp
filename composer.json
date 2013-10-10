@@ -12,7 +12,8 @@
         }
     ],
     "require-dev": {
-        "twig/twig": "~1.8"
+        "twig/twig": "~1.8",
+        "doctrine/common": "~2.3.0"
     },
     "autoload": {
         "psr-0": {
