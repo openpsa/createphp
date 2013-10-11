@@ -19,7 +19,7 @@ Installation
 
 CreatePHP is available on [Packagist](https://packagist.org/packages/midgard/createphp), so you can
 simply include it in your `composer.json`. Or you download it the old-fashioned way and register it
-in any PSR2-compatible autoloader.
+in any PSR0-compatible autoloader.
 
 Documentation
 --------
