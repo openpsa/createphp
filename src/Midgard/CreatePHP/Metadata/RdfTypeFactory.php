@@ -23,7 +23,12 @@ class RdfTypeFactory
     /**
      * @var RdfMapperInterface
      */
-    private $mapper;
+    private $defaultMapper;
+
+    /**
+     * @var RdfMapperInterface[]
+     */
+    private $mappers;
 
     /**
      * @var RdfDriverInterface
@@ -33,18 +38,21 @@ class RdfTypeFactory
     private $loadedTypes = array();
 
     /**
-     * @param RdfMapperInterface $mapper the mapper to use in this project
+     * @param RdfMapperInterface $defaultMapper the default mapper to use if there is no specific one
+     * @param RdfDriverInterface $driver the driver to load types from
+     * @param RdfMapperInterface[] $mappers rdf mappers per type name
      */
-    public function __construct(RdfMapperInterface $mapper, RdfDriverInterface $driver)
+    public function __construct(RdfMapperInterface $defaultMapper, RdfDriverInterface $driver, $mappers = array())
     {
-        $this->mapper = $mapper;
+        $this->defaultMapper = $defaultMapper;
         $this->driver = $driver;
+        $this->mappers = $mappers;
     }
 
     public function getTypeByObject($object)
     {
         return $this->getTypeByName(
-            $this->driver->objectToName($object, $this->mapper)
+            $this->driver->objectToName($object, $this->defaultMapper)
         );
     }
 
@@ -58,12 +66,25 @@ class RdfTypeFactory
     public function getTypeByName($name)
     {
         if (!isset($this->loadedTypes[$name])) {
-            $this->loadedTypes[$name] = $this->driver->loadType($name, $this->mapper, $this);
+            $mapper = $this->getMapper($name);
+            $this->loadedTypes[$name] = $this->driver->loadType($name, $mapper, $this);
         }
 
         // TODO: combine types from parent models...
 
         return $this->loadedTypes[$name];
+    }
+
+    /**
+     * Get the mapper for type $name, or the defaultMapper if there is no specific mapper.
+     *
+     * @param string $name the type name for which to get the mapper
+     *
+     * @return RdfMapperInterface
+     */
+    protected function getMapper($name)
+    {
+        return isset($this->mappers[$name]) ? $this->mappers[$name] : $this->defaultMapper;
     }
 
     /**
