@@ -8,18 +8,15 @@
 
 namespace Midgard\CreatePHP\Mapper;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
+
+use PHPCR\ItemExistsException;
 
 use \RuntimeException;
 
 /**
  * Mapper to handle PHPCR-ODM.
- *
- * For orm, this will be more difficult as the subject will need to carry
- * the information of which entity it is about.
  */
 class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
 {
@@ -71,7 +68,22 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
             $meta->setFieldValue($entity->getObject(), $meta->nodename, $name);
         }
 
-        return parent::store($entity);
+        try {
+            return parent::store($entity);
+        } catch (ItemExistsException $iee) {
+            //an item with the same title already exists
+            return false;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * With PHPCR-ODM we simply use the full repository path as id.
+     */
+    public function createSubject($object)
+    {
+        return $this->om->getUnitOfWork()->getDocumentId($object);
     }
 
     /**
