@@ -5,6 +5,7 @@ namespace Test\Midgard\CreatePHP\Extension\Twig;
 use Midgard\CreatePHP\Extension\Twig\CreatephpExtension;
 use Midgard\CreatePHP\Extension\Twig\CreatephpNode;
 
+use Test\Midgard\CreatePHP\Container;
 use Test\Midgard\CreatePHP\Model;
 use Test\Midgard\CreatePHP\Collection;
 use Midgard\CreatePHP\Metadata\RdfDriverXml;
@@ -72,7 +73,9 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         return array(
             array('node.twig'),
             array('node_as.twig'),
-            array('functions.twig')
+            array('container.twig'),
+            array('container_as.twig'),
+            array('functions.twig'),
         );
     }
 
@@ -177,6 +180,8 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
     private function prepareBasicTest(){
         $model = new Model;
         $this->twig->addGlobal('mymodel', $model);
+        $container = new Container($model);
+        $this->twig->addGlobal('mycontainer', $container);
 
         $this->mapper->expects($this->any())
             ->method('getPropertyValue')
