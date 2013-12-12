@@ -39,13 +39,15 @@ class CreatephpTokenParser extends Twig_TokenParser
     {
         $stream = $this->parser->getStream();
 
-        // modelvariable
-        $modelname = $stream->expect(Twig_Token::NAME_TYPE)->getValue();
+        // the object might be an expression like container.field
+        $object = $this->parser->getExpressionParser()->parseExpression();
 
         $var = null;
         if ($stream->test(Twig_Token::NAME_TYPE, 'as')) {
             $stream->next();
-            $stream->expect(Twig_Token::OPERATOR_TYPE, '=');
+            if ($stream->test(Twig_Token::OPERATOR_TYPE, '=')) {
+                $stream->expect(Twig_Token::OPERATOR_TYPE, '=');
+            }
             $var = $stream->expect(Twig_Token::STRING_TYPE)->getValue();
         }
 
@@ -62,7 +64,7 @@ class CreatephpTokenParser extends Twig_TokenParser
         $body = $this->parser->subparse($test, true);
         $stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-        return new CreatephpNode($body, $modelname, $var, !$noautotag, $token->getLine(), $this->getTag());
+        return new CreatephpNode($body, $object, $var, !$noautotag, $token->getLine(), $this->getTag());
     }
 
     public function getTag()
