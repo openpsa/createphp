@@ -264,4 +264,25 @@ class RestService
         }
         return $this->jsonldEncode($vocabularies[$parts[0]] . $parts[1]);
     }
+
+    /**
+     * Get all workflows available for this subject
+     *
+     * @param string $subject the RDFa identifier of the subject to get workflows for
+     *
+     * @return array of WorkflowInterface
+     */
+    public function getWorkflows($subject)
+    {
+        $response = array();
+        $object = $this->_mapper->getBySubject(trim($subject, '<>'));
+        foreach ($this->_workflows as $identifier => $workflow) {
+            /** @var $workflow WorkflowInterface */
+            $toolbar_config = $workflow->getToolbarConfig($object);
+            if (null !== $toolbar_config) {
+                $response[] = $toolbar_config;
+            }
+        }
+        return $response;
+    }
 }
