@@ -83,7 +83,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      */
     public function createSubject($object)
     {
-        return $this->om->getUnitOfWork()->getDocumentId($object);
+        return $this->om->getUnitOfWork()->getDocumentId($object, false);
     }
 
     /**
