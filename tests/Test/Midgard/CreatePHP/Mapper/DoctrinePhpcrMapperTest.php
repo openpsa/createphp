@@ -1,16 +1,13 @@
 <?php
-/**
- * www.valiton.com
- *
- * @author Uwe Jäger <uwe.jaeger@valiton.com>
- */
-
 
 namespace Test\Midgard\CreatePHP\Mapper;
 
 
 use Midgard\CreatePHP\Mapper\DoctrinePhpcrOdmMapper;
 
+/**
+ * @author Uwe Jäger <uwej711@googlemail.com>
+ */
 class DoctrinePhpcrMapperTest extends \PHPUnit_Framework_TestCase
 {
     protected $mapper;
