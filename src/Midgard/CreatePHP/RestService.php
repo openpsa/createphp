@@ -205,16 +205,9 @@ class RestService
                 $rel = $node->getRel();
                 $expanded_name = $this->_expandPropertyName($rel, $entity);
                 if (array_key_exists($expanded_name, $new_values)) {
-                    $childrenCollection = $this->_mapper->getChildren($object, $node);
-                    $children = $childrenCollection->toArray();
-                    $childrenCollection->clear();
-
                     $expectedOrder = $new_values[$expanded_name];
                     array_walk($expectedOrder, array($this, 'walkChildrenNames'));
-
-                    foreach ($expectedOrder as $name) {
-                        $childrenCollection->set($name, $children[$name]);
-                    }
+                    $this->_mapper->orderChildren($entity, $node, $expectedOrder);
                 }
             } elseif ($node instanceof PropertyInterface) {
                 /** @var $node PropertyInterface */
@@ -238,7 +231,7 @@ class RestService
 
     public function walkChildrenNames(&$item, $key)
     {
-        $item = basename($this->jsonldDecode($item));
+        $item = $this->jsonldDecode($item);
     }
 
     private function _convertToJsonld($object)

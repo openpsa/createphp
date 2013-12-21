@@ -123,4 +123,14 @@ interface RdfMapperInterface
      * @return string
      */
     public function createSubject($object);
+
+    /**
+     * Reorder the children of the collection node according to the expected order
+     *
+     * @param EntityInterface $entity
+     * @param CollectionInterface $node
+     * @param $expectedOrder array of subjects
+     * @return
+     */
+    public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder);
 }

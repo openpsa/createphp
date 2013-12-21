@@ -8,6 +8,7 @@
 
 namespace Midgard\CreatePHP\Mapper;
 
+use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 
@@ -159,4 +160,71 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
             throw new RuntimeException('No title could be found four your new node.');
         }
     }
+
+    /**
+     * Reorder the children of the collection node according to the expected order
+     *
+     * @param EntityInterface $entity
+     * @param CollectionInterface $node
+     * @param $expectedOrder array of subjects
+     */
+    public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder)
+    {
+        array_walk($expectedOrder, array($this, 'stripParentPath'));
+        $childrenCollection = $this->getChildren($entity->getObject(), $node);
+        $children = $childrenCollection->toArray();
+        $childrenNames = array_keys($children);
+
+        $childrenNames = $this->sort($childrenNames, $expectedOrder);
+
+        $childrenCollection->clear();
+
+        foreach ($childrenNames as $name) {
+            $childrenCollection->set($name, $children[$name]);
+        }
+    }
+
+    public function stripParentPath(&$item, $key)
+    {
+        $item = basename($item);
+    }
+    
+    /**
+     * stable sort is not implemented in php, so we need to sort ourself
+     */
+    public function sort($array, $reference)
+    {
+        $headIdx = 0;
+        $tailIdx = 0;
+        $i = 0;
+        foreach($array as $element) {
+            $i++;
+            if (false === array_search($element, $reference)) {
+                if (0 == $tailIdx) {
+                    $headIdx = $i;
+                }
+            } else {
+                $tailIdx = $i;
+            }
+        }
+
+        $toSort = array_splice($array, $headIdx);
+        $tail = array_splice($toSort, $tailIdx - $headIdx);
+
+        for ($i=1; $i < count($toSort); $i++) {
+            $tempIdx = (int)array_search($toSort[$i], $reference);
+            $temp = $toSort[$i];
+            $j = $i - 1;
+
+            while ($j >= 0 && (int)array_search($toSort[$j], $reference) > $tempIdx){
+                $toSort[$j + 1] = $toSort[$j];
+                $j--;
+            }
+
+            $toSort[$j+1] = $temp;
+        }
+
+        return array_merge($array, $toSort, $tail);
+    }
+
 }

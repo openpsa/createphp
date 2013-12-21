@@ -61,12 +61,6 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
             ->with('testmodel', $this->equalTo($this->property), 'the title')
             ->will($this->returnValue('testmodel'))
         ;
-        $this->mapper->expects($this->once())
-            ->method('getPropertyValue')
-            ->with('testmodel', $this->equalTo($this->property))
-            ->will($this->returnValue('stored title')) // The data storage could have changed the value
-        ;
-
         $this->type->expects($this->any())
             ->method('getVocabularies')
             ->will($this->returnValue(array('dcterms' => 'http://purl.org/dc/terms/')))
@@ -109,6 +103,11 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         ;
 
         $this->collection->expects($this->any())
+          ->method('getRel')
+          ->will($this->returnValue('dcterms:section'))
+        ;
+
+        $this->collection->expects($this->any())
             ->method('getTypes')
             ->will($this->returnValue(array($this->child_type)))
         ;
@@ -135,9 +134,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         $return = $rest->run($data, $this->type, '/the/subject', RestService::HTTP_PUT);
 
         $this->assertEquals(array(
-                '@subject' => '</the/subject>',
-                '<http://purl.org/dc/terms/title>' => 'stored title',
-                '<http://purl.org/dc/terms/partOf>' => array('</parent/subject>'),
+                '@subject' => '</the/subject>'
             ), $return
         );
     }
@@ -167,9 +164,7 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
         $return = $rest->run($data, $this->type, null, RestService::HTTP_POST);
 
         $this->assertEquals(array(
-                '@subject' => '</the/subject>',
-                '<http://purl.org/dc/terms/title>' => 'stored title',
-                '<http://purl.org/dc/terms/partOf>' => array('</parent/subject>'),
+                '@subject' => '</the/subject>'
             ), $return
         );
     }
