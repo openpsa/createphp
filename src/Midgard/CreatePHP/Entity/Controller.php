@@ -111,15 +111,12 @@ class Controller extends Node implements EntityInterface
             } elseif ($node instanceof CollectionDefinitionInterface) {
                 /** @var $node CollectionDefinitionInterface */
                 $instance = $node->createWithParent($this);
-                $instance->setAttribute('about', $this->_mapper->createSubject($object));
             } else {
                 // we had a generic node in our tree. make sure the node gets its parent set.
                 $instance = $node;
             }
             $this->$name = $instance;
         }
-
-        $this->setAttribute('about', $this->_mapper->createSubject($object));
     }
 
     /**
@@ -191,6 +188,31 @@ class Controller extends Node implements EntityInterface
     public function getObject()
     {
         return $this->_object;
+    }
+
+    public function getAttributes()
+    {
+        if (!isset($this->_attributes['about'])) {
+            $this->ensureAbout();
+        }
+
+        return parent::getAttributes();
+    }
+
+    public function getAttribute($key)
+    {
+        if ('about' === $key && !isset($this->_attributes['about'])) {
+            $this->ensureAbout();
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    protected function ensureAbout()
+    {
+        if ($this->_object && $this->isEditable()) {
+            $this->setAttribute('about', $this->_mapper->createSubject($this->_object));
+        }
     }
 
     /**

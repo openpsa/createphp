@@ -302,7 +302,7 @@ abstract class Node implements NodeInterface
         // add additional attributes
         $attributes = '';
         $swappedAttributes = array_flip($attributesToSkip);
-        foreach ($this->_attributes as $key => $value) {
+        foreach ($this->getAttributes() as $key => $value) {
             if (isset($swappedAttributes[$key])) {
                 continue;
             }
