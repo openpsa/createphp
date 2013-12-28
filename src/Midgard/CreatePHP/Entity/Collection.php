@@ -258,6 +258,36 @@ class Collection extends Node implements CollectionInterface
         return $ret;
     }
 
+    public function getAttributes()
+    {
+        if (!isset($this->_attributes['about'])) {
+            $this->ensureAbout();
+        }
+
+        return parent::getAttributes();
+    }
+
+    public function getAttribute($key)
+    {
+        if ('about' === $key && !isset($this->_attributes['about'])) {
+            $this->ensureAbout();
+        }
+
+        return parent::getAttribute($key);
+    }
+
+    protected function ensureAbout()
+    {
+        if ($this->_parent instanceof NodeInterface
+            && !$this->_parent->isRendering()
+            && $this->_parent->isEditable()
+        ) {
+            $about = $this->_parent->getAttribute('about');
+            if ($about) {
+                $this->setAttribute('about', $about);
+            }
+        }
+    }
 
     /* ----- arrayaccess and iterator implementation methods ----- */
     public function rewind()

@@ -78,7 +78,7 @@ class RdfDriverArrayTest extends RdfDriverBase
     }
 
     /**
-     * @expectedException Midgard\CreatePHP\Metadata\TypeNotFoundException
+     * @expectedException \Midgard\CreatePHP\Metadata\TypeNotFoundException
      */
     public function testLoadTypeForClassNodefinition()
     {
