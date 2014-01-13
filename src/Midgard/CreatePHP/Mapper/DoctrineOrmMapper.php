@@ -126,7 +126,8 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
      */
     public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder)
     {
-        // NOOP
+        // Currently ordering children is not supported by the ORM. This could be implemented using
+        // the sortable doctrine extension, e.g. https://github.com/l3pp4rd/DoctrineExtensions
     }
 
 }

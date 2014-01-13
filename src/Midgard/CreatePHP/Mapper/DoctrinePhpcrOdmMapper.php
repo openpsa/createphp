@@ -14,6 +14,7 @@ use Midgard\CreatePHP\Entity\EntityInterface;
 
 use PHPCR\ItemExistsException;
 
+use PHPCR\Util\PathHelper;
 use \RuntimeException;
 
 /**
@@ -49,6 +50,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      * Overwrite to set the node name if not set
      *
      * @param EntityInterface $entity
+     * @throws \RuntimeException
      * @return bool|void
      */
     public function store(EntityInterface $entity)
@@ -130,6 +132,8 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      * 4. give up
      *
      * @param EntityInterface $entity
+     * @throws \RuntimeException
+     * @return mixed|string
      */
     private function determineEntityTitle(EntityInterface $entity)
     {
@@ -170,7 +174,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      */
     public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder)
     {
-        array_walk($expectedOrder, array($this, 'stripParentPath'));
+        array_walk($expectedOrder, array($this, 'getNodeName'));
         $childrenCollection = $this->getChildren($entity->getObject(), $node);
         $children = $childrenCollection->toArray();
         $childrenNames = array_keys($children);
@@ -184,11 +188,17 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         }
     }
 
-    public function stripParentPath(&$item, $key)
+    /**
+     * Get the node name
+     *
+     * @param $item
+     * @param $key
+     */
+    public function getNodeName(&$item, $key)
     {
-        $item = basename($item);
+        $item = PathHelper::getNodeName($item);
     }
-    
+
     /**
      * stable sort is not implemented in php, so we need to sort ourself
      */
