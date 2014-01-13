@@ -266,6 +266,17 @@ class RestService
     }
 
     /**
+     * Register a workflow
+     *
+     * @param string $identifier
+     * @param WorkflowInterface $workflow
+     */
+    public function registerWorkflow($identifier, WorkflowInterface $workflow)
+    {
+        $this->_workflows[$identifier] = $workflow;
+    }
+
+    /**
      * Get all workflows available for this subject
      *
      * @param string $subject the RDFa identifier of the subject to get workflows for

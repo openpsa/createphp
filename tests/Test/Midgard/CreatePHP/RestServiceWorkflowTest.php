@@ -7,14 +7,14 @@ use Midgard\CreatePHP\tests\MockWorkflow;
 
 class RestServiceWorkflowTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetworkflows()
+    public function test_get_registerWorkflow()
     {
         $workflow = new MockWorkflow;
         $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
 
-        $rest = new RestService($mapper);
+        $restHandler = new RestService($mapper);
 
-        $rest->setWorkflow('mock', $workflow);
+        $restHandler->registerWorkflow('mock', $workflow);
 
         $expected = array
         (
@@ -30,6 +30,6 @@ class RestServiceWorkflowTest extends \PHPUnit_Framework_TestCase
             )
         );
 
-        $this->assertEquals($expected, $rest->getWorkflows('test1'));
+        $this->assertEquals($expected, $restHandler->getWorkflows('test1'));
     }
 }

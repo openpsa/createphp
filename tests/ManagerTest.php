@@ -42,28 +42,6 @@ class ManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($controller, $this->manager->getType('test'));
     }
 
-    public function test_get_registerWorkflow()
-    {
-        $workflow = new MockWorkflow;
-        $this->manager->registerWorkflow('mock', $workflow);
-
-        $expected = array
-        (
-            array
-            (
-                'name' => "mockbutton",
-                'label' => 'Mock Label',
-                'action' => array
-                (
-                    'type' => "backbone_destroy"
-                ),
-                'type' => "button"
-            )
-        );
-
-        $this->assertEquals($expected, $this->manager->getworkflows('test1'));
-    }
-
     public function test_getRestHandler()
     {
         $service = $this->manager->getRestHandler();
