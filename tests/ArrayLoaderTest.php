@@ -106,7 +106,7 @@ class ArrayLoaderTest extends \PHPUnit_Framework_TestCase
         $loader = new ArrayLoader($config);
         $manager = $loader->getManager($mapper);
 
-        $workflows = $manager->getWorkflows('test_id');
+        $workflows = $manager->getRestHandler()->getWorkflows('test_id');
 
         $expected = array
         (

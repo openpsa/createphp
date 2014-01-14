@@ -37,7 +37,7 @@ class ArrayLoader
 
         if (!empty($this->_config['workflows'])) {
             foreach ($this->_config['workflows'] as $identifier => $classname) {
-                $manager->registerWorkflow($identifier, new $classname);
+                $manager->getRestHandler()->registerWorkflow($identifier, new $classname);
             }
         }
 

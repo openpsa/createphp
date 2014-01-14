@@ -29,18 +29,19 @@ class Manager
     protected $_metadata;
 
     /**
-     * Array of available workflows
-     *
-     * @var array of WorkflowInterface
-     */
-    protected $_workflows = array();
-
-    /**
      * The mapper implementation to use
      *
      * @var RdfMapperInterface
      */
     protected $_mapper;
+
+    /**
+     * The RestService
+     *
+     * @var RestService
+     */
+    protected $_restService;
+
 
     /**
      * The widget (JS constructor) to use
@@ -121,42 +122,9 @@ class Manager
 
     public function getRestHandler()
     {
-        $restservice = new RestService($this->_mapper);
-        foreach ($this->_workflows as $identifier => $workflow) {
-            $restservice->setWorkflow($identifier, $workflow);
+        if (null === $this->_restService) {
+            $this->_restService = new RestService($this->_mapper);
         }
-        return $restservice;
-    }
-
-    /**
-     * Register a workflow
-     *
-     * @param string $identifier
-     * @param WorkflowInterface $Workflow
-     */
-    public function registerWorkflow($identifier, WorkflowInterface $workflow)
-    {
-        $this->_workflows[$identifier] = $workflow;
-    }
-
-    /**
-     * Get all workflows available for this subject
-     *
-     * @param string $subject the RDFa identifier of the subject to get workflows for
-     *
-     * @return array of WorkflowInterface
-     */
-    public function getWorkflows($subject)
-    {
-        $response = array();
-        $object = $this->_mapper->getBySubject(trim($subject, '<>'));
-        foreach ($this->_workflows as $identifier => $workflow) {
-            /** @var $workflow WorkflowInterface */
-            $toolbar_config = $workflow->getToolbarConfig($object);
-            if (null !== $toolbar_config) {
-                $response[] = $toolbar_config;
-            }
-        }
-        return $response;
+        return $this->_restService;
     }
 }
