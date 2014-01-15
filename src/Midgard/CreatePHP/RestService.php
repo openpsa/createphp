@@ -234,7 +234,7 @@ class RestService
         $item = $this->jsonldDecode($item);
     }
 
-    private function _convertToJsonld($object, $entity)
+    private function _convertToJsonld($object, EntityInterface $entity)
     {
         $jsonld = array();
 
