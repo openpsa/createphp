@@ -223,7 +223,7 @@ class RestService
 
         if ($this->_mapper->store($entity))
         {
-            return $this->_convertToJsonld($object);
+            return $this->_convertToJsonld($object, $entity);
         }
 
         return null;
@@ -234,10 +234,21 @@ class RestService
         $item = $this->jsonldDecode($item);
     }
 
-    private function _convertToJsonld($object)
+    private function _convertToJsonld($object, $entity)
     {
-        // only return what has changed, this is the subject at best ...
+        $jsonld = array();
+
         $jsonld['@subject'] = $this->jsonldEncode($this->_mapper->createSubject($object));
+
+        foreach ($entity->getChildDefinitions() as $node) {
+
+            if ($node instanceof PropertyInterface) {
+                $rdf_name = $node->getProperty();
+                $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
+
+                $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
+            }
+        }
 
         return $jsonld;
     }
