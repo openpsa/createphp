@@ -75,8 +75,8 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
     {
         $field = $this->getField($object, $property);
         $config = $property->getConfig();
-        if (isset($config['doctrine:reference'])) {
-            return $this->createSubject($object);
+        if (null !== $field && isset($config['doctrine:reference'])) {
+            return $this->createSubject($field);
         }
 
         return $field;
