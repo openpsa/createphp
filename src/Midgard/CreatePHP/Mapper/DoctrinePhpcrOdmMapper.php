@@ -166,7 +166,14 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     }
 
     /**
-     * Reorder the children of the collection node according to the expected order
+     * Reorder the children of the collection node according to the expected order.
+     *
+     * To make this as fail safe as possible we sort with the sort method below that makes sure
+     * no children are deleted if they are not part in the array of passed children
+     * ($expectedOrder).
+     *
+     * Also the sorting ensures that other children before the children to sort in the list
+     * stay in front and those originally after in the back ...
      *
      * @param EntityInterface $entity
      * @param CollectionInterface $node
@@ -189,7 +196,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     }
 
     /**
-     * Get the node name
+     * Get the node name from the complete path
      *
      * @param $item
      * @param $key
@@ -200,7 +207,12 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
     }
 
     /**
-     * stable sort is not implemented in php, so we need to sort ourself
+     * This sort method is used for sorting elements in the given array according the reference array
+     * which contains some of the array keys of the first array.
+     *
+     * The method makes sure that array elements without a key in the reference stay in the array with
+     * a nearly stable order (i.e. what was before the elements in reference stays before, what was after
+     * stays after, what is in is ordered as in reference.
      */
     public function sort($array, $reference)
     {
