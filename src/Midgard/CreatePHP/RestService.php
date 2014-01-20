@@ -10,6 +10,7 @@
 
 namespace Midgard\CreatePHP;
 
+use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\CollectionDefinitionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 
@@ -199,43 +200,52 @@ class RestService
         $object = $entity->getObject();
 
         foreach ($entity->getChildDefinitions() as $fieldname => $node) {
-            if (!$node instanceof PropertyInterface) {
-                continue;
-            }
-            /** @var $node PropertyInterface */
-            $rdf_name = $node->getProperty();
+            if ($node instanceof CollectionInterface) {
+                // check for the list of children. The order may have changed
+                $rel = $node->getRel();
+                $expanded_name = $this->_expandPropertyName($rel, $entity);
+                if (array_key_exists($expanded_name, $new_values)) {
+                    $expectedOrder = $new_values[$expanded_name];
+                    array_walk($expectedOrder, array($this, 'walkJsonLdDecode'));
+                    $this->_mapper->orderChildren($entity, $node, $expectedOrder);
+                }
+            } elseif ($node instanceof PropertyInterface) {
+                /** @var $node PropertyInterface */
+                $rdf_name = $node->getProperty();
 
-            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
+                $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
-            if (array_key_exists($expanded_name, $new_values)) {
-                $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
+                if (array_key_exists($expanded_name, $new_values)) {
+                    $object = $this->_mapper->setPropertyValue($object, $node, $new_values[$expanded_name]);
+                }
             }
         }
 
         if ($this->_mapper->store($entity))
         {
-            return $this->_convertToJsonld($new_values, $object, $entity);
+            return $this->_convertToJsonld($object, $entity);
         }
 
         return null;
     }
 
-    private function _convertToJsonld($data, $object, EntityInterface $entity)
+    public function walkJsonLdDecode(&$item, $key)
     {
-        // lazy: copy stuff from the sent json-ld to not have to rebuild everything.
-        $jsonld = $data;
+        $item = $this->jsonldDecode($item);
+    }
+
+    private function _convertToJsonld($object, EntityInterface $entity)
+    {
+        $jsonld = array();
 
         $jsonld['@subject'] = $this->jsonldEncode($this->_mapper->createSubject($object));
+
         foreach ($entity->getChildDefinitions() as $node) {
-            if (!$node instanceof PropertyInterface) {
-                continue;
-            }
-            /** @var $node PropertyInterface */
-            $rdf_name = $node->getProperty();
 
-            $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
+            if ($node instanceof PropertyInterface) {
+                $rdf_name = $node->getProperty();
+                $expanded_name = $this->_expandPropertyName($rdf_name, $entity);
 
-            if (array_key_exists($expanded_name, $jsonld)) {
                 $jsonld[$expanded_name] = $this->_mapper->getPropertyValue($object, $node);
             }
         }

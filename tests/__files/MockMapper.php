@@ -73,5 +73,18 @@ class MockMapper implements RdfMapperInterface
         }
         return '';
     }
+
+    /**
+     * Reorder the children of the collection node according to the expected order
+     *
+     * @param EntityInterface $entity
+     * @param CollectionInterface $node
+     * @param $expectedOrder array of subjects
+     */
+    public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder)
+    {
+
+    }
+
+
 }
-?>

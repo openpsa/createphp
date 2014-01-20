@@ -8,11 +8,13 @@
 
 namespace Midgard\CreatePHP\Mapper;
 
+use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 
 use PHPCR\ItemExistsException;
 
+use PHPCR\Util\PathHelper;
 use \RuntimeException;
 
 /**
@@ -48,6 +50,7 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      * Overwrite to set the node name if not set
      *
      * @param EntityInterface $entity
+     * @throws \RuntimeException
      * @return bool|void
      */
     public function store(EntityInterface $entity)
@@ -129,6 +132,8 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
      * 4. give up
      *
      * @param EntityInterface $entity
+     * @throws \RuntimeException
+     * @return mixed|string
      */
     private function determineEntityTitle(EntityInterface $entity)
     {
@@ -159,4 +164,46 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
             throw new RuntimeException('No title could be found four your new node.');
         }
     }
+
+    /**
+     * Reorder the children of the collection node according to the expected order.
+     *
+     * To make this as fail safe as possible we sort with the sort method below that makes sure
+     * no children are deleted if they are not part in the array of passed children
+     * ($expectedOrder).
+     *
+     * Also the sorting ensures that other children before the children to sort in the list
+     * stay in front and those originally after in the back ...
+     *
+     * @param EntityInterface $entity
+     * @param CollectionInterface $node
+     * @param $expectedOrder array of subjects
+     */
+    public function orderChildren(EntityInterface $entity, CollectionInterface $node, $expectedOrder)
+    {
+        array_walk($expectedOrder, array($this, 'getNodeName'));
+        $childrenCollection = $this->getChildren($entity->getObject(), $node);
+        $children = $childrenCollection->toArray();
+        $childrenNames = array_keys($children);
+
+        $childrenNames = $this->sort($childrenNames, $expectedOrder);
+
+        $childrenCollection->clear();
+
+        foreach ($childrenNames as $name) {
+            $childrenCollection->set($name, $children[$name]);
+        }
+    }
+
+    /**
+     * Get the node name from the complete path
+     *
+     * @param $item
+     * @param $key
+     */
+    public function getNodeName(&$item, $key)
+    {
+        $item = PathHelper::getNodeName($item);
+    }
+
 }
