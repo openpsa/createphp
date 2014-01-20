@@ -206,7 +206,7 @@ class RestService
                 $expanded_name = $this->_expandPropertyName($rel, $entity);
                 if (array_key_exists($expanded_name, $new_values)) {
                     $expectedOrder = $new_values[$expanded_name];
-                    array_walk($expectedOrder, array($this, 'walkChildrenNames'));
+                    array_walk($expectedOrder, array($this, 'walkJsonLdDecode'));
                     $this->_mapper->orderChildren($entity, $node, $expectedOrder);
                 }
             } elseif ($node instanceof PropertyInterface) {
@@ -229,7 +229,7 @@ class RestService
         return null;
     }
 
-    public function walkChildrenNames(&$item, $key)
+    public function walkJsonLdDecode(&$item, $key)
     {
         $item = $this->jsonldDecode($item);
     }

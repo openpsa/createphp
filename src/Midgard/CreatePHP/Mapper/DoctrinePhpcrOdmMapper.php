@@ -206,47 +206,4 @@ class DoctrinePhpcrOdmMapper extends BaseDoctrineRdfMapper
         $item = PathHelper::getNodeName($item);
     }
 
-    /**
-     * This sort method is used for sorting elements in the given array according the reference array
-     * which contains some of the array keys of the first array.
-     *
-     * The method makes sure that array elements without a key in the reference stay in the array with
-     * a nearly stable order (i.e. what was before the elements in reference stays before, what was after
-     * stays after, what is in is ordered as in reference.
-     */
-    public function sort($array, $reference)
-    {
-        $headIdx = 0;
-        $tailIdx = 0;
-        $i = 0;
-        foreach($array as $element) {
-            $i++;
-            if (false === array_search($element, $reference)) {
-                if (0 == $tailIdx) {
-                    $headIdx = $i;
-                }
-            } else {
-                $tailIdx = $i;
-            }
-        }
-
-        $toSort = array_splice($array, $headIdx);
-        $tail = array_splice($toSort, $tailIdx - $headIdx);
-
-        for ($i=1; $i < count($toSort); $i++) {
-            $tempIdx = (int)array_search($toSort[$i], $reference);
-            $temp = $toSort[$i];
-            $j = $i - 1;
-
-            while ($j >= 0 && (int)array_search($toSort[$j], $reference) > $tempIdx){
-                $toSort[$j + 1] = $toSort[$j];
-                $j--;
-            }
-
-            $toSort[$j+1] = $temp;
-        }
-
-        return array_merge($array, $toSort, $tail);
-    }
-
 }
