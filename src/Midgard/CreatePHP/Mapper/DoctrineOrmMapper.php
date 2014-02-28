@@ -71,7 +71,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         if (count($ids) < 2) {
             throw new RuntimeException("Invalid subject: $subject");
         }
-        $class = $this->unescape(ltrim($ids[0], '-')); // if we get the - from the url, this breaks the class loader in a funny way.
+        $class = $this->unescape(ltrim($ids[0], '/')); // if we get the / from the url, this breaks the class loader in a funny way.
         $repository = $this->om->getRepository($class);
 
         array_shift($ids);
