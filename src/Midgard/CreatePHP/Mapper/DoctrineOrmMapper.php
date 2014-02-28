@@ -31,7 +31,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         '<' => '%3C',
         '>' => '%3E',
         '|' => '%7C',
-        '\\' => '-',
+        '\\' => '%92',
     );
 
     /**
@@ -55,7 +55,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
 
         $idstring = implode('|', $key);
 
-        return $this->escape($this->canonicalName(get_class($object))) . "|$idstring";
+        return str_replace('\\', '-', $this->canonicalName(get_class($object))) . "|$idstring";
     }
 
      /**
@@ -71,7 +71,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         if (count($ids) < 2) {
             throw new RuntimeException("Invalid subject: $subject");
         }
-        $class = $this->unescape(ltrim($ids[0], '/')); // if we get the / from the url, this breaks the class loader in a funny way.
+        $class = str_replace('-', '\\', ltrim($ids[0], '/')); // if we get the / from the url, this breaks the class loader in a funny way.
         $repository = $this->om->getRepository($class);
 
         array_shift($ids);
@@ -92,8 +92,8 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
     }
 
     /**
-     * Escape a string to be used in an ID and classname. Escapes all characters used in
-     * building the ID and classname string and all potentially harmful when embedded in
+     * Escape a string to be used in an ID. Escapes all characters used in
+     * building the ID string and all potentially harmful when embedded in
      * HTML.
      *
      * @param string $string Original string
