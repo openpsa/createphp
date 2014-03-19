@@ -68,6 +68,9 @@ class DoctrineOrmMapperTest extends \PHPUnit_Framework_TestCase
         $mapper = new DoctrineOrmMapper(array(), $registry);
         $subject = $mapper->createSubject($entity);
         $this->assertSame($entity, $mapper->getBySubject($subject));
+        
+        $className = str_replace('\\', '-', get_class($entity));
+        $this->assertContains($className, $subject);
     }
 }
 

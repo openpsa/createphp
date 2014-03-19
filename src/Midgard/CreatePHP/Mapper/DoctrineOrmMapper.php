@@ -31,6 +31,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         '<' => '%3C',
         '>' => '%3E',
         '|' => '%7C',
+        '\\' => '%92',
     );
 
     /**
@@ -54,7 +55,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
 
         $idstring = implode('|', $key);
 
-        return $this->canonicalName(get_class($object)) . "|$idstring";
+        return str_replace('\\', '-', $this->canonicalName(get_class($object))) . "|$idstring";
     }
 
      /**
@@ -71,6 +72,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
             throw new RuntimeException("Invalid subject: $subject");
         }
         $class = ltrim($ids[0], '/'); // if we get the / from the url, this breaks the class loader in a funny way.
+        $class = str_replace('-', '\\', $class);
         $repository = $this->om->getRepository($class);
 
         array_shift($ids);
