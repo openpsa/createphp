@@ -10,6 +10,7 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Midgard\CreatePHP\RdfChainableMapperInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 
@@ -20,7 +21,7 @@ use Midgard\CreatePHP\Entity\PropertyInterface;
  *
  * @package Midgard.CreatePHP
  */
-abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
+abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper implements  RdfChainableMapperInterface
 {
     /** @var ObjectManager */
     protected $om;
@@ -58,13 +59,14 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
      *
      * use getRealClass if className names a doctrine proxy class.
      */
-    public function canonicalName($className)
+    public function objectToName($object)
     {
-        $refl = new \ReflectionClass($className);
+        $refl = new \ReflectionClass($object);
+        $className = $refl->getName();
         if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {
             $className = \Doctrine\Common\Util\ClassUtils::getRealClass($className);
         }
-
+        
         return $className;
     }
 
@@ -93,5 +95,21 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
         }
 
         return parent::setPropertyValue($object, $property, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supports($object)
+    {
+        return $this->om->contains($object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsCreate($object)
+    {
+        return false;
     }
 }

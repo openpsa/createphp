@@ -63,23 +63,6 @@ interface RdfMapperInterface
     public function getChildren($object, CollectionInterface $collection);
 
     /**
-     * Ensure the parameter is transformed into the canonical name string for
-     * the passed parameter.
-     *
-     * This may include fixing
-     * uppercase, normalizing doctrine proxy class name to original class
-     * name and so on.
-     *
-     * If you do not know what to do, just check if its an object and if so
-     * return get_class, otherwise return the string as passed in.
-     *
-     * @param string $name a name as passed to the RDF type factory
-     *
-     * @return string the canonical name
-     */
-    public function canonicalName($className);
-
-    /**
      * Instantiate a new object for the specified RDFa type
      *
      * Used as empty template for collections, and to instantiate an empty
@@ -110,6 +93,25 @@ interface RdfMapperInterface
      * @return mixed The storage object or false if nothing is found
      */
     public function getBySubject($subject);
+
+    /**
+     * Get the name for the object.
+     *
+     * Ensure the name is transformed into the canonical name string for
+     * the passed object.
+     *
+     * This may include fixing
+     * uppercase, normalizing doctrine proxy class name to original class
+     * name and so on.
+     *
+     * If you do not know what to do, just check if its an object and if so
+     * return get_class, otherwise return the string as passed in.
+     *
+     * @param object $object
+     *
+     * @return string the canonical name of this object
+     */
+    public function objectToName($object);
 
     /**
      * Create json-ld subject (RDFa about) for this object (could be simply the
