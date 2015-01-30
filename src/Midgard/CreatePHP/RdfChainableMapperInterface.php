@@ -8,6 +8,8 @@
 
 namespace Midgard\CreatePHP;
 
+use Midgard\CreatePHP\Type\TypeInterface;
+
 /**
  * Map from CreatePHP to your domain objects
  *
@@ -29,9 +31,9 @@ interface RdfChainableMapperInterface extends RdfMapperInterface
     /**
      * Get if this mapper can create this type.
      *
-     * @param mixed $object
+     * @param TypeInterface $type
      *
      * @return boolean
      */
-    public function supportsCreate($object);
+    public function supportsCreate(TypeInterface $type);
 }

@@ -58,15 +58,26 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
         if ($parent !== null) {
             throw new \Exception('Parent is not null, please extend this method to configure the parent');
         }
-        list($prefix, $shortname) = explode(':', $type->getRdfType());
-        $ns = $type->getVocabularies();
-        $ns = $ns[$prefix];
-        $name = $ns.$shortname;
+        $name = $this->getTypeMapKey($type);
         if (isset($this->typeMap[$name])) {
             $class = $this->typeMap[$name];
             return new $class;
         }
         throw new \Exception('No information on ' . $name);
+    }
+
+    /**
+     * Get's the possible key used in the typemap for the type
+     *
+     * @param TypeInterface $type
+     * @return string
+     */
+    protected function getTypeMapKey(TypeInterface $type)
+    {
+        list($prefix, $shortname) = explode(':', $type->getRdfType());
+        $ns = $type->getVocabularies();
+        $ns = $ns[$prefix];
+        return $ns.$shortname;
     }
 
     /**
@@ -154,7 +165,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
         if (! is_object($object)) {
             throw new \RuntimeException("$object is not an object");
         }
-        
+
         return get_class($object);
     }
 

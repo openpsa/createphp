@@ -112,7 +112,17 @@ class ChainRdfMapper implements RdfMapperInterface
      */
     public function prepareObject(TypeInterface $controller, $parent = null)
     {
-        throw new RuntimeException("Not implemented yet.");
+        foreach ($this->mappers as $mapper)
+        {
+            if ($mapper->supportsCreate($controller)) {
+                $object = $mapper->prepareObject($controller, $parent);
+                $this->createdObjects[spl_object_hash($object)] = $mapper;
+
+                return $object;
+            }
+        }
+
+        throw new RuntimeException("No mapper can create an object for type.");
     }
 
     /**
