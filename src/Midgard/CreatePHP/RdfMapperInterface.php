@@ -63,6 +63,17 @@ interface RdfMapperInterface
     public function getChildren($object, CollectionInterface $collection);
 
     /**
+     * Ensure the parameter is transformed into the canonical name string for
+     * the passed parameter.
+     *
+     * @param string $name a name as passed to the RDF type factory
+     *
+     * @return string the canonical name
+     * @deprecated Deprecated in 1.1 use objectToName instead.
+     */
+    public function canonicalName($className);
+
+    /**
      * Instantiate a new object for the specified RDFa type
      *
      * Used as empty template for collections, and to instantiate an empty

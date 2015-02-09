@@ -34,6 +34,17 @@ interface RdfDriverInterface
     public function loadType($name, RdfMapperInterface $mapper, RdfTypeFactory $typeFactory);
 
     /**
+     * Get the name of an object
+     *
+     * @param object $object
+     *
+     * @return string the canonical name of this object
+     *
+     * @deprecated Deprecated in 1.1 call on the mapper object instead.
+     */
+    public function objectToName($object, RdfMapperInterface $mapper);
+
+    /**
      * Gets a map of rdf types to names with all types known to this driver.
      *
      * @return array of RDF type => name of all types known to this driver.

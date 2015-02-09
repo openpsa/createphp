@@ -72,6 +72,16 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     protected abstract function getAttributes($element);
 
     /**
+     * {@inheritDoc}
+     *
+     * @deprecated Deprecated in 1.1 call on the mapper object instead.
+     */
+    public function objectToName($object, RdfMapperInterface $mapper)
+    {
+        return $mapper->objectToName($object);
+    }
+
+    /**
      * Create a type instance.
      *
      * @param RdfMapperInterface $mapper

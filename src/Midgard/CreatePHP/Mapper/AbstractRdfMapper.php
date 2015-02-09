@@ -156,6 +156,18 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
     }
 
     /**
+     * A dummy classname canonicalizer: returns the name unmodified.
+     *
+     * @param string $className
+     * @return string exactly the same as $className
+     * @deprecated Deprecated in 1.1 use objectToName instead.
+     */
+    public function canonicalName($className)
+    {
+        return $className;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * The default implementation uses get_class on objects
@@ -166,7 +178,7 @@ abstract class AbstractRdfMapper implements RdfMapperInterface
             throw new \RuntimeException("$object is not an object");
         }
 
-        return get_class($object);
+        return $this->canonicalName(get_class($object));
     }
 
     /**

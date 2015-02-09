@@ -102,6 +102,14 @@ class ChainRdfMapper implements RdfMapperInterface
     /**
      * {@inheritdoc}
      */
+    public function canonicalName($className)
+    {
+        return $className;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function objectToName($object)
     {
         return $this->getMapperForObject($object)->objectToName($object);

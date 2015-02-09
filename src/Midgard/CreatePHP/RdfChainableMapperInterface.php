@@ -11,9 +11,9 @@ namespace Midgard\CreatePHP;
 use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
- * Map from CreatePHP to your domain objects
+ * Mappers that implement this interface can be used the the chain mapper.
  *
- * You can have a mapper per type or a generic mapper that handles all types.
+ * Tests whether the mapper supports and object or can create an object of a type.
  *
  * @package Midgard.CreatePHP
  */

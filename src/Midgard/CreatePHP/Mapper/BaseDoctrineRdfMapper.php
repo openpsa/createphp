@@ -11,6 +11,7 @@ namespace Midgard\CreatePHP\Mapper;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Common\Util\ClassUtils;
 use Midgard\CreatePHP\RdfChainableMapperInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
@@ -61,15 +62,24 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper implements  RdfCh
      *
      * use getRealClass if className names a doctrine proxy class.
      */
-    public function objectToName($object)
+    public function canonicalName($className)
     {
-        $refl = new \ReflectionClass($object);
-        $className = $refl->getName();
+        $refl = new \ReflectionClass($className);
         if (in_array('Doctrine\\Common\\Persistence\\Proxy', $refl->getInterfaceNames())) {
             $className = \Doctrine\Common\Util\ClassUtils::getRealClass($className);
         }
 
         return $className;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * use getRealClass if className names a doctrine proxy class.
+     */
+    public function objectToName($object)
+    {
+        return $this->canonicalName(ClassUtils::getClass($object));
     }
 
     /**
