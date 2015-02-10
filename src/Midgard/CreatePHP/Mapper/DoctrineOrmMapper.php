@@ -55,7 +55,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
 
         $idstring = implode('|', $key);
 
-        return str_replace('\\', '-', $this->objectToName($object)) . "|$idstring";
+        return str_replace('\\', '-', $this->objectToName($object))."|$idstring";
     }
 
      /**

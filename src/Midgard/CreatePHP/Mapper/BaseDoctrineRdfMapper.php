@@ -126,8 +126,10 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper implements  RdfCh
         if (isset($this->typeMap[$name])) {
             try {
                 $metadata = $this->om->getClassMetadata($this->typeMap[$name]);
+
                 return is_object($metadata);
-            } catch (MappingException $e) { }
+            } catch (MappingException $e) {
+            }
         }
 
         return false;

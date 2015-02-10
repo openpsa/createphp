@@ -5,7 +5,6 @@
  * @license Dual licensed under the MIT (MIT-LICENSE.txt) and LGPL (LGPL-LICENSE.txt) licenses.
  * @package Midgard.CreatePHP
  */
-
 namespace Midgard\CreatePHP;
 
 use Midgard\CreatePHP\Type\TypeInterface;

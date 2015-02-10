@@ -2,15 +2,13 @@
 
 namespace Midgard\CreatePHP\Mapper;
 
-
 use Midgard\CreatePHP\RdfChainableMapperInterface;
 use Midgard\CreatePHP\RdfMapperInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
 use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Type\TypeInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
-
-use \RuntimeException;
+use RuntimeException;
 
 /**
  * Looks at all registered mappers to find one that can handle objects.
@@ -37,7 +35,7 @@ class ChainRdfMapper implements RdfMapperInterface
      * Register a mapper with a key. The key will be prefixed to all subjects.
      *
      * @param RdfChainableMapperInterface $mapper
-     * @param string $mapperKey
+     * @param string                      $mapperKey
      */
     public function registerMapper(RdfChainableMapperInterface $mapper, $mapperKey)
     {
@@ -47,14 +45,13 @@ class ChainRdfMapper implements RdfMapperInterface
     /**
      * Get the mapper than can handle object.
      *
-     * @param mixed $object
+     * @param  mixed                       $object
      * @return RdfChainableMapperInterface
-     * @throws RuntimeException when no mapper can handle the object
+     * @throws RuntimeException            when no mapper can handle the object
      */
     protected function getMapperForObject($object)
     {
-        foreach ($this->mappers as $mapper)
-        {
+        foreach ($this->mappers as $mapper) {
             if ($mapper->supports($object)) {
                 return $mapper;
             }
@@ -120,8 +117,7 @@ class ChainRdfMapper implements RdfMapperInterface
      */
     public function prepareObject(TypeInterface $controller, $parent = null)
     {
-        foreach ($this->mappers as $mapper)
-        {
+        foreach ($this->mappers as $mapper) {
             if ($mapper->supportsCreate($controller)) {
                 $object = $mapper->prepareObject($controller, $parent);
                 $this->createdObjects[spl_object_hash($object)] = $mapper;
@@ -130,7 +126,7 @@ class ChainRdfMapper implements RdfMapperInterface
             }
         }
 
-        throw new RuntimeException("No mapper can create an object for type.");
+        throw new RuntimeException(sprintf('None of the registered mappers can create an object of type %s', $controller->getRdfType()));
     }
 
     /**
@@ -148,8 +144,7 @@ class ChainRdfMapper implements RdfMapperInterface
     {
         list($mapperKey, $mapperSubject) = explode('|', $subject, 2);
 
-        if (!isset($this->mappers[$mapperKey]))
-        {
+        if (!isset($this->mappers[$mapperKey])) {
             throw new RuntimeException("Invalid subject: $subject");
         }
 
@@ -163,14 +158,13 @@ class ChainRdfMapper implements RdfMapperInterface
      */
     public function createSubject($object)
     {
-        foreach ($this->mappers as $mapperKey => $mapper)
-        {
+        foreach ($this->mappers as $mapperKey => $mapper) {
             if ($mapper->supports($object)) {
-                return $mapperKey . '|' . $mapper->createSubject($object);
+                return $mapperKey.'|'.$mapper->createSubject($object);
             }
         }
 
-        throw new RuntimeException("No mapper can create a subject for object.");
+        throw new RuntimeException(sprintf('None of the registered mappers can create the subject for object of class %s', get_class($object)));
     }
 
     /**
