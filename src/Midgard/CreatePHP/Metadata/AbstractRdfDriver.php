@@ -74,14 +74,11 @@ abstract class AbstractRdfDriver implements RdfDriverInterface
     /**
      * {@inheritDoc}
      *
-     * The default implementation uses get_class on objects
+     * @deprecated Deprecated in 1.1 call on the mapper object instead.
      */
     public function objectToName($object, RdfMapperInterface $mapper)
     {
-        if (! is_object($object)) {
-            throw new \RuntimeException("$object is not an object");
-        }
-        return $mapper->canonicalName(get_class($object));
+        return $mapper->objectToName($object);
     }
 
     /**

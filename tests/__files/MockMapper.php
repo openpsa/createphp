@@ -60,6 +60,11 @@ class MockMapper implements RdfMapperInterface
         return $className;
     }
 
+    public function objectToName($object)
+    {
+        return get_class($object);
+    }
+
     public function getBySubject($identifier)
     {
 

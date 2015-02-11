@@ -10,8 +10,12 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\Mapping\MappingException;
+use Doctrine\Common\Util\ClassUtils;
+use Midgard\CreatePHP\RdfChainableMapperInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
 use Midgard\CreatePHP\Entity\PropertyInterface;
+use Midgard\CreatePHP\Type\TypeInterface;
 
 /**
  * Base mapper for doctrine, removing the proxy class names in canonicalClassName
@@ -20,7 +24,7 @@ use Midgard\CreatePHP\Entity\PropertyInterface;
  *
  * @package Midgard.CreatePHP
  */
-abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
+abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper implements  RdfChainableMapperInterface
 {
     /** @var ObjectManager */
     protected $om;
@@ -70,6 +74,16 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
 
     /**
      * {@inheritDoc}
+     *
+     * use getRealClass if className names a doctrine proxy class.
+     */
+    public function objectToName($object)
+    {
+        return $this->canonicalName(ClassUtils::getClass($object));
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getPropertyValue($object, PropertyInterface $property)
     {
@@ -93,5 +107,31 @@ abstract class BaseDoctrineRdfMapper extends AbstractRdfMapper
         }
 
         return parent::setPropertyValue($object, $property, $value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supports($object)
+    {
+        return $this->om->contains($object);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function supportsCreate(TypeInterface $type)
+    {
+        $name = $this->getTypeMapKey($type);
+        if (isset($this->typeMap[$name])) {
+            try {
+                $metadata = $this->om->getClassMetadata($this->typeMap[$name]);
+
+                return is_object($metadata);
+            } catch (MappingException $e) {
+            }
+        }
+
+        return false;
     }
 }

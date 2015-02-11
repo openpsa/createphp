@@ -101,8 +101,8 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($collection->getChildren()))
         ;
         $this->mapper->expects($this->any())
-            ->method('canonicalName')
-            ->will($this->returnCallback(array($this, 'canonicalNameCallback')))
+            ->method('objectToName')
+            ->will($this->returnCallback(array($this, 'objectToNameCallback')))
         ;
 
         $xml = $this->renderXml('collection.twig');
@@ -147,9 +147,8 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('sioc:content', $xml->ul->li[1]->div[1]['property']);
     }
 
-    public function canonicalNameCallback($className) {
-
-        if ($className === 'Test\Midgard\CreatePHP\Collection') {
+    public function objectToNameCallback($object) {
+        if (get_class($object) === 'Test\Midgard\CreatePHP\Collection') {
             return 'Test\Midgard\CreatePHP\Collection';
         } else {
             return 'Test\Midgard\CreatePHP\Model';
@@ -196,8 +195,8 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue('/the/subject'))
         ;
         $this->mapper->expects($this->any())
-            ->method('canonicalName')
-            ->with(get_class($model))
+            ->method('objectToName')
+            ->with($model)
             ->will($this->returnValue(get_class($model)))
         ;
     }

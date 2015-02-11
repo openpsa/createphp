@@ -39,6 +39,8 @@ interface RdfDriverInterface
      * @param object $object
      *
      * @return string the canonical name of this object
+     *
+     * @deprecated Deprecated in 1.1 call on the mapper object instead.
      */
     public function objectToName($object, RdfMapperInterface $mapper);
 
