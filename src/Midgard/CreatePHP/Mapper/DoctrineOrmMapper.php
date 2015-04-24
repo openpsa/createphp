@@ -37,6 +37,36 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
     /**
      * {@inheritDoc}
      *
+     * The ORM implementation for preparing the object
+     */
+    public function prepareObject(TypeInterface $type, $parent = null)
+    {
+        $object = parent::prepareObject($type);
+
+        if (null == $parent){
+            throw new RuntimeException('You need a parent to create new objects');
+        }
+
+        /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
+        $metaData = $this->om->getClassMetaData(get_class($object));
+        $metaDataParent = $this->om->getClassMetaData(get_class($parent));
+
+        foreach ($metaData->associationMappings as $mapping)
+        {
+            if ($mapping['targetEntity'] == $metaDataParent->getName())
+            {
+                $metaData->setFieldValue($object, $mapping['fieldName'], $parent);
+                return $object;
+            }
+        }
+
+        throw new RuntimeException('parent could not be found/set for '
+                . get_class($object));
+    }
+    
+    /**
+     * {@inheritDoc}
+     *
      * For the ORM, we need the class name to know in which table to look. The
      * ORM can have multi field ids. Build the subject from all id's as per the
      * metadata information as key=value pairs, concatenated with '|'.
