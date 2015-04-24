@@ -10,6 +10,9 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Midgard\CreatePHP\Type\TypeInterface;
+use Doctrine\Common\Util\ClassUtils;
 use \RuntimeException;
 
 /**
@@ -34,6 +37,49 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         '\\' => '%92',
     );
 
+    /**
+     * {@inheritDoc}
+     *
+     * The ORM implementation for preparing the object
+     */
+    public function prepareObject(TypeInterface $type, $parent = null)
+    {
+        $object = parent::prepareObject($type);
+
+        if (null == $parent) {
+            throw new RuntimeException('You need a parent to create new objects');
+        }
+
+        /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
+        $metaData = $this->om->getClassMetaData(get_class($object));
+        $parentMappingField = $this->findParentMapping($parent, $metaData);
+        $metaData->setFieldValue($object, $parentMappingField, $parent);
+        
+        return $object;
+    }
+
+
+    /**
+     * find the parent object's property which holds the collection entries
+     *
+     * @param $parent
+     * @param ClassMetadata $metaData metadata from the collection entry's entity
+     * @param $object
+     * @return string
+     * @throws RunTimeException
+     */
+    protected function findParentMapping($parent, ClassMetadata $metaData, $object = null )
+    {
+        $parentClass = ClassUtils::getRealClass(get_class($parent));
+
+        foreach ($metaData->associationMappings as $mapping) {
+            if ($mapping['targetEntity'] == $parentClass) {
+                return $mapping['fieldName'];
+            }
+        }
+        throw new RuntimeException(sprintf('No mapping for parent class %s found in metadata of %s', $parentClass, $metaData->getName()));
+    }
+    
     /**
      * {@inheritDoc}
      *
