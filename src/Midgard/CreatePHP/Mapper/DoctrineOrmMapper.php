@@ -64,7 +64,8 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
      *
      * @param $parent
      * @param ClassMetadata $metaData metadata from the collection entry's entity
-     * @return bool|string
+     * @return string
+     * @throws RunTimeException
      */
     protected function findParentMapping($parent, $object = null, ClassMetadata $metaData = null)
     {
