@@ -52,16 +52,10 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
 
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
         $metaData = $this->om->getClassMetaData(get_class($object));
-
-        $parentMappingField = $this->findParentMapping($parent, $metaData);
-
-        if(false !== $parentMappingField) {
-            $metaData->setFieldValue($object, $parentMappingField, $parent);
-            return $object;
-        }
-
-        throw new RuntimeException('parent could not be found/set for '
-                . get_class($object));
+        $parentMappingField = $this->findParentMapping($parent, $object, $metaData);
+        $metaData->setFieldValue($object, $parentMappingField, $parent);
+        
+        return $object;
     }
 
 
@@ -72,7 +66,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
      * @param ClassMetadata $metaData metadata from the collection entry's entity
      * @return bool|string
      */
-    protected function findParentMapping($parent, ClassMetadata $metaData = null)
+    protected function findParentMapping($parent, $object = null, ClassMetadata $metaData = null)
     {
         $parentClass = ClassUtils::getRealClass(get_class($parent));
 
@@ -81,8 +75,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
                 return $mapping['fieldName'];
             }
         }
-
-        return false;
+        throw new RuntimeException(sprintf('No mapping for parent class %s found in metadata of %s', $parentClass, $metaData->getName()));
     }
     
     /**
