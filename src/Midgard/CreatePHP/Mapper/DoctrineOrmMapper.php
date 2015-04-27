@@ -10,6 +10,9 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Midgard\CreatePHP\Type\TypeInterface;
+use Doctrine\Common\Util\ClassUtils;
 use \RuntimeException;
 
 /**
