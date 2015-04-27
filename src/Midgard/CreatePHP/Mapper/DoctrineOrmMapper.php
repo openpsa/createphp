@@ -43,25 +43,43 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
     {
         $object = parent::prepareObject($type);
 
-        if (null == $parent){
+        if (null == $parent) {
             throw new RuntimeException('You need a parent to create new objects');
         }
 
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
         $metaData = $this->om->getClassMetaData(get_class($object));
-        $metaDataParent = $this->om->getClassMetaData(get_class($parent));
 
-        foreach ($metaData->associationMappings as $mapping)
-        {
-            if ($mapping['targetEntity'] == $metaDataParent->getName())
-            {
-                $metaData->setFieldValue($object, $mapping['fieldName'], $parent);
-                return $object;
-            }
+        $parentMappingField = $this->findParentMapping($parent, $metaData);
+
+        if(false !== $parentMappingField) {
+            $metaData->setFieldValue($object, $parentMappingField, $parent);
+            return $object;
         }
 
         throw new RuntimeException('parent could not be found/set for '
                 . get_class($object));
+    }
+
+
+    /**
+     * find the parent object's property which holds the collection entries
+     *
+     * @param $parent
+     * @param ClassMetadata $metaData metadata from the collection entry's entity
+     * @return bool|string
+     */
+    protected function findParentMapping($parent, ClassMetadata $metaData = null)
+    {
+        $parentClass = ClassUtils::getRealClass(get_class($parent));
+
+        foreach ($metaData->associationMappings as $mapping) {
+            if ($mapping['targetEntity'] == $parentClass) {
+                return $mapping['fieldName'];
+            }
+        }
+
+        return false;
     }
     
     /**
