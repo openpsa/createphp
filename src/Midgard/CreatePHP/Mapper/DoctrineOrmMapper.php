@@ -52,7 +52,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
 
         /** @var \Doctrine\ORM\Mapping\ClassMetadata $metaData */
         $metaData = $this->om->getClassMetaData(get_class($object));
-        $parentMappingField = $this->findParentMapping($parent, $object, $metaData);
+        $parentMappingField = $this->findParentMapping($parent, $metaData);
         $metaData->setFieldValue($object, $parentMappingField, $parent);
         
         return $object;
@@ -64,10 +64,11 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
      *
      * @param $parent
      * @param ClassMetadata $metaData metadata from the collection entry's entity
+     * @parem $object
      * @return string
      * @throws RunTimeException
      */
-    protected function findParentMapping($parent, $object = null, ClassMetadata $metaData = null)
+    protected function findParentMapping($parent, ClassMetadata $metaData, $object = null )
     {
         $parentClass = ClassUtils::getRealClass(get_class($parent));
 
