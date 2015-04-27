@@ -64,7 +64,7 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
      *
      * @param $parent
      * @param ClassMetadata $metaData metadata from the collection entry's entity
-     * @parem $object
+     * @param $object
      * @return string
      * @throws RunTimeException
      */
