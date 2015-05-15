@@ -46,4 +46,3 @@ names. There are several drivers available:
   quick hack, but does not produce meaningful RDF.
 
 Look at the driver phpdoc for the exact syntax to use for configuration.
-

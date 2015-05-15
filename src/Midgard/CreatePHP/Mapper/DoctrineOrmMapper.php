@@ -10,6 +10,9 @@ namespace Midgard\CreatePHP\Mapper;
 
 use Midgard\CreatePHP\Entity\CollectionInterface;
 use Midgard\CreatePHP\Entity\EntityInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Midgard\CreatePHP\Type\TypeInterface;
+use Doctrine\Common\Util\ClassUtils;
 use \RuntimeException;
 
 /**
@@ -33,6 +36,64 @@ class DoctrineOrmMapper extends BaseDoctrineRdfMapper
         '|' => '%7C',
         '\\' => '%92',
     );
+
+    /**
+     * {@inheritDoc}
+     *
+     * In addition to create the object, try to find the parent relation if one exists.
+     */
+    public function prepareObject(TypeInterface $type, $parent = null)
+    {
+        $object = parent::prepareObject($type);
+
+        $config = $type->getConfig();
+        $needParent = isset($config['parent_required']) && (bool) $config['parent_required'];
+
+        if (null == $parent) {
+            if ($needParent) {
+                throw new RuntimeException(sprintf('Parent is required for object of type %s', get_class($object)));
+            }
+            return $object;
+        }
+
+        /** @var ClassMetadata $metaData */
+        $metaData = $this->om->getClassMetaData(get_class($object));
+        $parentMappingField = $this->findParentMapping($parent, $metaData);
+        if (false === $parentMappingField) {
+            if ($needParent) {
+                throw new RuntimeException(sprintf('No mapping for parent class %s found in metadata of %s', ClassUtils::getClass($parent), $metaData->getName()));
+            }
+
+            return $object;
+        }
+
+        $metaData->setFieldValue($object, $parentMappingField, $parent);
+
+        return $object;
+    }
+
+    /**
+     * Find the parent object's property which holds the collection entries
+     *
+     * @param object        $parent   The parent entity.
+     * @param ClassMetadata $metaData Metadata of the object that is being created.
+     *
+     * @return string|boolean The name of the parent mapping field or false if none is found.
+     */
+    protected function findParentMapping($parent, ClassMetadata $metaData)
+    {
+        $parentClass = ClassUtils::getClass($parent);
+
+        foreach ($metaData->associationMappings as $mapping) {
+            if ($mapping['targetEntity'] == $parentClass
+                && $metaData->isSingleValuedAssociation($mapping['fieldName'])
+            ) {
+                return $mapping['fieldName'];
+            }
+        }
+
+        return false;
+    }
 
     /**
      * {@inheritDoc}
