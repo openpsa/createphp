@@ -83,7 +83,7 @@ class CreatephpExtension extends Twig_Extension
      */
     public function renderAttributes(NodeInterface $node, $removeAttr = array())
     {        
-        return $node->renderAttributes($remove, $removeAttr);
+        return $node->renderAttributes($removeAttr);
     }
 
     /**
