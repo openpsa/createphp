@@ -71,13 +71,19 @@ class CreatephpExtension extends Twig_Extension
      *
      *     <span {{ createphp_attributes(entity) }}>
      *
+     * Example usage with optional $removeAttr
+     * 
+     *      {% set removeAttr = ['partof', 'rev', 'ect...'] %}
+     *      <span {{ createphp_attributes(entity, removeAttr) }}>  
+     * 
+     * 
      * @param NodeInterface $node The node (entity, property or collection) for which to render the attributes
      *
      * @return string The html markup
      */
-    public function renderAttributes(NodeInterface $node)
-    {
-        return $node->renderAttributes();
+    public function renderAttributes(NodeInterface $node, $attributesToSkip = array())
+    {        
+        return $node->renderAttributes($attributesToSkip);
     }
 
     /**
