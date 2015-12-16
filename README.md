@@ -2,6 +2,7 @@ CreatePHP
 =========
 
 This is a small standalone library designed to make it easier to integrate [Create.js](http://createjs.org)
+[![StyleCI](https://styleci.io/repos/6075026/shield)](https://styleci.io/repos/6075026)
 into existing PHP applications/frameworks. You can see a live demonstration of an integration
 with the MidCOM framework under http://demo.createphp.org
 
