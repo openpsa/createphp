@@ -41,7 +41,7 @@ $config = array
 
 $object = new \My\Blog\Model\Article('Some title', 'Article content');
 $mapper = new my_mapper_class;
-$loader = new Midgard\CreatePHP\ArrayLoader($config);
+$loader = new \Midgard\CreatePHP\ArrayLoader($config);
 $manager = $loader->getManager($mapper);
 $entity = $manager->getEntity($object);
 ```
