@@ -31,21 +31,21 @@ class DoctrineOrmMapperTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new MockOrmEntity();
 
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
         $repository
             ->expects($this->once())
             ->method('find')
             ->with($ids)
             ->will($this->returnValue($entity))
         ;
-        $om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $om
             ->expects($this->once())
             ->method('getRepository')
             ->with(get_class($entity))
             ->will($this->returnValue($repository))
         ;
-        $meta = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $meta = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $meta
             ->expects($this->once())
             ->method('getIdentifierValues')
@@ -58,7 +58,7 @@ class DoctrineOrmMapperTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValue($meta))
         ;
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry
             ->expects($this->once())
             ->method('getManager')
@@ -68,7 +68,7 @@ class DoctrineOrmMapperTest extends \PHPUnit_Framework_TestCase
         $mapper = new DoctrineOrmMapper(array(), $registry);
         $subject = $mapper->createSubject($entity);
         $this->assertSame($entity, $mapper->getBySubject($subject));
-        
+
         $className = str_replace('\\', '-', get_class($entity));
         $this->assertContains($className, $subject);
     }

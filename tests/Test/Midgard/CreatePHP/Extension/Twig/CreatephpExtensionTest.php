@@ -34,7 +34,7 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
             $this->markTestSkipped('Twig is not installed.');
         }
 
-        $this->mapper = $this->getMock('Midgard\CreatePHP\RdfMapperInterface');
+        $this->mapper = $this->createMock('Midgard\CreatePHP\RdfMapperInterface');
 
         $xmlDriver = new RdfDriverXml(array(__DIR__.'/../../Metadata/rdf-twig'));
         $this->factory = new RdfTypeFactory($this->mapper, $xmlDriver);

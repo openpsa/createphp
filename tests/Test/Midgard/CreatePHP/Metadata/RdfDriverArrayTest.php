@@ -62,7 +62,7 @@ class RdfDriverArrayTest extends RdfDriverBase
 
     public function testLoadType()
     {
-        $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $mapper = $this->createMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
         $itemType = new Controller($mapper);
         $itemType->addRev('my:customRev');
@@ -82,7 +82,7 @@ class RdfDriverArrayTest extends RdfDriverBase
      */
     public function testLoadTypeForClassNodefinition()
     {
-        $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $mapper = $this->createMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
         $type = $this->driver->loadType('Midgard\\CreatePHP\\Not\\Existing\\Class', $mapper, $typeFactory);
     }
@@ -109,7 +109,7 @@ class RdfDriverArrayTest extends RdfDriverBase
      */
     public function testGetRevOptions()
     {
-        $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $mapper = $this->createMock('Midgard\\CreatePHP\\RdfMapperInterface');
         $typeFactory = $this->getMockBuilder('Midgard\\CreatePHP\\Metadata\\RdfTypeFactory')->disableOriginalConstructor()->getMock();
         $type = $this->driver->loadType('Test\\Midgard\\CreatePHP\\Model', $mapper, $typeFactory);
 
