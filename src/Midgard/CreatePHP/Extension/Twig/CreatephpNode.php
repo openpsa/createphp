@@ -111,7 +111,7 @@ class CreatephpNode extends Twig_Node
     protected function compileTypeLoad(Twig_Compiler $compiler, $modelname)
     {
         $compiler
-            ->write('$this->env->getExtension(\'createphp\')->createEntity(')
+            ->write('$this->env->getExtension(\'Midgard\\CreatePHP\\Extension\\Twig\\CreatephpExtension\')->createEntity(')
         ;
         $compiler->subcompile($this->getAttribute('object'));
         $compiler

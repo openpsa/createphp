@@ -120,14 +120,4 @@ class CreatephpExtension extends Twig_Extension
         return $type->createWithObject($model);
     }
 
-    /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
-     */
-    public function getName()
-    {
-        return 'createphp';
-    }
-
 }
