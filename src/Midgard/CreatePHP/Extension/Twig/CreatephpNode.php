@@ -8,7 +8,6 @@
 
 namespace Midgard\CreatePHP\Extension\Twig;
 
-use Twig_NodeInterface;
 use Twig_Node;
 use Twig_Compiler;
 
@@ -26,16 +25,16 @@ class CreatephpNode extends Twig_Node
      *
      *  * varname: The name of the rdfa entity to expose to the body node
      *
-     * @param Twig_NodeInterface $body     The body of the createphp token
-     * @param Twig_NodeInterface $object   The object to convert to rdf
+     * @param Twig_Node $body     The body of the createphp token
+     * @param Twig_Node $object   The object to convert to rdf
      * @param string|null        $varname  The name for the rdfa entity to expose or null if no explicit name
      * @param boolean            $autotag  Automatically render start and end part of the node?
      * @param integer            $lineno   The line number
      * @param string             $tag      The tag name
      */
     public function __construct(
-        Twig_NodeInterface $body,
-        Twig_NodeInterface $object,
+        Twig_Node $body,
+        Twig_Node $object,
         $varname,
         $autotag,
         $lineno = 0,
@@ -126,11 +125,11 @@ class CreatephpNode extends Twig_Node
      *
      * For example container.method.content will make the name "content"
      *
-     * @param Twig_NodeInterface $node
+     * @param Twig_Node $node
      *
      * @return string|null get the variable name
      */
-    protected function findVariableName(Twig_NodeInterface $node)
+    protected function findVariableName(Twig_Node $node)
     {
         $name = null;
         if ($node instanceof \Twig_Node_Expression_Name) {
