@@ -39,8 +39,8 @@ class CreatephpExtensionTest extends \PHPUnit_Framework_TestCase
         $xmlDriver = new RdfDriverXml(array(__DIR__.'/../../Metadata/rdf-twig'));
         $this->factory = new RdfTypeFactory($this->mapper, $xmlDriver);
 
-        $this->twig = new \Twig_Environment();
-        $this->twig->setLoader(new \Twig_Loader_Filesystem(__DIR__.'/templates'));
+        $loader = new \Twig_Loader_Filesystem(__DIR__.'/templates');
+        $this->twig = new \Twig_Environment($loader);
         $this->twig->addExtension(new CreatephpExtension($this->factory));
     }
 
