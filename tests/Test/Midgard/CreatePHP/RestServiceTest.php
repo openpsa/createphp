@@ -39,12 +39,12 @@ class RestServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
-        $this->type = $this->getMock('Midgard\\CreatePHP\\Type\\TypeInterface');
-        $this->child_type = $this->getMock('Midgard\\CreatePHP\\Type\\TypeInterface');
-        $this->entity = $this->getMock('Midgard\\CreatePHP\\Entity\\EntityInterface');
-        $this->property = $this->getMock('Midgard\\CreatePHP\\Entity\\PropertyInterface');
-        $this->collection = $this->getMock('Midgard\\CreatePHP\\Entity\\CollectionInterface');
+        $this->mapper = $this->createMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $this->type = $this->createMock('Midgard\\CreatePHP\\Type\\TypeInterface');
+        $this->child_type = $this->createMock('Midgard\\CreatePHP\\Type\\TypeInterface');
+        $this->entity = $this->createMock('Midgard\\CreatePHP\\Entity\\EntityInterface');
+        $this->property = $this->createMock('Midgard\\CreatePHP\\Entity\\PropertyInterface');
+        $this->collection = $this->createMock('Midgard\\CreatePHP\\Entity\\CollectionInterface');
 
         $this->mapper->expects($this->once())
             ->method('store')

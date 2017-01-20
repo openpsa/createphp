@@ -10,7 +10,7 @@ class RestServiceWorkflowTest extends \PHPUnit_Framework_TestCase
     public function test_get_registerWorkflow()
     {
         $workflow = new MockWorkflow;
-        $mapper = $this->getMock('Midgard\\CreatePHP\\RdfMapperInterface');
+        $mapper = $this->createMock('Midgard\\CreatePHP\\RdfMapperInterface');
 
         $restHandler = new RestService($mapper);
 

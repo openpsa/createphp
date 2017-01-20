@@ -14,9 +14,9 @@ class DoctrinePhpcrMapperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $om = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $om = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $registry
           ->expects($this->once())
           ->method('getManager')
