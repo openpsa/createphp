@@ -10,7 +10,7 @@ namespace Midgard\CreatePHP\Extension\Twig;
 
 use Twig_Extension;
 use Twig_Environment;
-use Twig_Function;
+use Twig_SimpleFunction;
 use Twig_Error_Runtime;
 
 use Midgard\CreatePHP\NodeInterface;
@@ -58,8 +58,8 @@ class CreatephpExtension extends Twig_Extension
     public function getFunctions()
     {
         return array(
-            new Twig_Function('createphp_attributes', [$this, 'renderAttributes'], array('is_safe' => array('html'))),
-            new Twig_Function('createphp_content', [$this, 'renderContent'], array('is_safe' => array('html'))),
+            new Twig_SimpleFunction('createphp_attributes', [$this, 'renderAttributes'], array('is_safe' => array('html'))),
+            new Twig_SimpleFunction('createphp_content', [$this, 'renderContent'], array('is_safe' => array('html'))),
 
         );
     }
