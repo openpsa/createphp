@@ -15,7 +15,7 @@
         "php": "^7.0"
     },
     "require-dev": {
-        "twig/twig": "^2.1",
+        "twig/twig": "^1.31 | ^2.1",
         "doctrine/common": "~2.3.0"
     },
     "autoload": {
