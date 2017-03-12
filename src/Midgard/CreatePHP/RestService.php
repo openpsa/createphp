@@ -129,8 +129,12 @@ class RestService
 
         if (array_key_exists($method, $this->_workflows)) {
             $object = null;
-            if (null === $subject && isset($_GET["subject"])) {
-                $subject = $_GET["subject"];
+            if (null === $subject) {
+                if (isset($_GET["subject"])) {
+                    $subject = $_GET["subject"];
+                } else {
+                    $subject = $this->jsonldDecode($data['@subject']);
+                }
             }
             // TODO: workflows should expect subject rather than instance
             $object = $this->_mapper->getBySubject($subject);
