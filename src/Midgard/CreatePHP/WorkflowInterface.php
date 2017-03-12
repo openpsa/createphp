@@ -8,6 +8,8 @@
 
 namespace Midgard\CreatePHP;
 
+use Midgard\CreatePHP\Type\TypeInterface;
+
 /**
  * Interface for workflow implementations
  *
@@ -29,12 +31,14 @@ interface WorkflowInterface
     /**
      * Execute this workflow
      *
-     * The object will only be set if there is a subject parameter in $_GET
-     * that can be found by the mapper tied to the RestService
+     * @param array $data the json-ld data received in the request
+     * @param TypeInterface $type the type information for this data
+     * @param string $subject the request subject for workflows
+     * @param string $method the http request method, one of the HTTP constants,
+     *      if omitted, $_SERVER['REQUEST_METHOD'] is used
      *
-     * @param mixed $object
-     *
-     * @return array TODO what?
+     * @return null|array if this is a successful post or put, returns the json
+     *      data for the processed item
      */
-    public function run($object);
+    public function run($data, TypeInterface $type, $subject = null, $method = null);
 }
