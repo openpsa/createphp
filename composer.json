@@ -3,7 +3,7 @@
     "type": "library",
     "description": "PHP adapter for Create.js",
     "keywords": ["rdfa"],
-    "license": ["LGPL","MIT"],
+    "license": ["LGPL-2.1-or-later","MIT"],
     "authors": [
         {
             "name": "Andreas Flack",
